@@ -1,0 +1,35 @@
+<style>
+	.result td{
+		word-wrap:break-word !important;
+	}
+
+	.dataTable-wrapper {
+		height: 300px;
+		overflow: auto;
+	}
+	
+	
+	/* Datatable columns */
+	.result .col1  { width: 30px; text-align: center; }
+	.result .col2  { width: 45px;  text-align: right; }
+	.result .col3  { width: 120px; text-align: left;}
+	.result .col4  { width: 150px; text-align: left;}
+	.result .col5  { width: 100px; text-align: left;}
+	.result .col6  { width: 350px; text-align: left;}
+	.result .col7  { width: 350px; text-align: left;}
+	.result .col8  { width: 100px; text-align: center;}
+	.result .col9  { width: 150px; text-align: center;}
+	.result .col10  { width: 100px; text-align: left;}
+	.result .col11  { width: 150px; text-align: center;}
+	.result .col12  { width: 100px; text-align: left;}
+
+	.dataTables_paginate  span {
+		display: none;
+	}
+	
+	.checkbox {
+		padding: 0px;
+		margin: 0px;
+	}
+	
+</style>

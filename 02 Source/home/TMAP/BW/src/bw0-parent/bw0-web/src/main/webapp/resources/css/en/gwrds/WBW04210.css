@@ -1,0 +1,105 @@
+<style>
+	.result{
+		table-layout:fixed !important;
+	}
+	.result td{
+		word-wrap:break-word !important;
+	}
+	.dataTables_length {
+		display:block;	
+		position: relative;
+		top: 2px;
+	}
+	.dataTable-wrapper {
+		height: 300px;
+		overflow: auto;
+	}
+	
+	.button-panel {
+		margin: 10px 0px 10px 0px;
+	}
+	
+	.tableHeaderHide {
+		visibility: hidden;
+	}
+	
+	.result .headcol  { 
+		color:white;
+		text-align: center;
+		z-index: 999; 
+	}
+	
+	/* Datatable columns */
+	.result .col1  { width: 20px; z-index: 200; text-align: right; }
+	.result .col2  { width: 40px; text-align: left; z-index: 200; }
+	.result .col3  { width: 60px; z-index: 200; text-align: left; }
+	.result .col4  { width: 200px; z-index: 200; text-align: left;  }
+	.result .col5  { width: 100px; z-index: 200; text-align: left; }
+	.result .col6  { width: 130px; text-align: left; z-index: 200; }
+
+	.dataTables_paginate  span {
+		display: none;
+	}
+	
+	#join-domain-desc{
+		margin-left: 57px;
+		font-size:0.9em;
+	}
+	
+	.checkbox {
+		padding: 0px;
+		margin: 0px;
+	}
+	hr { margin: 5px 0 5px 0; }
+	
+	.tooltips {
+	  position: relative;
+	  /*display: inline;*/
+	}
+	.tooltips span {
+	  position: absolute;
+	  width: 200%;
+	  color: #000000;
+	  background: orange;
+	  height: auto;
+	  line-height: 20px;
+	  text-align: center;
+	  visibility: hidden;
+	  border-radius: 4px;
+	  /* white-space: nowrap; */
+	}
+	.tooltips span:after {
+	  content: '';
+	  position: absolute;
+	 /* top: -22%; */
+	  top: -6px;
+	  left: 0%;
+	  margin-left: 0px;
+	  width: 0; height: 0;
+	  border-bottom: 8px solid orange;
+	  border-right: 8px solid transparent;
+	  border-left: 8px solid transparent;
+	}
+	:hover.tooltips span {
+	  visibility: visible;
+	  opacity: 1;
+	  /* bottom: -22px; */
+	  top: 22px;
+	  left: 0%;
+	  margin-left: 0%;
+	  z-index: 9999;
+	}
+	#search-criteria tbody td div {
+		padding: 2px 0px 2px 0px;
+		position: relative;
+	}
+	#data-criteria tbody td div {
+		padding: 2px 0px 2px 0px;
+		position: relative;
+	}
+	
+	.getsudoMonth{
+		vertical-align : sub;
+	}
+	
+</style>

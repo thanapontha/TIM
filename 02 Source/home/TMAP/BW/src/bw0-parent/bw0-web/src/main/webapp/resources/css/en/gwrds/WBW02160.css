@@ -1,0 +1,123 @@
+<style>
+	.result{
+		table-layout:fixed !important;
+	}
+	.result td{
+		word-wrap:break-word !important;
+	}
+	.dataTables_length {
+		display:block;	
+		position: relative;
+		top: 2px;
+	}
+	.dataTable-wrapper {
+		height: 360px;
+		overflow: auto;
+	}
+	
+	.button-panel {
+		margin: 10px 0px 10px 0px;
+	}
+	
+	.tableHeaderHide {
+		visibility: hidden;
+	}
+	
+	.result .headcol  { 
+		color:white;
+		text-align: center;
+		z-index: 999; 
+	}
+	
+	/* Datatable columns */
+	.result td.col1  { width: 0px; text-align: center; z-index: 200; }
+	.result td.col2  { width: 20px; text-align: center; z-index: 200; }
+	.result td.col3  { width: 45px;max-width: 45px; text-align: right; z-index: 200; }
+	.result td.col4  { width: 80px;max-width: 80px; text-align: center; z-index: 200;  }
+	.result td.col5  { width: 100px;max-width: 100px; text-align: center; z-index: 200; }
+	.result td.col6  { width: 100px;max-width: 100px; text-align: center; z-index: 200; }
+	.result td.col7  { width: 100px;max-width: 100px; text-align: center; z-index: 200; }
+	.result td.col8  { width: 165px;max-width: 165px; text-align: center; z-index: 200; }
+	.result td.col9  { width: 100px;max-width: 100px; text-align: center; z-index: 200; }
+	.result td.col10  { width: 105px;max-width: 105px; text-align: center; z-index: 200; }
+	.result td.col11  { width: 100px;max-width: 100px; text-align: center; z-index: 200; }
+	.result td.col12  { width: 95px;max-width: 95px; text-align: center; z-index: 200; }
+	.result td.col13  { width: 100px;max-width: 100px; text-align: center; z-index: 200; }
+	
+	.checkbox {
+		padding: 0px;
+		margin: 0px;
+	}
+	hr { margin: 5px 0 5px 0; }
+
+	#search-criteria tbody td div {
+		padding: 2px 0px 2px 0px;
+		position: relative;
+	}
+	#data-criteria tbody td div {
+		padding: 2px 0px 2px 0px;
+		position: relative;
+	}
+	
+	.operation-upload {
+		float: left;
+		border: solid #AAA 2px;
+		padding:6px 4px 6px 4px;
+		
+	}
+	.operation-btn {
+		float: right;
+		height:79px;
+		
+	}
+	.getsudoMonthSearchImg {
+	    margin-left: 0px;
+    	vertical-align: middle;
+    }
+	
+	/*
+	.scroll {
+	  border: 0;
+	  border-collapse: collapse;
+	}
+	
+	.scroll tr {
+	  display: flex;
+	}
+	
+	.scroll td {
+	  padding: 3px;
+	  flex: 1 auto;
+	  border: none;
+	  width: 1px;
+	  word-wrap: break;
+	}
+	
+	.scroll thead tr:after {
+	  content: '';
+	  overflow-y: scroll;
+	  visibility: hidden;
+	  height: 0;
+	}
+	
+	.scroll thead th {
+	  flex: 1 auto;
+	  display: block;
+	  border: none;
+	}
+	
+	.scroll tbody {
+	  display: block;
+	  width: 100%;
+	  overflow-y: auto;
+	  height: 200px;
+	}
+	*/
+	table.dataTable tr.even {
+    	background-color: #FFFFFF !important;
+	}
+	
+	.font-green { color: #2eb32e; }
+	.bg-green { background-color: lightgreen; }
+	.bg-red { background-color: red;color: white; }
+</style>

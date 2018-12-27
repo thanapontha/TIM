@@ -1,0 +1,2 @@
+10 0 * * * /home/TMAP/BW/release/bin/FileCleanUp.sh TMAP-EM
+10 0 1 * * /home/TMAP/BW/release/bin/TableCleanUP.sh

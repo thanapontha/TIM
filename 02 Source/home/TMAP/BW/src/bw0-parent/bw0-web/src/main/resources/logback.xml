@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration scan="false">
+	<property name="LOG_DIR" value="/home/TMAP/BW/log" />
+ 	<contextName>BW0</contextName>
+
+	<appender name="APPLOGFILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	    <prudent>true</prudent>
+	    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+	        <fileNamePattern>${LOG_DIR}/${CONTEXT_NAME}-%d{yyyy-MM-dd}.log</fileNamePattern>
+	        <maxHistory>10</maxHistory>	        
+	    </rollingPolicy>	
+		<encoder>
+			<pattern>%date %level [%contextName] %logger{10} [%file:%line] %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	
+	<appender name="FRAMEWORKLOGFILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	    <prudent>true</prudent>
+	    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+	        <fileNamePattern>${LOG_DIR}/${CONTEXT_NAME}-framework-%d{yyyy-MM-dd}.log</fileNamePattern>
+	        <maxHistory>3</maxHistory>	        
+	    </rollingPolicy>	
+		<encoder>
+			<pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender" level="DEBUG">
+		<encoder>
+			<pattern>
+				%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} [%file:%line] - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="th.co.toyota" level="DEBUG" additivity="false">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="consoleAppender" />
+		<appender-ref ref="APPLOGFILE" />
+	</logger>
+
+	<root level="DEBUG">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="consoleAppender" />
+		<appender-ref ref="FRAMEWORKLOGFILE" />
+	</root>
+	
+	<logger name="org.hibernate.type" level="ALL" />
+	
+	<logger name="org.hibernate" level="DEBUG" />
+</configuration>

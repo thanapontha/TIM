@@ -1,0 +1,147 @@
+html, body, .ui-widget {
+	font-size: 13px;
+}
+* {
+	font-family: 'Microsoft Sans Serif' !important; /*,Helvetica,Arial,Thonburi,Tahoma,FreeSans,sans-serif !important;*/
+}
+
+h1,h2,h3,h4,h5,h6,h7 {
+	padding: 0px;
+	margin: 0px;
+}
+
+h1 
+{
+	font-weight: bolder;
+	font-size: 22px;
+}
+
+h2 {
+
+}
+
+h3 {
+	font-size: 13px;
+	font-weight: bolder;
+}
+
+strong {
+	font-size: 13px;
+}
+
+label {
+	font-size: 13px;
+	font-weight: normal;
+}
+
+input {
+	font-size: 12px;
+	font-weight: normal;
+}
+
+textarea {
+	font-size: 12px;
+	font-weight: normal;
+}
+
+select {
+	font-size: 12px;
+	font-weight: normal;
+}
+
+.normal-size{
+	font-size: 13px;
+}
+
+input.button.ui-state-default , .ui-dialog-buttonset .ui-button {
+	font-size: 13px;
+}
+
+ /*
+  *  Header Mobile
+  */
+ #header-mobile > .application-panel .application {
+ 	font-size: 11px;
+ }
+
+ 
+table.dataTable {
+
+}
+	.fht-table thead tr,
+	table.dataTable thead  tr th,
+	table.dataTable tbody tr td{
+		font-size: 13px;
+		font-weight: normal;
+	}
+
+.body-label, .Body_Label {
+	font-size:13px;
+	font-weight: normal; 
+}
+
+.Body_PageInfo {
+	font-size:11px;
+	font-weight: bold; 
+}
+.a.Body_PageControl {
+	font-size:11px;
+	font-weight: bold; 		
+}
+
+	
+.application-panel .application {
+	font-weight: bolder;
+	font-size: 22px;
+}
+
+.application-panel .userinfo,
+.screenid-panel .screenid,
+.screenid-panel .time {
+	font-size: 12px;
+	font-weight: bolder;
+	height: 16px;
+	line-height: 1.3;
+}
+	.screenid-panel .screenid {
+		font-size: 13px;
+	}
+#footer {
+	font-size: 13px;
+}
+#menu-container {
+	font-size:13px;
+}
+	#menu-container .ui-accordion-content div.item,
+	#menu-container .ui-accordion.sub .ui-accordion-header {
+		font-size: 0.9em;
+	}
+	
+	#menu-container a {
+		font-size:13px
+	} 
+	
+	
+	
+/*
+ *  WSC2210Home.jsp
+ */
+ .system span.systemname {
+ 	font-size: 14px;
+	font-weight: bold;	
+ }
+ @media (max-width: 670px) {
+ 	.system,.system-command {
+ 		font-size: 12px;
+ 	}
+ 		.system span.systemname {
+ 			font-size: 12px;
+			font-weight: bold;
+ 		}
+ }
+ 
+ .dataTables_info{
+ 	font-size: 10px;
+ 	font-weight: bold;
+ }
+ 
