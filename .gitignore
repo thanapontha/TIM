@@ -11,13 +11,30 @@
 .mtj.tmp/
 
 # Package Files #
-*.jar
-*.war
 *.nar
 *.ear
-*.zip
 *.tar.gz
 *.rar
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+#Folder and Files on eclipse
+**/bw0-parent/.settings
+**/bw0-parent/.project
+**/bw0-parent/bw0-api/bin
+**/bw0-parent/bw0-api/build
+**/bw0-parent/bw0-api/.settings
+**/bw0-parent/bw0-api/.classpath
+**/bw0-parent/bw0-api/.project
+**/bw0-parent/bw0-batch/bin
+**/bw0-parent/bw0-batch/build
+**/bw0-parent/bw0-batch/.settings
+**/bw0-parent/bw0-batch/.classpath
+**/bw0-parent/bw0-batch/.project
+**/bw0-parent/bw0-web/bin
+**/bw0-parent/bw0-web/build
+**/bw0-parent/bw0-web/.settings
+**/bw0-parent/bw0-web/.classpath
+**/bw0-parent/bw0-web/.project
+**/bw0-parent/bw0-web/.factorypath
