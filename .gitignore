@@ -20,6 +20,8 @@
 hs_err_pid*
 
 #Folder and Files on eclipse
+
+**/Workspace
 **/bw0-parent/.gradle
 #**/bw0-parent/.settings
 #**/bw0-parent/.project
