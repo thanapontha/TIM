@@ -154,9 +154,9 @@
 		
 	<bean id="CST30000BatchManager" class="th.co.toyota.st3.api.util.CST30000BatchManager" scope="prototype" />
 		
-	<bean id="CST30170JasperReportConnector" class="th.co.toyota.st3.api.report.CST30170JasperReportConnector" 
+	<!-- <bean id="CST30170JasperReportConnector" class="th.co.toyota.st3.api.report.CST30170JasperReportConnector" 
 		scope="prototype" p:templateFolder="${jr.template.folder}" p:destinationFolder="${jr.destination.folder}" 
-		p:virtualizerFolder="${jr.virtualizer.folder}" p:virtualMaxSize="${jr.virtualMaxSize}"/>	
+		p:virtualizerFolder="${jr.virtualizer.folder}" p:virtualMaxSize="${jr.virtualMaxSize}"/>	 -->
 	
 	<bean id="CBW03060Repository" class="th.co.toyota.bw0.api.repository.common.CBW03060Repository" scope="prototype" />
 	

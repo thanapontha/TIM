@@ -1,10 +1,5 @@
 package th.co.toyota.application.web;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
-
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -13,7 +8,6 @@ import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.collections.map.HashedMap;
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +27,7 @@ import th.co.toyota.application.model.ServiceStatus;
 import th.co.toyota.application.model.XmlPayload;
 import th.co.toyota.application.web.form.APITestForm;
 import th.co.toyota.sc2.client.model.simple.CSC22110UserInfo;
-import th.co.toyota.st3.api.constants.CST30000Constants;
 import th.co.toyota.st3.api.download.CST30070UploadDownload;
-import th.co.toyota.st3.api.model.SequenceHistoryMaster;
-import th.co.toyota.st3.api.report.CST30170JasperReportConnector;
 import th.co.toyota.st3.api.upload.CST32020DataFileUpload;
 import th.co.toyota.st3.api.util.IST30050ErrorUtil;
 
@@ -54,8 +45,8 @@ public class APITestController extends CommonBaseController {
 	@Autowired
 	protected CST32020DataFileUpload dataUpload;
     
-    @Autowired
-    private CST30170JasperReportConnector jasperReport;
+//    @Autowired
+//    private CST30170JasperReportConnector jasperReport;
     
 	@Value("${jr.destination.folder}")
 	private String destinationFolder;
@@ -291,68 +282,68 @@ public class APITestController extends CommonBaseController {
 	// End: Data File Upload
 	
 	// Start: Jasper Reports
-	@RequestMapping(value = "/jasper", method = RequestMethod.POST)
-	public ModelAndView jasperApi(APITestForm form, HttpServletRequest request,
-			HttpServletResponse response, RequestContext context, RedirectAttributes redirectAttributes) {
-	
-		logger.info("Jasper Report API");
-		ModelAndView mv = new ModelAndView(viewName);		
-		
-		Payload payload = new XmlPayload();
-		payload = populatePayloadForDisplay(viewName, payload,
-				RequestContextUtils.getLocale(request));
-
-		try {	
-			String currentDate = new SimpleDateFormat(
-					CST30000Constants.DATE_TIME_STRING_FILENAME_FORMAT).format(new Date());
-			
-			String fileName = "TEST_" + form.getReportType() + "_" + currentDate;
-			Map<String, Object> params = new HashedMap();
-
-			String sqlHistSeqQuery = "SELECT TB_M_HIST_SEQ.* from TB_M_HIST_SEQ";
-	        Query q = em.createNativeQuery(sqlHistSeqQuery, SequenceHistoryMaster.class);			
-			
-	        String message = "Successfully Processed.";
-	        
-	        String action = form.getActionType();
-	        switch (action) {
-	        	case "Generate":
-	        		message =  jasperReport.generateReport(form.getReportName(), 
-							params, q.getResultList(), form.getReportType(), 
-							destinationFolder + File.separator + fileName + "." + form.getReportType());
-	        		break;
-	        	case "Download":
-					jasperReport.downloadReport(form.getReportName(), 
-							params, q.getResultList(), form.getReportType(), fileName, response, request);	        		
-	        		break;
-	        	case "Preview":
-	        		jasperReport.previewReport(form.getReportName(), 
-							params, q.getResultList(), request, response);
-	        		break;
-	        	default:
-	        		break;
-	       
-	        }
-			
-			payload.setStatus(ServiceStatus.OK);
-			payload.addInfoMessage(message);
-			mv.addObject("upload", new APITestForm());
-			mv.addObject("payload", payload);	
-			redirectAttributes.addFlashAttribute("upload",  new APITestForm());
-			redirectAttributes.addFlashAttribute("payload", payload);
-			return mv;	
-		} catch (Exception e) {
-			logger.debug("Stacktrace:", e);
-		
-			payload.setStatus(ServiceStatus.NG);
-			payload.addErrorMessage(e.getMessage());	
-			
-			mv.addObject("upload", new APITestForm());
-			mv.addObject("payload", payload);
-			redirectAttributes.addFlashAttribute("upload",  new APITestForm());
-			redirectAttributes.addFlashAttribute("payload", payload);
-			return mv;
-		}
-	}	
+//	@RequestMapping(value = "/jasper", method = RequestMethod.POST)
+//	public ModelAndView jasperApi(APITestForm form, HttpServletRequest request,
+//			HttpServletResponse response, RequestContext context, RedirectAttributes redirectAttributes) {
+//	
+//		logger.info("Jasper Report API");
+//		ModelAndView mv = new ModelAndView(viewName);		
+//		
+//		Payload payload = new XmlPayload();
+//		payload = populatePayloadForDisplay(viewName, payload,
+//				RequestContextUtils.getLocale(request));
+//
+//		try {	
+//			String currentDate = new SimpleDateFormat(
+//					CST30000Constants.DATE_TIME_STRING_FILENAME_FORMAT).format(new Date());
+//			
+//			String fileName = "TEST_" + form.getReportType() + "_" + currentDate;
+//			Map<String, Object> params = new HashedMap();
+//
+//			String sqlHistSeqQuery = "SELECT TB_M_HIST_SEQ.* from TB_M_HIST_SEQ";
+//	        Query q = em.createNativeQuery(sqlHistSeqQuery, SequenceHistoryMaster.class);			
+//			
+//	        String message = "Successfully Processed.";
+//	        
+//	        String action = form.getActionType();
+//	        switch (action) {
+//	        	case "Generate":
+//	        		message =  jasperReport.generateReport(form.getReportName(), 
+//							params, q.getResultList(), form.getReportType(), 
+//							destinationFolder + File.separator + fileName + "." + form.getReportType());
+//	        		break;
+//	        	case "Download":
+//					jasperReport.downloadReport(form.getReportName(), 
+//							params, q.getResultList(), form.getReportType(), fileName, response, request);	        		
+//	        		break;
+//	        	case "Preview":
+//	        		jasperReport.previewReport(form.getReportName(), 
+//							params, q.getResultList(), request, response);
+//	        		break;
+//	        	default:
+//	        		break;
+//	       
+//	        }
+//			
+//			payload.setStatus(ServiceStatus.OK);
+//			payload.addInfoMessage(message);
+//			mv.addObject("upload", new APITestForm());
+//			mv.addObject("payload", payload);	
+//			redirectAttributes.addFlashAttribute("upload",  new APITestForm());
+//			redirectAttributes.addFlashAttribute("payload", payload);
+//			return mv;	
+//		} catch (Exception e) {
+//			logger.debug("Stacktrace:", e);
+//		
+//			payload.setStatus(ServiceStatus.NG);
+//			payload.addErrorMessage(e.getMessage());	
+//			
+//			mv.addObject("upload", new APITestForm());
+//			mv.addObject("payload", payload);
+//			redirectAttributes.addFlashAttribute("upload",  new APITestForm());
+//			redirectAttributes.addFlashAttribute("payload", payload);
+//			return mv;
+//		}
+//	}	
 	// End: Jasper Reports
 }
