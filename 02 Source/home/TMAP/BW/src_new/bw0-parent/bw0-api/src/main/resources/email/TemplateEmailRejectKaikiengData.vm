@@ -1,0 +1,67 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns:m="http://schemas.microsoft.com/office/2004/12/omml"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-874">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 12">
+<meta name=Originator content="Microsoft Word 12">
+</head>
+<style>
+	.h_col1  { width: 50px; text-align: center; font-weight: bold;}
+	.h_col2  { width: 150px; text-align: center; font-weight: bold;}
+	.h_col3  { width: 70px; text-align: center; font-weight: bold;}
+	.h_col4  { width: 150px; text-align: center; font-weight: bold;}
+	.h_col5  { width: 150px; text-align: center; font-weight: bold;}
+	.h_col6  { width: 150px; text-align: center; font-weight: bold;}
+	
+	.d_col1  { text-align: center; font-weight: normal;}
+	.d_col2  { text-align: center; font-weight: normal;}
+	.d_col3  { text-align: center; font-weight: normal;}
+	.d_col4  { text-align: left; font-weight: normal;}
+	.d_col5  { text-align: left; font-weight: normal;}
+	.d_col6  { text-align: center; font-weight: normal;}
+</style>
+<body>
+<p>Dear TMAP-MS User,</p>
+<p>Refer to Kaikieng of [${GETSUDO_MONTH}], [${TIMING}] already rejected by TDEM user.</p>
+
+<table border="1" cellpadding="0" cellspacing="0" style="width:50%">
+	<tbody>
+		<tr>
+			<td class="h_col1">No.</td>
+			<td class="h_col2">Getsudo Month</td>
+			<td class="h_col3">Timing</td>
+			<td class="h_col4">Vehicle Plant</td>
+			<td class="h_col5">Vehicle Model</td>
+			<td class="h_col6">Rejected Date</td>
+		</tr>
+		<tr>
+			<td class="d_col1">${NO}</td>
+			<td class="d_col2">${GETSUDO_MONTH}</td>
+			<td class="d_col3">${TIMING}</td>
+			<td class="d_col4">${VEHICLE_PLANT}</td>
+			<td class="d_col5">${VEHICLE_MODEL}</td>
+			<td class="d_col6">${REJECTED_DATE}</td>
+		</tr>
+	</tbody>
+</table>
+
+<br />
+If there is any concern/inquiry, please contact ${CONTACT_NAME}<br />
+<br />
+
+Best Regards<br />
+${SENDER}
+
+<br /><br />
+** This message was automatically generated from system.
+<br />
+</p>
+
+</body>
+
+</html>

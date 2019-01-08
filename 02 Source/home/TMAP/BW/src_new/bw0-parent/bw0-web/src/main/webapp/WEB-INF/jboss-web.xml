@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss-web>
+    <context-root></context-root> <!-- change to application context root -->
+
+    <!-- For session replication -->
+    <replication-config>
+      <cache-name>web</cache-name>
+      <replication-trigger>SET</replication-trigger>
+      <replication-granularity>ATTRIBUTE</replication-granularity>
+   </replication-config>
+
+</jboss-web>

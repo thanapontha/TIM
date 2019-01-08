@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
+
+<tiles-definitions>
+
+  <definition name="baseLayout" template="/WEB-INF/tiles/baseLayout.jsp">
+      <put-attribute name="title"  value="Template"/>
+      <put-attribute name="header" value="/WEB-INF/tiles/header.jsp"/>
+      <put-attribute name="body"   value="/WEB-INF/tiles/body.jsp"/>
+      <put-attribute name="footer"   value="/WEB-INF/tiles/footer.jsp"/>
+  </definition>
+  
+  <definition name="noTemplateLayout" template="/WEB-INF/tiles/noTemplateLayout.jsp">
+      <put-attribute name="title"  value="Template"/>
+      <put-attribute name="body"   value="/WEB-INF/tiles/body.jsp"/>
+  </definition>
+  
+  <definition name="popupLayout" template="/WEB-INF/tiles/popupLayout.jsp">
+      <put-attribute name="title"  value="Template"/>
+      <put-attribute name="header" value="/WEB-INF/tiles/header.jsp"/>
+      <put-attribute name="body"   value="/WEB-INF/tiles/body.jsp"/>
+      <put-attribute name="footer"   value="/WEB-INF/tiles/footer.jsp"/>
+  </definition>
+  
+  <definition name="blankLayout" template="/WEB-INF/tiles/blankLayout.jsp">
+      <put-attribute name="body"   value="/WEB-INF/tiles/body.jsp"/>
+  </definition>
+  
+   <definition name="WBW00000" extends="baseLayout">
+      <put-attribute name="title"  value="Welcome Page"/>
+      <put-attribute name="body"   value="/WEB-INF/views/welcomeNew.jsp"/>      
+  </definition>
+  
+  <definition name="WBW03000" extends="baseLayout">		
+  	  <put-attribute name="title"  value="New Car Insurance Menu"/>
+	  <put-attribute name="body"   value="/WEB-INF/views/newcar/WBW03000NewCarInsuranceMenu.jsp"/>	
+  </definition>
+  
+  <definition name="WBW03110" extends="baseLayout">		
+		<put-attribute name="title"  value="New Car Insurance Screen"/>
+		<put-attribute name="body"   value="/WEB-INF/views/newcar/WBW03110NewCarInsurance.jsp"/>	
+  </definition>
+  
+  <definition name="WBW03120" extends="baseLayout">		
+		<put-attribute name="title"  value="New Car Insurance Activation Screen"/>
+		<put-attribute name="body"   value="/WEB-INF/views/newcar/WBW03120NewCarInsuranceActivation.jsp"/>	
+  </definition>
+  
+  <definition name="WBW03210" extends="baseLayout">		
+		<put-attribute name="title"  value="Report and Data Export"/>
+		<put-attribute name="body"   value="/WEB-INF/views/newcar/WBW03210ReportDataExport.jsp"/>	
+  </definition>  
+  
+  <definition name="WBW04000" extends="baseLayout">		
+ 	  <put-attribute name="title"  value="Insurance Renewal Menu"/>
+	  <put-attribute name="body"   value="/WEB-INF/views/renewal/WBW04000InsuranceRenewalMenu.jsp"/>	
+  </definition>
+  
+   <definition name="WBW04110" extends="baseLayout">		
+ 	  <put-attribute name="title"  value="Insurance Renewal - Overall Screen for Telemarketing"/>
+	  <put-attribute name="body"   value="/WEB-INF/views/renewal/WBW04110InsRenewalOverallForTelemarketing.jsp"/>	
+  </definition>
+  
+  <definition name="WBW04210" extends="baseLayout">		
+ 	  <put-attribute name="title"  value="Add New Customer Profile"/>
+	  <put-attribute name="body"   value="/WEB-INF/views/renewal/WBW04210AddNewCustomerProfile.jsp"/>	
+  </definition>
+
+  <definition name="WBW05110" extends="baseLayout">		
+  	  <put-attribute name="title"  value="Insurance Company"/>
+	  <put-attribute name="body"   value="/WEB-INF/views/insCompany/WBW05110InsuranceCompany.jsp"/>	
+  </definition>
+
+  <definition name="WBW06000" extends="baseLayout">		
+ 	  <put-attribute name="title"  value="Management Menu"/>
+	  <put-attribute name="body"   value="/WEB-INF/views/management/WBW06000ManagementMenu.jsp"/>	
+  </definition>
+  
+  <definition name="WBW06100" extends="baseLayout">		
+		<put-attribute name="title"  value="New Car Insurance Management Menu"/>
+		<put-attribute name="body"   value="/WEB-INF/views/management/WBW06100NewCarInsuranceSubMenu.jsp"/>	
+  </definition>
+  
+  <definition name="WBW06110" extends="baseLayout">		
+		<put-attribute name="title"  value="New Car Insurance Portfolio Management"/>
+		<put-attribute name="body"   value="/WEB-INF/views/management/WBW06110NewCarInsurancePortfolioManagement.jsp"/>	
+  </definition>
+  
+  <definition name="WBW06120" extends="baseLayout">		
+		<put-attribute name="title"  value="New Car Insurance Activation Management"/>
+		<put-attribute name="body"   value="/WEB-INF/views/management/WBW06120NewCarInsuranceActivationManagement.jsp"/>	
+  </definition>
+  
+  <definition name="WBW06200" extends="baseLayout">		
+		<put-attribute name="title"  value="Insurance Renewal Management Menu"/>
+		<put-attribute name="body"   value="/WEB-INF/views/management/WBW06200InsuranceRenewalManagementSubMenu.jsp"/>	
+  </definition>
+  
+  <definition name="WBW06211" extends="baseLayout">		
+  		<put-attribute name="title"  value="Standard Renewal SOP PIC Setting"/>
+		<put-attribute name="body"   value="/WEB-INF/views/management/WBW06211StandardRenewalSOPPICSetting.jsp"/>	
+  </definition>
+  
+  <definition name="WBW06212" extends="baseLayout">		
+  		<put-attribute name="title"  value="Insurance Renew Portfolio Control"/>
+		<put-attribute name="body"   value="/WEB-INF/views/management/WBW06212InsuranceRenewPortfolioControl.jsp"/>	
+  </definition> 
+  
+  <definition name="WBW06213" extends="baseLayout">		
+  		<put-attribute name="title"  value="Tele Sales Team Management"/>
+		<put-attribute name="body"   value="/WEB-INF/views/management/WBW06213TeleSalesTeamManagement.jsp"/>	
+  </definition>
+  
+  <definition name="WBW06220" extends="baseLayout">		
+  		<put-attribute name="title"  value="Special Contact Setting"/>
+		<put-attribute name="body"   value="/WEB-INF/views/management/WBW06220SpecialContactSettingSubMenu.jsp"/>	
+  </definition>
+  
+  <definition name="WBW06221" extends="baseLayout">		
+  		<put-attribute name="title"  value="Special Contact Activity Management"/>
+		<put-attribute name="body"   value="/WEB-INF/views/management/WBW06221SpecialContactActivityManagement.jsp"/>	
+  </definition>
+  
+  <definition name="WBW06222" extends="baseLayout">		
+  		<put-attribute name="title"  value="Target Group Setting"/>
+		<put-attribute name="body"   value="/WEB-INF/views/management/WBW06222TargetGroupSetting.jsp"/>	
+  </definition>
+  
+  <definition name="WBW06231" extends="baseLayout">		
+  		<put-attribute name="title"  value="Activities Reminder"/>
+		<put-attribute name="body"   value="/WEB-INF/views/management/WBW06231ActivitiesReminder.jsp"/>	
+  </definition>
+  
+  <definition name="WBW06300" extends="baseLayout">		
+		<put-attribute name="title"  value="Manpower and Account Management Menu"/>
+		<put-attribute name="body"   value="/WEB-INF/views/management/WBW06300ManpowerAccountManagementSubMenu.jsp"/>	
+  </definition>
+  
+  <definition name="WBW06311" extends="baseLayout">		
+  		<put-attribute name="title"  value="Insurance Customer Databased Management"/>
+		<put-attribute name="body"   value="/WEB-INF/views/management/WBW06311InsuranceCustomerDatabasedManagement.jsp"/>	
+  </definition>
+  
+  <definition name="WBW06410" extends="baseLayout">		
+		<put-attribute name="title"  value="Insurance Premium Management"/>
+		<put-attribute name="body"   value="/WEB-INF/views/management/WBW06410InsurancePremiumManagement.jsp"/>	
+  </definition>
+  
+  <definition name="WBW06500" extends="baseLayout">		
+		<put-attribute name="title"  value="Report Management Menu"/>
+		<put-attribute name="body"   value="/WEB-INF/views/management/WBW06500ReportManagementSubMenu.jsp"/>	
+  </definition>
+  
+  <definition name="WBW06510" extends="baseLayout">		
+		<put-attribute name="title"  value="Report and Data Export of INS Renewal"/>
+		<put-attribute name="body"   value="/WEB-INF/views/management/WBW06510ReportDataExportofINSRenewal.jsp"/>	
+  </definition>
+  
+  <definition name="WBW06520" extends="baseLayout">		
+		<put-attribute name="title"  value="Process and Result KPIs"/>
+		<put-attribute name="body"   value="/WEB-INF/views/management/WBW06520ProcessResultKPIs.jsp"/>	
+  </definition>
+  
+  <definition name="WBW06530" extends="baseLayout">		
+		<put-attribute name="title"  value="BP Returning Report"/>
+		<put-attribute name="body"   value="/WEB-INF/views/management/WBW06530BPReturningReport.jsp"/>	
+  </definition>
+  
+  <definition name="WBW06540" extends="baseLayout">		
+		<put-attribute name="title"  value="1st Year (Red Plate) INS Report "/>
+		<put-attribute name="body"   value="/WEB-INF/views/management/WBW065401stYearRedPlateINSReport.jsp"/>	
+  </definition>
+  
+<!--   <definition name="WST33060" extends="baseLayout">
+      <put-attribute name="title"  value="System Master"/>
+      <put-attribute name="body"   value="/WEB-INF/views/WST33060SystemMasterView.jsp"/>      
+  </definition> -->
+  
+  <definition name="WST33060" extends="baseLayout">
+      <put-attribute name="title"  value="System Master"/>
+      <put-attribute name="body"   value="/WEB-INF/views/master/WST33060SystemMaster.jsp"/>      
+  </definition>
+  
+  <definition name="WST33010" extends="baseLayout">		
+	<put-attribute name="title"  value="Log Monitoring Summary Screen"/>	
+	<put-attribute name="body"   value="/WEB-INF/views/WST33010LogMonitoringView.jsp"/>	
+  </definition>
+  
+  <definition name="WST33011" extends="baseLayout">		
+	<put-attribute name="title"  value="Log Monitoring Detail Screen"/>	
+	<put-attribute name="body"   value="/WEB-INF/views/WST33011LogMonitoringDetailsView.jsp"/>	
+  </definition>		
+  
+  <definition name="WST33020" extends="baseLayout">		
+	<put-attribute name="title"  value="Excel Download Monitoring Screen"/>	
+	<put-attribute name="body"   value="/WEB-INF/views/WST33020ExcelDownloadMonitoringView.jsp"/>	
+  </definition>		
+  
+  <definition name="WST33022" extends="noTemplateLayout">		
+	<put-attribute name="title"  value="Excel Download Monitoring Screen Mini"/>	
+	<put-attribute name="body"   value="/WEB-INF/views/WST33022ExcelDownloadMonitoringMiniList.jsp"/>	
+  </definition>		
+  <definition name="WST30900" extends="baseLayout">		
+	<put-attribute name="title"  value="Excel Download Screen"/>	
+	<put-attribute name="body"   value="/WEB-INF/views/WST30900ExcelDownloadView.jsp"/>	
+  </definition>	
+  
+  <definition name="WST30300" extends="baseLayout">
+      <put-attribute name="title"  value="Application About Screen"/>
+      <put-attribute name="body"   value="/WEB-INF/views/WST30300AboutView.jsp"/>      
+  </definition>
+  
+  <definition name="WST33040" extends="baseLayout">
+      <put-attribute name="title"  value="Batch Master"/>
+      <put-attribute name="body"   value="/WEB-INF/views/WST33040BatchMasterView.jsp"/>      
+  </definition>
+  <definition name="WST33050" extends="baseLayout">
+      <put-attribute name="title"  value="Batch Status"/>
+      <put-attribute name="body"   value="/WEB-INF/views/WST33050BatchStatusView.jsp"/>      
+  </definition>
+  <!-- API Test -->
+    <definition name="WST30070" extends="baseLayout">
+      <put-attribute name="title"  value="API Test Screen"/>
+      <put-attribute name="body"   value="/WEB-INF/views/APITestView.jsp"/>      
+  </definition>
+  <!-- End -->
+  
+  <definition name="WBW01150" extends="baseLayout">		
+	<put-attribute name="title"  value="New Car Insurance"/>
+	<put-attribute name="body"   value="/WEB-INF/views/newcar/NewCarInsuranceMenu.jsp"/>	
+  </definition>
+  <definition name="WBW02110" extends="baseLayout">		
+	<put-attribute name="title"  value="Rundown and Kompo Management Screen"/>
+	<put-attribute name="body"   value="/WEB-INF/views/rundown/WBW02110RundownKompoManagement.jsp"/>	
+  </definition>
+  <definition name="WBW02111" extends="popupLayout">		
+	<put-attribute name="title"  value="Vanning Adjustment Screen"/>	
+	<put-attribute name="body"   value="/WEB-INF/views/rundown/WBW02111VanningAdjustment.jsp"/>	
+  </definition>
+  <definition name="WBW02160" extends="baseLayout">		
+	<put-attribute name="title"  value="Unit Capacity Management"/>
+	<put-attribute name="body"   value="/WEB-INF/views/rundown/WBW02160UnitCapacityManagement.jsp"/>	
+  </definition>
+  
+</tiles-definitions>
