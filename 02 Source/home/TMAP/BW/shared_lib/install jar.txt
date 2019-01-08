@@ -1,3 +1,5 @@
 mvn install:install-file "-Dfile=D:\00 Projects\FSBT Serv\SERVICE_PART_PRICING\02 Source\home\TMAP\LW\shared_lib\st3-api-1.1.8-RELEASE.jar" "-DgroupId=th.co.toyota.st3.api" "-DartifactId=st3-api" "-Dversion=1.1.8-RELEASE" "-Dpackaging=jar"
 mvn install:install-file "-Dfile=D:\00 Projects\FSBT Serv\SERVICE_PART_PRICING\02 Source\home\TMAP\LW\shared_lib\st3-batch-1.1.14-RELEASE.jar" "-DgroupId=th.co.toyota.st3.batch" "-DartifactId=st3-batch" "-Dversion=1.1.14-RELEASE" "-Dpackaging=jar"
 mvn install:install-file "-Dfile=D:\00 Projects\FSBT Serv\SERVICE_PART_PRICING\02 Source\home\TMAP\LW\shared_lib\sc2-client-java-1.0.5-RELEASE.jar" "-DgroupId=th.co.toyota.sc2.client" "-DartifactId=sc2-client-java" "-Dversion=1.0.5-RELEASE" "-Dpackaging=jar"
+
+mvn install:install-file "-Dfile=C:\Users\thanawutt\Documents\GitHub\TIM\02 Source\home\TMAP\BW\shared_lib\ojdbc7.jar" "-DgroupId=com.oracle" "-DartifactId=ojdbc7" "-Dversion=12.1.0.1" "-Dpackaging=jar"
