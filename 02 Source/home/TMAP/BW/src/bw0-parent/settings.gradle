@@ -1,8 +1,0 @@
-rootProject.name = 'bw0-parent'
-include ':bw0-api'
-include ':bw0-batch'
-include ':bw0-web'
-
-project(':bw0-api').projectDir = "$rootDir/bw0-api" as File
-project(':bw0-batch').projectDir = "$rootDir/bw0-batch" as File
-project(':bw0-web').projectDir = "$rootDir/bw0-web" as File
