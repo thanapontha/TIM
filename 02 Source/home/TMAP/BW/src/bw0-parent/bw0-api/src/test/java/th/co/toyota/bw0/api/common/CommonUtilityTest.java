@@ -1,10 +1,5 @@
 package th.co.toyota.bw0.api.common;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.ArrayList;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,29 +16,29 @@ public class CommonUtilityTest {
 	public void tearDown() throws Exception {
 	}
 
-	@Test
-	public void toDoubleOKTest() {
-		String value = "9.352";
-		assertNotNull(value);
-		assertEquals(9.352, CommonUtility.toDouble(value), 0);
-		 value = "0.0";
-		assertNotNull(value);
-		assertEquals(0, CommonUtility.toDouble(value), 0);
-	}
-	
-
-	@Test
-	public void toIntOKTest() {
-		String value = "9";
-		assertNotNull(value);
-		assertEquals(9, CommonUtility.toInt(value));
-	}
-	
-	@Test
-	public void isListNullOrEmpty() {
-		assertTrue(CommonUtility.isListNullOrEmpty(new ArrayList<>()));
-		assertTrue(CommonUtility.isListNullOrEmpty(null));
-	}
+//	@Test
+//	public void toDoubleOKTest() {
+//		String value = "9.352";
+//		assertNotNull(value);
+//		assertEquals(9.352, CommonUtility.toDouble(value), 0);
+//		 value = "0.0";
+//		assertNotNull(value);
+//		assertEquals(0, CommonUtility.toDouble(value), 0);
+//	}
+//	
+//
+//	@Test
+//	public void toIntOKTest() {
+//		String value = "9";
+//		assertNotNull(value);
+//		assertEquals(9, CommonUtility.toInt(value));
+//	}
+//	
+//	@Test
+//	public void isListNullOrEmpty() {
+//		assertTrue(CommonUtility.isListNullOrEmpty(new ArrayList<>()));
+//		assertTrue(CommonUtility.isListNullOrEmpty(null));
+//	}
 	
 	@Test
 	public void moveFile(){

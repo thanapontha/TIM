@@ -35,7 +35,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.DateTime;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -53,7 +52,6 @@ import th.co.toyota.application.web.CommonBaseController;
 import th.co.toyota.bw0.api.constants.AppConstants;
 import th.co.toyota.bw0.api.exception.common.CommonErrorException;
 import th.co.toyota.bw0.util.ComboValue;
-import th.co.toyota.bw0.util.JsonStringToObjectConverter;
 import th.co.toyota.bw0.web.master.form.SystemMasterForm;
 import th.co.toyota.bw0.web.master.service.SystemMasterService;
 import th.co.toyota.sc2.client.model.simple.CSC22110UserInfo;
@@ -67,9 +65,6 @@ import com.google.common.base.Strings;
 @RequestMapping("master/systemMaster")
 public class SystemMasterController extends CommonBaseController {
 	private static final String VIEW_NAME = "WST33060";
-
-	@Autowired
-	private JsonStringToObjectConverter jsonConverter;
 	
 	@Autowired
 	private SystemMasterService service;

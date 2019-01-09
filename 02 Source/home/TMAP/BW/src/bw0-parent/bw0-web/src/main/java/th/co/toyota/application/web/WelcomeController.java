@@ -57,29 +57,10 @@ public class WelcomeController extends CommonBaseController {
 		payload = populatePayloadForDisplay(viewName, payload,
 				RequestContextUtils.getLocale(request));
 		payload.setStatus(ServiceStatus.OK);
-		
-//		EmployeeInfoId empId = new EmployeeInfoId();
-//		empId.setCompanyCode(this.getUserCompany(userInfo));
-//		empId.setEmployeeCode(userInfo.getEmployeeNo());		
-//		EmployeeInfo emp = commonService.findEmployee(empId);
-//		
-		boolean isExistEmployee = true;
-//		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-//		
-//		int effEndDate = 99991231;
-//		int currentDate = Integer.parseInt(sdf.format(FormatUtil.getCurrentDateTime()));
-//		if (emp != null && emp.getEffectiveEndDate() != null) {
-//			effEndDate = Integer.parseInt(emp.getEffectiveEndDate());
-//		}
-//				
-//		if (emp != null && emp.getActiveFlag() == CBW00000CommonConstants.ACTIVE && currentDate <= effEndDate){
-//			isExistEmployee = true;
-//		}
 
 		ModelAndView mv = new ModelAndView(viewName);
 		mv.addObject(AppConstants.MV_USER_COMPANY, getUserCompany(getUserInSession(request)));
 		mv.addObject(AppConstants.MV_PAYLOAD, payload);
-		mv.addObject(AppConstants.MV_IS_APPLICATION_USER, isExistEmployee);
 
 		return mv;
 	}
@@ -92,13 +73,10 @@ public class WelcomeController extends CommonBaseController {
 		payload = populatePayloadForDisplay(viewName, payload,
 				RequestContextUtils.getLocale(request));
 		payload.setStatus(ServiceStatus.OK);
-		
-		boolean isExistEmployee = true;
 
 		ModelAndView mv = new ModelAndView(viewName);
 		mv.addObject(AppConstants.MV_USER_COMPANY, getUserCompany(getUserInSession(request)));
 		mv.addObject(AppConstants.MV_PAYLOAD, payload);
-		mv.addObject(AppConstants.MV_IS_APPLICATION_USER, isExistEmployee);
 
 		return mv;
 	}
@@ -110,13 +88,10 @@ public class WelcomeController extends CommonBaseController {
 		payload = populatePayloadForDisplay(viewName, payload,
 				RequestContextUtils.getLocale(request));
 		payload.setStatus(ServiceStatus.OK);
-		
-		boolean isExistEmployee = true;
 
 		ModelAndView mv = new ModelAndView(viewName);
 		mv.addObject(AppConstants.MV_USER_COMPANY, getUserCompany(getUserInSession(request)));
 		mv.addObject(AppConstants.MV_PAYLOAD, payload);
-		mv.addObject(AppConstants.MV_IS_APPLICATION_USER, isExistEmployee);
 
 		return mv;
 	}
@@ -128,13 +103,10 @@ public class WelcomeController extends CommonBaseController {
 		payload = populatePayloadForDisplay(viewName, payload,
 				RequestContextUtils.getLocale(request));
 		payload.setStatus(ServiceStatus.OK);
-		
-		boolean isExistEmployee = true;
 
 		ModelAndView mv = new ModelAndView(viewName);
 		mv.addObject(AppConstants.MV_USER_COMPANY, getUserCompany(getUserInSession(request)));
 		mv.addObject(AppConstants.MV_PAYLOAD, payload);
-		mv.addObject(AppConstants.MV_IS_APPLICATION_USER, isExistEmployee);
 
 		return mv;
 	}
@@ -146,13 +118,10 @@ public class WelcomeController extends CommonBaseController {
 		payload = populatePayloadForDisplay(viewName, payload,
 				RequestContextUtils.getLocale(request));
 		payload.setStatus(ServiceStatus.OK);
-		
-		boolean isExistEmployee = true;
 
 		ModelAndView mv = new ModelAndView(viewName);
 		mv.addObject(AppConstants.MV_USER_COMPANY, getUserCompany(getUserInSession(request)));
 		mv.addObject(AppConstants.MV_PAYLOAD, payload);
-		mv.addObject(AppConstants.MV_IS_APPLICATION_USER, isExistEmployee);
 
 		return mv;
 	}
@@ -164,13 +133,10 @@ public class WelcomeController extends CommonBaseController {
 		payload = populatePayloadForDisplay(viewName, payload,
 				RequestContextUtils.getLocale(request));
 		payload.setStatus(ServiceStatus.OK);
-		
-		boolean isExistEmployee = true;
 
 		ModelAndView mv = new ModelAndView(viewName);
 		mv.addObject(AppConstants.MV_USER_COMPANY, getUserCompany(getUserInSession(request)));
 		mv.addObject(AppConstants.MV_PAYLOAD, payload);
-		mv.addObject(AppConstants.MV_IS_APPLICATION_USER, isExistEmployee);
 
 		return mv;
 	}
@@ -182,13 +148,10 @@ public class WelcomeController extends CommonBaseController {
 		payload = populatePayloadForDisplay(viewName, payload,
 				RequestContextUtils.getLocale(request));
 		payload.setStatus(ServiceStatus.OK);
-		
-		boolean isExistEmployee = true;
 
 		ModelAndView mv = new ModelAndView(viewName);
 		mv.addObject(AppConstants.MV_USER_COMPANY, getUserCompany(getUserInSession(request)));
 		mv.addObject(AppConstants.MV_PAYLOAD, payload);
-		mv.addObject(AppConstants.MV_IS_APPLICATION_USER, isExistEmployee);
 
 		return mv;
 	}
@@ -200,13 +163,10 @@ public class WelcomeController extends CommonBaseController {
 		payload = populatePayloadForDisplay(viewName, payload,
 				RequestContextUtils.getLocale(request));
 		payload.setStatus(ServiceStatus.OK);
-		
-		boolean isExistEmployee = true;
 
 		ModelAndView mv = new ModelAndView(viewName);
 		mv.addObject(AppConstants.MV_USER_COMPANY, getUserCompany(getUserInSession(request)));
 		mv.addObject(AppConstants.MV_PAYLOAD, payload);
-		mv.addObject(AppConstants.MV_IS_APPLICATION_USER, isExistEmployee);
 
 		return mv;
 	}
@@ -219,12 +179,9 @@ public class WelcomeController extends CommonBaseController {
 				RequestContextUtils.getLocale(request));
 		payload.setStatus(ServiceStatus.OK);
 		
-		boolean isExistEmployee = true;
-
 		ModelAndView mv = new ModelAndView(viewName);
 		mv.addObject(AppConstants.MV_USER_COMPANY, getUserCompany(getUserInSession(request)));
 		mv.addObject(AppConstants.MV_PAYLOAD, payload);
-		mv.addObject(AppConstants.MV_IS_APPLICATION_USER, isExistEmployee);
 
 		return mv;
 	}
