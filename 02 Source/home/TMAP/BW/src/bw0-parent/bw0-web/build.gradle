@@ -77,13 +77,13 @@ dependencies {
 		exclude(module: 'commons-logging')
     }
     testCompile group: 'junit', name: 'junit', version:'4.8.1'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version:'3.1'
     
     
 /*    compile(group: 'th.co.toyota.st3.batch', name: 'st3-batch', version:'1.1.14-RELEASE') {
 		exclude(module: 'jaxb-impl')
     }
     compile group: 'com.google.code.gson', name: 'gson', version:'2.3.1'
-    compile group: 'org.apache.commons', name: 'commons-lang3', version:'3.1'
     
     compile group: 'org.apache.camel', name: 'camel-ftp', version:'2.12.2'
     compile group: 'org.apache.camel', name: 'camel-mail', version:'2.12.2'
