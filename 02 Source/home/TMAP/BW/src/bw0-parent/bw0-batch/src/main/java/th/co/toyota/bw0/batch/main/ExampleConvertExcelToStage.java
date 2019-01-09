@@ -42,9 +42,9 @@ import th.co.toyota.st3.api.util.IST30000LoggerDb;
 
 import com.google.common.base.Strings;
 
-public class ExampleExcelToStage {
+public class ExampleConvertExcelToStage {
 
-	final Logger logger = LoggerFactory.getLogger(ExampleExcelToStage.class);
+	final Logger logger = LoggerFactory.getLogger(ExampleConvertExcelToStage.class);
 
 	@Autowired
 	private IST30000LoggerDb loggerBBW02130;
@@ -153,7 +153,7 @@ public class ExampleExcelToStage {
 		
 		// Start Spring
 		ApplicationContext appContext = new AnnotationConfigApplicationContext(AppConfig.class);
-		ExampleExcelToStage kompoMain = appContext.getBean(ExampleExcelToStage.class);
+		ExampleConvertExcelToStage kompoMain = appContext.getBean(ExampleConvertExcelToStage.class);
 		
 		if (Strings.isNullOrEmpty(appId)){
 			try {
