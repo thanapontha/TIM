@@ -1,7 +1,7 @@
 package th.co.toyota.bw0.api.common.upload;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CommonExcelConversionDTO {
 	public static final String TAG_EXCEL_CONVERSION_CONFIG = "excel-conversion-config";
@@ -46,10 +46,10 @@ public class CommonExcelConversionDTO {
 	// HashMap<String, Object>
 	//		- String: "conversion-info", "conversion-header", "conversion-detail"
 	//		- Object: HashMap<String, HashMap<String, String>> = "Excel Field Name", "DB Field Name"
-	private HashMap excelCheckHeadersConfig;
-	private HashMap excelHeaderConfig;
-	private HashMap excelDetailConfig;
-	protected List<HashMap> checkHeaders;
+	private Map<String, Object> excelCheckHeadersConfig;
+	private Map<String, Object> excelHeaderConfig;
+	private Map<String, Object> excelDetailConfig;
+	protected List<Map<String, Object>> checkHeaders;
 	protected String[] columnNames;
 	
 	public Integer[] getArrayWorkSheetIdx() {
@@ -64,16 +64,16 @@ public class CommonExcelConversionDTO {
 	public void setArrayWorkSheetName(String[] arrWorkSheetName) {
 		this.arrWorkSheetName = arrWorkSheetName;
 	}
-	public HashMap getExcelHeaderConfig() {
+	public Map<String, Object> getExcelHeaderConfig() {
 		return excelHeaderConfig;
 	}
-	public void setExcelHeaderConfig(HashMap excelHeaderConfig) {
+	public void setExcelHeaderConfig(Map<String, Object> excelHeaderConfig) {
 		this.excelHeaderConfig = excelHeaderConfig;
 	}
-	public HashMap getExcelDetailConfig() {
+	public Map<String, Object> getExcelDetailConfig() {
 		return excelDetailConfig;
 	}
-	public void setExcelDetailConfig(HashMap excelDetailConfig) {
+	public void setExcelDetailConfig(Map<String, Object> excelDetailConfig) {
 		this.excelDetailConfig = excelDetailConfig;
 	}
 	
@@ -93,8 +93,8 @@ public class CommonExcelConversionDTO {
 		return (Integer)excelHeaderConfig.get(ATTR_END_COL);
 	}
 	
-	public HashMap getHeaderMappingField() {
-		return (HashMap)excelHeaderConfig.get(TAG_CONVERSION_HEADER);
+	public Map<String, Object> getHeaderMappingField() {
+		return (Map)excelHeaderConfig.get(TAG_CONVERSION_HEADER);
 	}
 	
 	public Integer getDetailStartRow() {
@@ -113,40 +113,40 @@ public class CommonExcelConversionDTO {
         return (Integer)excelDetailConfig.get(ATTR_END_COL);
     }
 
-	public HashMap getDetailMappingField() {
-		return (HashMap)excelDetailConfig.get(TAG_CONVERSION_DETAIL);
+	public Map<String, Object> getDetailMappingField() {
+		return (Map)excelDetailConfig.get(TAG_CONVERSION_DETAIL);
 	}
 	
 	public Integer getCheckHeaderStartRow(int index) {
-		return (Integer)((HashMap)this.getCheckHeaders().get(index)).get(ATTR_START_ROW);
+		return (Integer)((Map)this.getCheckHeaders().get(index)).get(ATTR_START_ROW);
 	}
 	
 	public Integer getCheckHeaderEndRow(int index) {
-        return (Integer)((HashMap)this.getCheckHeaders().get(index)).get(ATTR_END_ROW);
+        return (Integer)((Map)this.getCheckHeaders().get(index)).get(ATTR_END_ROW);
     }
 
 	public Integer getCheckHeaderStartCol(int index) {
-		return (Integer)((HashMap)this.getCheckHeaders().get(index)).get(ATTR_START_COL);
+		return (Integer)((Map)this.getCheckHeaders().get(index)).get(ATTR_START_COL);
 	}
 
 	public Integer getCheckHeaderEndCol(int index) {
-		return (Integer)((HashMap)this.getCheckHeaders().get(index)).get(ATTR_END_COL);
+		return (Integer)((Map)this.getCheckHeaders().get(index)).get(ATTR_END_COL);
 	}
-	public List getCheckHeaders() {
+	public List<Map<String, Object>> getCheckHeaders() {
 		return checkHeaders;
 	}
-	public void setCheckHeaders(List checkHeaders) {
+	public void setCheckHeaders(List<Map<String, Object>> checkHeaders) {
 		this.checkHeaders = checkHeaders;
 	}
 	
-	public HashMap<String, Object> getExcelCheckHeadersConfig() {
+	public Map<String, Object> getExcelCheckHeadersConfig() {
 		return excelCheckHeadersConfig;
 	}
-	public void setExcelCheckHeadersConfig(HashMap<String, Object> excelCheckHeaderConfig) {
+	public void setExcelCheckHeadersConfig(Map<String, Object> excelCheckHeaderConfig) {
 		this.excelCheckHeadersConfig = excelCheckHeaderConfig;
 	}
-	public HashMap getCheckHeadersMapping() {
-		return (HashMap)excelCheckHeadersConfig.get(TAG_CHECK_HEADERS);
+	public Map<String, Object> getCheckHeadersMapping() {
+		return (Map)excelCheckHeadersConfig.get(TAG_CHECK_HEADERS);
 	}
 	public Integer getCheckHeadersStartRow() {
 		return (Integer)this.excelCheckHeadersConfig.get(ATTR_START_ROW);

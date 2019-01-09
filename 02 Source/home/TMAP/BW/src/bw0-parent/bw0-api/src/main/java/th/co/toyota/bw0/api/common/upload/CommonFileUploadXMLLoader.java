@@ -3,6 +3,7 @@ package th.co.toyota.bw0.api.common.upload;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -20,42 +21,38 @@ public class CommonFileUploadXMLLoader {
 	protected String[] columnNames;
 	
 	public CommonExcelConversionDTO loadXMLConfig(String pathXmlConfigFile, String xmlFileName) throws Exception {
-		try {
-			String pullFile = pathXmlConfigFile+File.separator + xmlFileName;
-			File configFile = new File(pullFile);
-			if (!configFile.exists()) {
-				throw new CommonErrorException(MessagesConstants.B_ERROR_FILE_NOT_EXISTS, new String[]{pullFile}, AppConstants.ERROR);
-			}
-			
-			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-            Document doc = docBuilder.parse(configFile);
-            if (doc == null) {
-            	throw new CommonErrorException("Cannot parse DocumentBuilder object to Document object by " + configFile, AppConstants.ERROR);
+		String pullFile = pathXmlConfigFile+File.separator + xmlFileName;
+		File configFile = new File(pullFile);
+		if (!configFile.exists()) {
+			throw new CommonErrorException(MessagesConstants.B_ERROR_FILE_NOT_EXISTS, new String[]{pullFile}, AppConstants.ERROR);
+		}
+		
+		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+        Document doc = docBuilder.parse(configFile);
+        if (doc == null) {
+        	throw new CommonErrorException("Cannot parse DocumentBuilder object to Document object by " + configFile, AppConstants.ERROR);
+        }
+        else {
+        	doc.getDocumentElement().normalize();
+            NodeList rootNode = doc.getElementsByTagName(
+            		CommonExcelConversionDTO.TAG_EXCEL_CONVERSION_CONFIG);
+            
+            if (rootNode == null || rootNode.getLength() == 0) {
+            	throw new CommonErrorException("Not found <" + CommonExcelConversionDTO.TAG_EXCEL_CONVERSION_CONFIG + "> in config file", AppConstants.ERROR);
             }
             else {
-            	doc.getDocumentElement().normalize();
-                NodeList rootNode = doc.getElementsByTagName(
-                		CommonExcelConversionDTO.TAG_EXCEL_CONVERSION_CONFIG);
-                
-                if (rootNode == null || rootNode.getLength() == 0) {
-                	throw new CommonErrorException("Not found <" + CommonExcelConversionDTO.TAG_EXCEL_CONVERSION_CONFIG + "> in config file", AppConstants.ERROR);
-                }
-                else {
-                	CommonExcelConversionDTO excelConvVo = new CommonExcelConversionDTO();
-                	
-                	NodeList childNodes = rootNode.item(0).getChildNodes();
-                	for (int i = 0; i < childNodes.getLength(); i++) {
-                		loadConfiguration(excelConvVo, childNodes.item(i));
-                	}
-                	
-                	excelConvVo.setColumnNames(columnNames);
-                    return excelConvVo;
-                }
+            	CommonExcelConversionDTO excelConvVo = new CommonExcelConversionDTO();
+            	
+            	NodeList childNodes = rootNode.item(0).getChildNodes();
+            	for (int i = 0; i < childNodes.getLength(); i++) {
+            		loadConfiguration(excelConvVo, childNodes.item(i));
+            	}
+            	
+            	excelConvVo.setColumnNames(columnNames);
+                return excelConvVo;
             }
-		} catch(Exception ex) {
-			throw ex;
-		}
+        }
 	}
 	
 	private void loadConfiguration(CommonExcelConversionDTO excelConvVo, Node node) throws Exception {
@@ -99,7 +96,7 @@ public class CommonFileUploadXMLLoader {
 			String endRow = getAttributeValue(attribs, CommonExcelConversionDTO.ATTR_END_ROW);
 			String startCol = getAttributeValue(attribs, CommonExcelConversionDTO.ATTR_START_COL);
 			String endCol = getAttributeValue(attribs, CommonExcelConversionDTO.ATTR_END_COL);
-			HashMap<String, Object> hCheckConfig = new HashMap<>();
+			Map<String, Object> hCheckConfig = new HashMap<>();
 			hCheckConfig.put(CommonExcelConversionDTO.ATTR_START_ROW, Integer.valueOf(startRow));
 			hCheckConfig.put(CommonExcelConversionDTO.ATTR_END_ROW, null!=endRow?Integer.valueOf(endRow):null);
 			hCheckConfig.put(CommonExcelConversionDTO.ATTR_START_COL, Integer.valueOf(startCol));

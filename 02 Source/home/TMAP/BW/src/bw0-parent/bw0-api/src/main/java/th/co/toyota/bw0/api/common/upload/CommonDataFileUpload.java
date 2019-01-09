@@ -119,10 +119,10 @@ public class CommonDataFileUpload {
 		private CommonFileUploadXMLLoader xmlLoader;
 		
 		@Transient
-		private CommonExcelConversionDTO xlsConvVo;
+		public CommonExcelConversionDTO xlsConvVo;
 		
 		@Transient
-		private IST30000LoggerDb loggerDb;
+		public IST30000LoggerDb loggerDb;
 		
 		@Value(value="${ctl.file.path}")
 		private String ctlFilePath;
@@ -133,7 +133,7 @@ public class CommonDataFileUpload {
 	    protected Map<String,Object> tableMetaData;
 	    private String appId;
 	    private String createBy;
-	    private String filename;
+	    private String fileName;
 	    private String fileId;
 
 	    private boolean alreadyLoggedInvaidTemplate = false;
@@ -165,12 +165,12 @@ public class CommonDataFileUpload {
 			this.createBy = createBy;
 		}
 
-		public String getFilename() {
-			return filename;
+		public String getFileName() {
+			return fileName;
 		}
 
-		public void setFilename(String filename) {
-			this.filename = filename;
+		public void setFileName(String fileName) {
+			this.fileName = fileName;
 		}
 
 		public String getFileId() {
@@ -206,7 +206,7 @@ public class CommonDataFileUpload {
 	        }
 	    }
 	    
-	    public Object[] convertExcelToStaging(String fileName, String functionId, String userID,String stagingTbName, boolean checkFileSize, HashMap<String, String[]> paramHeaderChk, String deleteStageSQL) throws CommonErrorException {
+	    public Object[] convertExcelToStaging(String stagingTbName, boolean checkFileSize, Map<String, String[]> paramHeaderChk, String deleteStageSQL) throws CommonErrorException {
 	        int dataCnt = 0;
 	        boolean validAll = true;
 	    	String tmpFileName = "";
@@ -224,7 +224,7 @@ public class CommonDataFileUpload {
 	        	
 	        	//Load xml mapping configuration
 	        	xmlLoader = new CommonFileUploadXMLLoader();
-	    		xlsConvVo = xmlLoader.loadXMLConfig(ctlFilePath, functionId+".xml");
+	    		xlsConvVo = xmlLoader.loadXMLConfig(ctlFilePath, this.getFileId()+".xml");
 	    		
 	    		//Get table metadata
 	    		tableMetaData = commonRepository.getTableMeataData(stagingTbName);
@@ -232,12 +232,12 @@ public class CommonDataFileUpload {
 	            String tempFolder = this.uploadConfig.getTempUploadFolder(this.companyCode);
 	            
 	            
-	            this.validateUploadFile(fileName, tempFolder, checkFileSize, functionId);
+	            this.validateUploadFile(this.getFileName(), tempFolder, checkFileSize, this.getFileId());
 	            
 	            String targetFolder = this.uploadConfig.getTempUploadFolder(this.companyCode);
-	            file = new FileInputStream(new File(targetFolder + fileName));
-	            int iPos = fileName.lastIndexOf('.');
-	            String fileExtension = fileName.substring(iPos + 1, fileName.length()).toUpperCase();
+	            file = new FileInputStream(new File(targetFolder + this.getFileName()));
+	            int iPos = this.getFileName().lastIndexOf('.');
+	            String fileExtension = this.getFileName().substring(iPos + 1, this.getFileName().length()).toUpperCase();
 	            if (AppConstants.FILE_FORMAT_EXCEL_XLS.equals(fileExtension)) {
 	                workbook = new HSSFWorkbook((InputStream)file);
 	                objFormulaEvaluator = new HSSFFormulaEvaluator((HSSFWorkbook)workbook);
@@ -292,7 +292,7 @@ public class CommonDataFileUpload {
 	        return new Object[]{validAll, dataCnt};
 	    }
 
-	    public HashMap<String, String[]> getHeaderParamToCheckWithExcel(String[] params){
+	    public Map<String, String[]> getHeaderParamToCheckWithExcel(String[] params){
 	    	return null;
 	    }
 	    
@@ -421,8 +421,9 @@ public class CommonDataFileUpload {
 	    }
 
 	    protected String createNameListFile(List<String> filenameList, String fileID) {
+	    	String fileNameNew = fileID + "_" + System.currentTimeMillis();
 	        String folder = this.uploadConfig.getInputFolder(this.companyCode, this.subFolder);
-	        try(Writer writer = new BufferedWriter(new FileWriter(new File(folder + fileID + "_" + System.currentTimeMillis())))) {
+	        try(Writer writer = new BufferedWriter(new FileWriter(new File(folder + fileNameNew)))) {
 	            for (int i = 0; i < filenameList.size(); ++i) {
 	                writer.write(filenameList.get(i));
 	                writer.write("\r\n");
@@ -433,7 +434,7 @@ public class CommonDataFileUpload {
 	        }catch (IOException e) {
 	        	logger.error(ExceptionUtils.getStackTrace(e));
 	        }
-	        return filename;
+	        return fileNameNew;
 	    }
 
 	    protected void checkUploadFile(MultipartFile file, String functionId) throws FileUploadDownloadException {
@@ -745,90 +746,11 @@ public class CommonDataFileUpload {
 			}
     		return newFileName;
 	    }
-
-//		public boolean checkHeaderTemplate(List<Sheet> workingSheet, FormulaEvaluator objFormulaEvaluator, HashMap<String, String[]> paramHeaderChk) throws Exception {
-//			boolean valid = true;
-//			//int headerCheckStartRow = xlsConvVo.getCheckHeadersStartRow().intValue() - 1;
-//			int headerCheckEndRow = xlsConvVo.getCheckHeadersEndRow().intValue() - 1;
-//			List checkHeaderLs = xlsConvVo.getCheckHeaders();
-//			if(checkHeaderLs != null && checkHeaderLs.size() > 0){
-//				for(int i=0; i < workingSheet.size(); i++){
-//					Sheet curSheet = workingSheet.get(i);
-//					int lastRow = curSheet.getLastRowNum();
-//					if (lastRow == 0 || lastRow < headerCheckEndRow) {
-//						throw new CommonErrorException(MessagesConstants.B_ERROR_INVALID_FILE_TEMPLATE, new String[]{}, AppConstants.ERROR);
-//					}
-//					for(int ri=0; ri<lastRow; ri++){
-//						if(ri > headerCheckEndRow){
-//							break;
-//						}
-//						
-//						for(int j=0; j<checkHeaderLs.size(); j++){
-//							
-//							int headerCheckRow = xlsConvVo.getCheckHeaderStartRow(j).intValue() - 1;
-//							int headerStartCol = xlsConvVo.getCheckHeaderStartCol(j).intValue() - 1;
-//							int headerEndCol = xlsConvVo.getCheckHeaderEndCol(j).intValue() - 1;
-//							if(ri==headerCheckRow){
-//								HashMap obj = (HashMap)checkHeaderLs.get(j);
-//								if(obj != null){
-//									HashMap headerNameCheck = (HashMap)obj.get(CBW00000CommonExcelConversionDTO.TAG_CHECK_HEADER);
-//									Row headerRow = curSheet.getRow(ri);
-//									if (headerRow == null) {
-//										throw new CommonErrorException(MessagesConstants.B_ERROR_INVALID_FILE_TEMPLATE, new String[]{}, AppConstants.ERROR);
-//									}
-//									
-//									Iterator<Object> iter = headerNameCheck.entrySet().iterator();
-//									while(iter.hasNext()){
-//										Map.Entry<Object,Object> entry = (Map.Entry<Object,Object>) iter.next();
-//										String rowKey = (String)entry.getKey();
-//										int rowKeyIdx = Integer.parseInt(rowKey)-1;
-//										HashMap mapInfo =  (HashMap)entry.getValue();
-//										String value = (String)mapInfo.get(CBW00000CommonExcelConversionDTO.ATTR_VALUE);
-//										String cellValue = "";
-//										for (int k = headerStartCol; k <= headerEndCol; k++) {
-//											Cell colNameCell = headerRow.getCell((short)k);
-//											if (null == colNameCell) {
-//												throw new CommonErrorException(MessagesConstants.B_ERROR_INVALID_FILE_TEMPLATE, new String[]{}, AppConstants.ERROR);
-//											}
-//											
-//											if( colNameCell != null && 
-//													(colNameCell.getCellType() == Cell.CELL_TYPE_STRING)){						
-//													 cellValue = colNameCell.getStringCellValue();
-//													 if(cellValue != null){
-//														 cellValue = cellValue.trim();
-//													 }
-//												}
-//												else if(colNameCell != null && 
-//														(colNameCell.getCellType() == Cell.CELL_TYPE_NUMERIC)){
-//														 cellValue = Double.toString(colNameCell.getNumericCellValue());
-//												} 
-//												else if(colNameCell == null || 
-//														colNameCell.getCellType() == Cell.CELL_TYPE_BLANK){
-//														cellValue = "";
-//												}							
-//											
-//											if(k == rowKeyIdx){
-//												if(!Strings.nullToEmpty(value).trim().equals(Strings.nullToEmpty(cellValue).trim())){
-//													throw new CommonErrorException(MessagesConstants.B_ERROR_INVALID_FILE_TEMPLATE, new String[]{}, AppConstants.ERROR);
-//												}
-//												break;
-//											}
-//										}
-//									}
-//								}
-//							}
-//						}
-//					}
-//				}
-//			}
-//			return valid;
-//		}
 		
-		public boolean checkHeaderTemplate(List<Sheet> workingSheet, FormulaEvaluator objFormulaEvaluator, HashMap<String, String[]> paramHeaderChk) throws Exception {
+		public boolean checkHeaderTemplate(List<Sheet> workingSheet, FormulaEvaluator objFormulaEvaluator, Map<String, String[]> paramHeaderChk) throws Exception {
 			boolean valid = true;
-			//int headerCheckStartRow = xlsConvVo.getCheckHeadersStartRow().intValue() - 1;
 			int headerCheckEndRow = xlsConvVo.getCheckHeadersEndRow().intValue() - 1;
-			List checkHeaderLs = xlsConvVo.getCheckHeaders();
+			List<Map<String, Object>> checkHeaderLs = xlsConvVo.getCheckHeaders();
 			if(checkHeaderLs != null && !checkHeaderLs.isEmpty()){
 				for(int i=0; i < workingSheet.size(); i++){
 					String[] paramHChk = null;
@@ -853,7 +775,7 @@ public class CommonDataFileUpload {
 							int headerStartCol = xlsConvVo.getCheckHeaderStartCol(j).intValue() - 1;
 							int headerEndCol = xlsConvVo.getCheckHeaderEndCol(j).intValue() - 1;
 							if(ri==headerCheckRow){
-								HashMap obj = (HashMap)checkHeaderLs.get(j);
+								Map<String, Object> obj = checkHeaderLs.get(j);
 								if(obj != null){
 									HashMap headerNameCheck = (HashMap)obj.get(CommonExcelConversionDTO.TAG_CHECK_HEADER);
 									Row headerRow = curSheet.getRow(ri);
@@ -1049,7 +971,7 @@ public class CommonDataFileUpload {
 			return new Object[]{false, false, dataList};
 		}
 			    
-		protected Object[] readCell(HashMap mapInfo, Cell dataCell, String columnName, int columnIdx, String col1ofRow, int rowIdx) {
+		protected Object[] readCell(Map<String, Object> mapInfo, Cell dataCell, String columnName, int columnIdx, String col1ofRow, int rowIdx) {
 			boolean valid = true;
 		    String cellValue = "";
 		    String cellValueOriginal = "";
@@ -1088,9 +1010,9 @@ public class CommonDataFileUpload {
 		        		String convertToNumberic = "N";
 		        		String checkAlphaNumeric = "N";
 		        		
-		        		HashMap detailMap = this.xlsConvVo.getDetailMappingField();
+		        		Map detailMap = this.xlsConvVo.getDetailMappingField();
 		                if(detailMap != null){
-		                	HashMap mapInfoDetail = (HashMap)detailMap.get(columnName);
+		                	Map mapInfoDetail = (HashMap)detailMap.get(columnName);
 		                	if(mapInfoDetail!=null){
 				        		convertToNumberic = (String)mapInfoDetail.get(CommonExcelConversionDTO.ATTR_CONVERT_TO_NUMBERIC);
 				        		checkAlphaNumeric = (String)mapInfoDetail.get(CommonExcelConversionDTO.ATTR_ALPHANUMERIC_CHECK);
@@ -1179,7 +1101,7 @@ public class CommonDataFileUpload {
 			return cellValue;
 		}
 	    
-		protected String checkAndReplaceValueBeforeChkLength(HashMap mapInfo, String cellValue){
+		protected String checkAndReplaceValueBeforeChkLength(Map<String, Object> mapInfo, String cellValue){
 			String replaceValueBeforeChkLength = (String)mapInfo.get(CommonExcelConversionDTO.ATTR_REPLACE_CALUE_BEFORE_CHK_LENGTH);
 			if (replaceValueBeforeChkLength != null && replaceValueBeforeChkLength.equalsIgnoreCase("Y")) {
 				String replaceKey = (String)mapInfo.get(CommonExcelConversionDTO.ATTR_REPLACE_KEY);
@@ -1194,10 +1116,10 @@ public class CommonDataFileUpload {
 		}
 		
 		private Object[] convertNumbericValue(String cellValue, String columnName, int columnIdx, String col1ofRow, int rowIdx){
-			HashMap detailMap = this.xlsConvVo.getDetailMappingField();
+			Map<String, Object> detailMap = this.xlsConvVo.getDetailMappingField();
 			boolean valid = true;
 	        if(detailMap != null){
-	        	HashMap mapInfo = (HashMap)detailMap.get(columnName);
+	        	Map<String, Object> mapInfo = (HashMap)detailMap.get(columnName);
 	        	if(mapInfo!=null){
 	        		Object[] objs = checkMatchRegularAndReplaceValueBeforeGenByFormat(mapInfo, cellValue, columnIdx, col1ofRow, rowIdx);
 	        		valid = (boolean)objs[0];
@@ -1238,13 +1160,11 @@ public class CommonDataFileUpload {
 	        return new Object[]{valid, cellValue};
 		}
 		
-		private Object[] checkAlphaNumeric(HashMap mapInfo, String cellValue, int rowIdx, int columnIdx, String colName){
+		private Object[] checkAlphaNumeric(Map<String, Object> mapInfo, String cellValue, int rowIdx, int columnIdx, String colName){
 			String alphaNumericCheck = (String)mapInfo.get(CommonExcelConversionDTO.ATTR_ALPHANUMERIC_CHECK);
 			boolean valid = true;
 			boolean passChkReg = true;
-			if (alphaNumericCheck != null && AppConstants.YES_STR.equals(alphaNumericCheck)) {	
-//				Pattern p = Pattern.compile("[^a-zA-Z0-9]");
-//				boolean hasSpecialChar = p.matcher(s).find();
+			if (alphaNumericCheck != null && AppConstants.YES_STR.equals(alphaNumericCheck)) {
 				if (cellValue != null && cellValue.trim().length() > 0 && StringUtils.isAlphanumeric(cellValue)) {
 					passChkReg = true;
 				}else{
@@ -1271,7 +1191,7 @@ public class CommonDataFileUpload {
 			return new Object[]{valid, cellValue};
 		}
 		
-		private Object[] checkMatchRegularAndReplaceValueBeforeGenByFormat(HashMap mapInfo, String cellValue, int columnIdx, String col1ofRow, int rowIdx){
+		private Object[] checkMatchRegularAndReplaceValueBeforeGenByFormat(Map<String, Object> mapInfo, String cellValue, int columnIdx, String col1ofRow, int rowIdx){
 			String regExCheck = (String)mapInfo.get(CommonExcelConversionDTO.ATTR_REGEX_CHECK);
 			boolean valid = true;
 			boolean passChkReg = true;
@@ -1332,7 +1252,7 @@ public class CommonDataFileUpload {
 //					return null;
 //		}
 
-		public Object[] checkLength(HashMap mapInfo, 
+		public Object[] checkLength(Map<String, Object> mapInfo, 
 									   String cellValue, 
 									   String columnName, 
 									   String cellValueOriginal,
@@ -1343,7 +1263,7 @@ public class CommonDataFileUpload {
 			if(dbColumnName==null){
 				dbColumnName = columnName;
 			}
-			HashMap colInfo = (HashMap)tableMetaData.get(dbColumnName);
+			Map<String, Object> colInfo = (HashMap<String, Object>) tableMetaData.get(dbColumnName);
 			String colType = (String)colInfo.get("TYPE");
 			if (colType.equals("DATE")) {				
 			    int length = AppConstants.DATE_STRING_SCREEN_FORMAT.length();

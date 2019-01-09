@@ -1,21 +1,3 @@
-/******************************************************
- * Program History
- *
- * Project Name	            :  GWRDS :
- * Client Name				:  TMAP-EM
- * Package Name             :  th.co.toyota.bw0.repository.common
- * Program ID 	            :  CBW00000Repository.java
- * Program Description	    :  Common Repository
- * Environment	 	        :  Java 7
- * Author					:  Thanapon T.
- * Version					:  1.0
- * Creation Date            :  September 08, 2016
- *
- * Modification History	    :
- * Version	   Date		   Person Name		Chng Req No		Remarks
- *
- * Copyright(C) 2013-TOYOTA Motor Asia Pacific. All Rights Reserved.
- ********************************************************/
 package th.co.toyota.bw0.api.repository.common;
 
 import java.sql.Connection;
@@ -38,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import th.co.toyota.bw0.api.common.CommonUtility;
 import th.co.toyota.bw0.api.constants.AppConstants;
 import th.co.toyota.bw0.api.exception.common.CommonErrorException;
 import th.co.toyota.bw0.util.FormatUtil;
@@ -78,10 +61,8 @@ public class CommonAPIRepositoryImp implements CommonAPIRepository {
 	
 	@Override
 	public Map<String,Object> getTableMeataData(String tableName) throws Exception {
-		String sqlCmd = "SELECT * FROM " + tableName + " WHERE 0 = 1";
-		
 		Connection conn = null;
-		PreparedStatement pp = null;
+		PreparedStatement ps = null;
 		ResultSet rs = null;
 		
 		Map<String,Object> hashMetadata = new HashMap<>();
@@ -92,8 +73,9 @@ public class CommonAPIRepositoryImp implements CommonAPIRepository {
 			SessionImpl session = (SessionImpl)(em.getDelegate());
         	conn = session.getJdbcConnectionAccess().obtainConnection();	
 			
-			pp = conn.prepareStatement(sqlCmd);
-			rs = pp.executeQuery();
+        	StringBuilder sqlCmd = new StringBuilder("SELECT * FROM " + tableName + " WHERE 0 = 1");
+			ps = conn.prepareStatement(sqlCmd.toString());
+			rs = ps.executeQuery();
 
 	    	ResultSetMetaData rsmd = rs.getMetaData();
 	    	DatabaseMetaData dbmd = conn.getMetaData();
@@ -133,23 +115,8 @@ public class CommonAPIRepositoryImp implements CommonAPIRepository {
 	    	hashMetadata.put("TABLE_NAME", tableName);
 	    	hashMetadata.put("PK", arrPK);
 
-		} catch (Exception ex) {
-			throw ex;
 		} finally {
-			if ((conn != null) && !conn.isClosed()) {
-				if (rs !=null) {
-		            rs.close();
-		            rs = null;
-		        }
-				
-				if (pp !=null) {
-		            pp.close();
-		            pp = null;
-		        }
-				
-				conn.close();
-				conn = null;
-			}
+			CommonUtility.closeConnection(conn, rs, ps, true);
 		}
 
     	return hashMetadata;
