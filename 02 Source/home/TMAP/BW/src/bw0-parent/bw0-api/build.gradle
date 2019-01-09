@@ -50,6 +50,11 @@ dependencies {
 	
 	testCompile group: 'junit', name: 'junit', version:'4.8.1'
     
+
+    
+    runtime group: 'ch.qos.logback', name: 'logback-classic', version:'1.1.7'
+    runtime group: 'org.slf4j', name: 'jcl-over-slf4j', version:'1.7.5'
+    
 /*  compile group: 'th.co.toyota.sc2.client', name: 'sc2-client-java', version:'1.0.15-RELEASE'
     compile group: 'org.springframework', name: 'spring-webmvc', version:'3.2.4.RELEASE'
     compile group: 'org.springframework', name: 'spring-context-support', version:'3.2.4.RELEASE'
