@@ -162,16 +162,6 @@ public class FormatUtilTest {
 		assertEquals("Result",result.toString() , value.toString());
 	}
 	@Test
-	public void getCurrentDatehFormatTest() {
-		Date value = new Date();
-		Date result = FormatUtil.getCurrentDate(2);
-		value.setDate(9);
-		value.setHours(0);
-		value.setSeconds(0);
-		value.setMinutes(0);
-		assertEquals("Result",result.toString() , value.toString());
-	}
-	@Test
 	public void getCurrentYearFormatTest() {
 		int value = Year.now().getValue();
 		String result = FormatUtil.getCurrentYear();
@@ -233,11 +223,7 @@ public class FormatUtilTest {
 		String result = FormatUtil.pad("test",1,1,value[0]);
 		assertEquals("Result",result , "test");
 	}
-	@Test
-	public void convertFormatTest() {
-		Date result = FormatUtil.convert(new Date());
-		assertEquals("Result",result.toString() , "2019-01-07");
-	}
+
 	@Test
 	public void convertTimestampFormatTest() {
 		Date result = FormatUtil.convertTimestamp(new Date());

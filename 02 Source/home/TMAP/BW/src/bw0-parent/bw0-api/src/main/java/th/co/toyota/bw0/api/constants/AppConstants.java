@@ -103,11 +103,7 @@ public final class AppConstants {
 	public static final String SYS_CATEGORY_REPORT = "REPORT";
 	public static final String SYS_CATEGORY_REPORT_NAME = "REPORT_NAME";
 	public static final String SYS_CATEGORY_MASTER = "MASTER";
-	public static final String SYS_CATEGORY_COMMON = "COMMON";
-	public static final String SYS_CATEGORY_EMAIL = "EMAIL";
-	public static final String SYS_CATEGORY = "GWRDS";
-	public static final String SYS_CATEGORY_PIC = "PIC";
-	public static final String SYS_CATEGORY_UNIT_CAPACITY = "UNIT_CAPACITY";
+	public static final String SYS_CATEGORY = "TIM";
 	public static final String SYS_CATEGORY_COMMON_UPLOAD = "COMMON_UPLOAD";
 
 	public static final String SYS_SUB_CATEGORY_FUNCTION_UPLOAD = "FUNCTION";
@@ -122,13 +118,7 @@ public final class AppConstants {
 	public static final String SYS_SUB_CATEGORY_MAXROW_OF_REPORT = "MAXROW";
 	public static final String SYS_SUB_CATEGORY_UPLOAD = "UPLOAD";
 
-	public static final String ROLE_ADMIN = "GWRDS_ADMIN.tmap-em.toyota.co.th.asia";
-
 	public static final String UPDATE_KEYS_SEPERATER = "|";
-
-	public static final int INX_OF_UNIT_PLANT = 0;
-	public static final int INX_OF_UNIT_PARENT_LINE = 1;
-	public static final int INX_OF_UNIT_SUB_LINE = 2;
 
 	public static final String ACTION_ADD = "add";
 	public static final String ACTION_EDIT = "edit";
