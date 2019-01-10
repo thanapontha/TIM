@@ -119,13 +119,10 @@
 	<bean id="CBW03060Repository" class="th.co.toyota.bw0.api.repository.common.CBW03060Repository" scope="prototype" />
 	
 	<!-- Batch -->
-	
-	
 	<bean id="CBW02120Preprocess" class="th.co.toyota.bw0.batch.preprocess.main.CBW02120Preprocess" scope="prototype" />
-	<bean id="CBW02120ExcelToStage" class="th.co.toyota.bw0.batch.main.CBW02120ExcelToStage" scope="prototype" />
 	
 	<bean id="CBW02130Preprocess" class="th.co.toyota.bw0.batch.preprocess.main.CBW02130Preprocess" scope="prototype" />
-	<bean id="CBW02130ExcelToStage" class="th.co.toyota.bw0.batch.main.CBW02130ExcelToStage" scope="prototype" />
+	<bean id="ExampleConvertExcelToStage" class="th.co.toyota.bw0.batch.main.ExampleConvertExcelToStage" scope="prototype" />
 	
 	
 	<!-- Batch Report or Generate ASSCII-->

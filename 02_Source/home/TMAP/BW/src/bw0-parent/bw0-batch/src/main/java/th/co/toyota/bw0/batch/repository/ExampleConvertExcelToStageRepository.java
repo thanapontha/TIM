@@ -4,12 +4,12 @@
  * Project Name	            :  GWRDS : 
  * Client Name				:  TDEM
  * Package Name             :  th.co.toyota.bw0.batch.repository
- * Program ID 	            :  IBW02120Repository.java
- * Program Description	    :  PAMs Rundown Upload
+ * Program ID 	            :  IBW02130Repository.java
+ * Program Description	    :  Kompo Upload
  * Environment	 	    	:  Java 7
- * Author		    		:  Thanapon T.
+ * Author		    		:  Thanawut T.
  * Version		    		:  1.0
- * Creation Date            :  18 August 2017
+ * Creation Date            :  07 September 2017
  *
  * Modification History	    :
  * Version	   Date		   Person Name		Chng Req No		Remarks
@@ -23,7 +23,7 @@ import java.util.List;
 
 import th.co.toyota.bw0.api.exception.common.CommonErrorException;
 
-public interface IBW02120Repository {
+public interface ExampleConvertExcelToStageRepository {
 	public int insertDataToStaging(Connection conn, List<Object[]> dataList,
 			String userId) throws CommonErrorException;
 }

@@ -4,12 +4,12 @@
  * Project Name	            :  GWRDS : 
  * Client Name				:  TDEM
  * Package Name             :  th.co.toyota.bw0.batch.repository
- * Program ID 	            :  CBW02120Repository.java
- * Program Description	    :  PAMs Rundown Upload
+ * Program ID 	            :  CBW02130Repository.java
+ * Program Description	    :  Kompo Upload
  * Environment	 	    	:  Java 7
- * Author		    		:  Thanapon T.
+ * Author		    		:  Thanawut T.
  * Version		    		:  1.0
- * Creation Date            :  18 August 2017
+ * Creation Date            :  07 September 2017
  *
  * Modification History	    :
  * Version	   Date		   Person Name		Chng Req No		Remarks
@@ -36,13 +36,13 @@ import th.co.toyota.bw0.api.common.CBW00000Util;
 import th.co.toyota.bw0.api.exception.common.CommonErrorException;
 
 @Repository
-public class CBW02120Repository implements IBW02120Repository {
+public class ExampleConvertExcelToStageRepositoryImp implements ExampleConvertExcelToStageRepository {
 
 	@NotNull
 	@PersistenceContext(unitName = "entityManagerFactory")
 	private EntityManager em;
 
-	final Logger logger = LoggerFactory.getLogger(CBW02120Repository.class);
+	final Logger logger = LoggerFactory.getLogger(ExampleConvertExcelToStageRepositoryImp.class);
 	
 	@Override
 	public int insertDataToStaging(Connection conn, List<Object[]> dataList, String userId) throws CommonErrorException{
@@ -51,11 +51,10 @@ public class CBW02120Repository implements IBW02120Repository {
 		boolean closeConnection = true;
 		try{
 //			StringBuilder deleteSQL = new StringBuilder();
-//			deleteSQL.append(" DELETE FROM TB_S_PAMS_RUNDOWN WHERE CREATE_BY = ?");
+//			deleteSQL.append(" DELETE FROM TB_S_KOMPO WHERE CREATE_BY = ?");
 			
-			//Date currentDate = FormatUtil.getCurrentDateTime()			
 			StringBuilder insSQL = new StringBuilder();
-			insSQL.append("INSERT INTO TB_S_PAMS_RUNDOWN  ");
+			insSQL.append("INSERT INTO TB_S_KOMPO  ");
 			insSQL.append(" ( GETSUDO_MONTH,  ");
 			insSQL.append("   TIMING,  ");
 			insSQL.append("   VEHICLE_PLANT,  ");
@@ -66,23 +65,14 @@ public class CBW02120Repository implements IBW02120Repository {
 			insSQL.append("   FILE_NAME,  ");
 			insSQL.append("   IMPORTER,  ");
 			insSQL.append("   RUNDOWN_KEY,  ");
-			insSQL.append("   VARIATION,  ");
-			insSQL.append("   SS_NO,  ");
-			insSQL.append("   ID_LINE,  ");
 			insSQL.append("   EXPORTER,  ");
 			insSQL.append("   ORDER_DT,  ");
+			insSQL.append("   VANNING_VOLUME,  ");
+			insSQL.append("   VANNING_DT,  ");
+			insSQL.append("   LOADING_DT,  ");
+			insSQL.append("   UNLOADING_DT,  ");
 			insSQL.append("   PROD_DT,  ");
 			insSQL.append("   PROD_VOLUME,  ");
-			insSQL.append("   LOCAL_STOCK,  ");
-			insSQL.append("   STOCK_DAYS,  ");
-			insSQL.append("   UNLOAD,  ");
-			insSQL.append("   TRANSIT,  ");
-			insSQL.append("   LOADING,  ");
-			insSQL.append("   PORT_STOCK,  ");
-			insSQL.append("   PACK_VOLUME,  ");
-			insSQL.append("   LOT_SIZE,  ");
-			insSQL.append("   NO_OF_LOT,  ");
-			insSQL.append("   TOTAL_STOCK,  ");
 			insSQL.append("   UPLOAD_FILE_NAME,  ");
 			insSQL.append("   CREATE_BY,  ");
 			insSQL.append("   RUNNING_NO,  ");
@@ -91,7 +81,7 @@ public class CBW02120Repository implements IBW02120Repository {
 			insSQL.append(" VALUES  ");
 			insSQL.append(" ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,  ");
 			insSQL.append("   ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,  ");
-			insSQL.append("   ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?   ");
+			insSQL.append("   ?, ? ");
 			insSQL.append(" )  ");
 			
 			if(conn==null){
