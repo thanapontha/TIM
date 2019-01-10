@@ -40,7 +40,7 @@ import th.co.toyota.bw0.api.common.upload.CommonDataFileUpload;
 import th.co.toyota.bw0.api.common.upload.CommonExcelConversionDTO;
 import th.co.toyota.bw0.api.constants.MessagesConstants;
 import th.co.toyota.bw0.api.exception.common.CommonErrorException;
-import th.co.toyota.bw0.batch.repository.IBW02130Repository;
+import th.co.toyota.bw0.batch.repository.ExampleConvertExcelToStageRepository;
 import th.co.toyota.bw0.util.FormatUtil;
 import th.co.toyota.st3.api.constants.CST30000Messages;
 import th.co.toyota.st3.api.util.IST30000LoggerDb;
@@ -48,14 +48,14 @@ import th.co.toyota.st3.api.util.IST30000LoggerDb;
 import com.google.common.base.Strings;
 
 @Service
-public class CBW02130Service extends CommonDataFileUpload{
-	final Logger logger = LoggerFactory.getLogger(CBW02130Service.class);
+public class ExampleConvertExcelToStageService extends CommonDataFileUpload{
+	final Logger logger = LoggerFactory.getLogger(ExampleConvertExcelToStageService.class);
 	
 	@Autowired
 	private IST30000LoggerDb loggerBBW02130;
 	
 	@Autowired
-	private IBW02130Repository repository;
+	private ExampleConvertExcelToStageRepository repository;
 
 	protected String DEFAULT_SEPARATOR = "|";
 	protected static final String DEFAULT_PAD = " ";
