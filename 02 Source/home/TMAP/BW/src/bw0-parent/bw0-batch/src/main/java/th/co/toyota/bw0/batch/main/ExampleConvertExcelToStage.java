@@ -14,7 +14,7 @@
  * Modification History	    :
  * Version	   Date		   Person Name		Chng Req No		Remarks
  *
- * Copyright(C) 2013-TOYOTA Motor Asia Pacific. All Rights Reserved.             
+ * Copyright(C) 2019-TOYOTA Motor Asia Pacific. All Rights Reserved.             
  ********************************************************/
 package th.co.toyota.bw0.batch.main;
 
@@ -47,7 +47,7 @@ public class ExampleConvertExcelToStage {
 	final Logger logger = LoggerFactory.getLogger(ExampleConvertExcelToStage.class);
 
 	@Autowired
-	private IST30000LoggerDb loggerExampleConvert;
+	private IST30000LoggerDb loggerBBW02130;
 
 	@Autowired
 	protected MessageSource messageSource;
@@ -68,21 +68,23 @@ public class ExampleConvertExcelToStage {
 
 	public static final Integer IDX_PARAM_USER_LOGIN = 0;
 	public static final Integer IDX_PARAM_APP_ID = 1;
+	public static final Integer IDX_PARAM_FILE_NAME = 2;
 	
 	public static void main(String[] args) {	
 		String[] params = {
-				"gwrds04", //param 1: User Login
-				"1800001626", //param 2: Application ID
-				//TDEM::K::Sep-17::D-14::TMT^##^Test::C-HR_Conventional::TMT_IH::Engine::1GD::Kompo_OK_20170928032538.xlsx::suthida::000780
+				"timuser01", //param 1: User Login
+				"1", //param 2: Application ID
+				"Example_data.xlsx" //param 3: file name
+				//timuser01::1::Example_data.xlsx
 		};
 		
 		if (args.length != 0) {
 			params = args;
 		}
 
-		String batchName = "Upload KOMPO Batch";
-		String fileId2 = "BW02130";
-		String tableName2 = "TB_S_KOMPO";
+		String batchName = "Example Upload Batch";
+		String fileId = "BW02130";
+		String tableName = "TB_S_KOMPO";
 		
 		String createBy = "SYSTEM";
 		String appId = null;
@@ -90,94 +92,90 @@ public class ExampleConvertExcelToStage {
 		Timestamp sysdate = FormatUtil.currentTimestampToOracleDB();
 		
 		
-		int lengthParamCheck = 12;
+		int lengthParamCheck = 3;
 		if (params.length == lengthParamCheck) {
 			if (!Strings.isNullOrEmpty(params[IDX_PARAM_USER_LOGIN]))
 				createBy = CommonUtility.convertBatchParam(params[IDX_PARAM_USER_LOGIN]);
 			if (!Strings.isNullOrEmpty(params[IDX_PARAM_APP_ID]))
 				appId = CommonUtility.convertBatchParam(params[IDX_PARAM_APP_ID]);
-//			filename = CommonUtility.convertBatchParam(params[IDX_PARAM_FILE_NAME]);
+			filename = CommonUtility.convertBatchParam(params[IDX_PARAM_FILE_NAME]);
 			
 		}
 		
 		// Start Spring
 		ApplicationContext appContext = new AnnotationConfigApplicationContext(AppConfig.class);
-		ExampleConvertExcelToStage kompoMain = appContext.getBean(ExampleConvertExcelToStage.class);
+		ExampleConvertExcelToStage exampleConvertExcelToStage = appContext.getBean(ExampleConvertExcelToStage.class);
 		
 		if (Strings.isNullOrEmpty(appId)){
 			try {
 				sysdate = FormatUtil.currentTimestampToOracleDB();
-				appId = kompoMain.docNoGenerator.generateDocNo(AppConstants.SEQ_CODE_APP_ID, sysdate);
+				appId = exampleConvertExcelToStage.docNoGenerator.generateDocNo(AppConstants.SEQ_CODE_APP_ID, sysdate);
 			} catch (Exception e) {
 				String messageCode = CST30000Messages.ERROR_UNDEFINED_ERROR;
 				appId = "999990";
-				String errMsg = kompoMain.messageSource.getMessage(messageCode,
+				String errMsg = exampleConvertExcelToStage.messageSource.getMessage(messageCode,
 						new String[] { "Can't generate APP_ID " + e.getMessage()
 								+ " then use APP_ID=999990" }, Locale.getDefault());
-				kompoMain.logger.error(errMsg);
-				kompoMain.loggerExampleConvert.error(appId, messageCode, errMsg, createBy);
+				exampleConvertExcelToStage.logger.error(errMsg);
+				exampleConvertExcelToStage.loggerBBW02130.error(appId, messageCode, errMsg, createBy);
 			}	
 		}
 		int status = CST30000Constants.SUCCESS;
-		int resultPreprocess = CST30000Constants.SUCCESS;
 		try {
-			int[] resultPamsRundown = null;
-			int[] resultKompo = null;
+			int[] result = null;
 			int totalConvert = 0;
 			String msg = "";
+			boolean archiveFlag = false;
 			
-			msg = kompoMain.messageSource.getMessage(CST30000Messages.INFO_PROCESS_START,	new String[] { batchName }, Locale.getDefault());
-			kompoMain.logger.info(msg);
-			kompoMain.loggerExampleConvert.start(appId, CST30000Messages.INFO_PROCESS_START, msg, createBy);
+			//Log start process
+			msg = exampleConvertExcelToStage.messageSource.getMessage(CST30000Messages.INFO_PROCESS_START,	new String[] { batchName }, Locale.getDefault());
+			exampleConvertExcelToStage.logger.info(msg);
+			exampleConvertExcelToStage.loggerBBW02130.start(appId, CST30000Messages.INFO_PROCESS_START, msg, createBy);
 			
-
-			resultKompo = kompoMain.convertExcelToStaging(params, lengthParamCheck, appId, createBy, filename, fileId2, tableName2, sysdate, kompoMain.loggerExampleConvert);
-			totalConvert = (int)resultPamsRundown[IDX_ROWS_EFFECTED];
-	        	
-	        	
-        	if (resultKompo[IDX_VALIDATE_STATUS] == CST30000Constants.ERROR) {
-				msg = kompoMain.messageSource.getMessage(
-								CST30000Messages.INFO_PROCESS_END_ERROR, new String[] {
-								batchName, "(Please see details on above log)", "Upload file:" + filename, "" },
-						Locale.getDefault());
-				kompoMain.logger.info(msg);
-				kompoMain.loggerExampleConvert
-						.endError(appId,
-								CST30000Messages.INFO_PROCESS_END_ERROR, msg,
-								createBy);
+			//Process : Convert Excel To Staging table
+			result = exampleConvertExcelToStage.convertExcelToStaging(params, lengthParamCheck, appId, createBy, filename, fileId, tableName, sysdate, exampleConvertExcelToStage.loggerBBW02130);
+	        
+			//Setup process result
+			if (result[IDX_VALIDATE_STATUS] == CST30000Constants.ERROR) {
 				status = CST30000Constants.ERROR;
-				
-				kompoMain.batchUtil.archiveFile(filename, "", true);
-				
+				archiveFlag = true;
 			} else {
-				msg = kompoMain.messageSource.getMessage(
-						CST30000Messages.INFO_PROCESS_END_SUCCESS,
-						new String[] { batchName
-									 , "(Total convert PAMs Rundown " + totalConvert + " rows"
-									 , "Total convert Diagram " + resultKompo[IDX_ROWS_EFFECTED] + " rows)"
-									 , "Upload file:" + filename }
-						, Locale.getDefault());
-				kompoMain.logger.info(msg);
-				kompoMain.loggerExampleConvert.end(appId,
-						CST30000Messages.INFO_PROCESS_END_SUCCESS, msg,
-						createBy);
-	
 				status = CST30000Constants.SUCCESS;
-	
-				kompoMain.batchUtil.archiveFile(filename, "", false);
+				archiveFlag = false;
+			}
+			
+			//Archive File
+			exampleConvertExcelToStage.batchUtil.archiveFile(filename, "", archiveFlag);
+			
+			//Log end process
+        	if (result[IDX_VALIDATE_STATUS] == CST30000Constants.ERROR) {
+				msg = exampleConvertExcelToStage.messageSource.getMessage(
+																		CST30000Messages.INFO_PROCESS_END_ERROR, 
+																		new String[] { batchName, "(Please see details on above log)", "Upload file:" + filename, "" },
+																		Locale.getDefault());
+				exampleConvertExcelToStage.logger.info(msg);
+				exampleConvertExcelToStage.loggerBBW02130.endError(appId, CST30000Messages.INFO_PROCESS_END_ERROR, msg, createBy);
+			} else {
+				msg = exampleConvertExcelToStage.messageSource.getMessage(
+																		CST30000Messages.INFO_PROCESS_END_SUCCESS, 
+																		new String[] { batchName
+																					 , "(Total convert PAMs Rundown " + totalConvert + " rows"
+																					 , "Total convert Diagram " + result[IDX_ROWS_EFFECTED] + " rows)"
+																					 , "Upload file:" + filename }, 
+																		Locale.getDefault());
+				exampleConvertExcelToStage.logger.info(msg);
+				exampleConvertExcelToStage.loggerBBW02130.end(appId, CST30000Messages.INFO_PROCESS_END_SUCCESS, msg, createBy);
 			}
         	
-//		} catch (CommonErrorException e) {
-//			String errMsg = kompoMain.messageSource.getMessage(e.getMessageCode(),e.getMessageArg(), Locale.getDefault());
-//			kompoMain.logger.error(errMsg);
-//			kompoMain.loggerBBW02130.error(appId, e.getMessageCode(), errMsg, createBy);
 		} catch (Exception e) {
-			String errMsg = kompoMain.messageSource.getMessage(CST30000Messages.ERROR_UNDEFINED_ERROR, 
+			String errMsg = exampleConvertExcelToStage.messageSource.getMessage(CST30000Messages.ERROR_UNDEFINED_ERROR, 
 					new String[] { CommonUtility.genMessageOfException(e) }, 
 					Locale.getDefault());
-			kompoMain.logger.error(errMsg);
-			kompoMain.loggerExampleConvert.error(appId, CST30000Messages.ERROR_UNDEFINED_ERROR, errMsg, createBy);
+			exampleConvertExcelToStage.logger.error(errMsg);
+			exampleConvertExcelToStage.loggerBBW02130.error(appId, CST30000Messages.ERROR_UNDEFINED_ERROR, errMsg, createBy);
 		}
+		
+		// End Spring
 		((ConfigurableApplicationContext) appContext).close();
 
 		System.exit(status);

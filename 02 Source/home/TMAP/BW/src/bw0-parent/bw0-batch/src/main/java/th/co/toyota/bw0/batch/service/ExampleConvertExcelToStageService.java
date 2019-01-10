@@ -1,20 +1,20 @@
 /******************************************************
  * Program History
  * 
- * Project Name	            :  GWRDS : 
+ * Project Name	            :  TIM : Toyota Insurance Management
  * Client Name				:  TDEM
  * Package Name             :  th.co.toyota.bw0.batch.service
- * Program ID 	            :  CBW02130Service.java
- * Program Description	    :  Kompo Upload
+ * Program ID 	            :  ExampleConvertExcelToStageService.java
+ * Program Description	    :  Example Upload
  * Environment	 	    	:  Java 7
  * Author		    		:  Thanawut T.
  * Version		    		:  1.0
- * Creation Date            :  07 September 2017
+ * Creation Date            :  10 January 2019
  *
  * Modification History	    :
  * Version	   Date		   Person Name		Chng Req No		Remarks
  *
- * Copyright(C) 2013-TOYOTA Motor Asia Pacific. All Rights Reserved.             
+ * Copyright(C) 2019-TOYOTA Motor Asia Pacific. All Rights Reserved.             
  ********************************************************/
 package th.co.toyota.bw0.batch.service;
 
@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import th.co.toyota.bw0.api.common.CommonUtility;
 import th.co.toyota.bw0.api.common.upload.CommonDataFileUpload;
 import th.co.toyota.bw0.api.common.upload.CommonExcelConversionDTO;
 import th.co.toyota.bw0.api.constants.MessagesConstants;
@@ -52,7 +51,7 @@ public class ExampleConvertExcelToStageService extends CommonDataFileUpload{
 	final Logger logger = LoggerFactory.getLogger(ExampleConvertExcelToStageService.class);
 	
 	@Autowired
-	private IST30000LoggerDb loggerBBW02130;
+	private IST30000LoggerDb loggerDB;
 	
 	@Autowired
 	private ExampleConvertExcelToStageRepository repository;
@@ -88,14 +87,9 @@ public class ExampleConvertExcelToStageService extends CommonDataFileUpload{
 			String errMsg = messageSource.getMessage(CST30000Messages.ERROR_MESSAGE_MISSING_PARAMETER, null, Locale.getDefault());
 			errMsg = errMsg + "(" + params.length + "/"+lengthParamCheck+")";
 			logger.error(errMsg);
-			loggerBBW02130.error(this.getAppId(), CST30000Messages.ERROR_MESSAGE_MISSING_PARAMETER, errMsg, this.getCreateBy());
+			loggerDB.error(this.getAppId(), CST30000Messages.ERROR_MESSAGE_MISSING_PARAMETER, errMsg, this.getCreateBy());
 			return false;
 		}
-		this.userCompanyLogin = CommonUtility.convertBatchParam(Strings.nullToEmpty(params[0]));
-		this.uploadType = CommonUtility.convertBatchParam(Strings.nullToEmpty(params[1]));
-		this.getsudoMonth = CommonUtility.convertBatchParam(Strings.nullToEmpty(params[2]));
-		this.timing = CommonUtility.convertBatchParam(Strings.nullToEmpty(params[3]));
-
 		
 		return true;
 	}
@@ -112,7 +106,7 @@ public class ExampleConvertExcelToStageService extends CommonDataFileUpload{
 		}catch (CommonErrorException e){		
 			String errMsg = messageSource.getMessage(e.getMessageCode(),e.getMessageArg(), Locale.getDefault());
 			logger.error(errMsg);
-			loggerBBW02130.error(this.getAppId(), e.getMessageCode(), errMsg, this.getCreateBy());
+			loggerDB.error(this.getAppId(), e.getMessageCode(), errMsg, this.getCreateBy());
 			throw e;
 		}
 	}	

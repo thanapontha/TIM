@@ -96,60 +96,11 @@
 		p:moduleId="ST3200" p:functionId="ST3125" />
 	
 	<!-- odb excel download -->
-	<bean id="loggerST33020" class="th.co.toyota.st3.api.util.CST30000LoggerDb"
-		p:moduleId="ST3200" p:functionId="ST3302" />
-		
-	<bean id="loggerBBW01130" class="th.co.toyota.st3.api.util.CST30000LoggerDb"
-		p:moduleId="BW01" p:functionId="LBW01130" />
-		
-	<bean id="loggerBBW01160" class="th.co.toyota.st3.api.util.CST30000LoggerDb"
-		p:moduleId="BW01" p:functionId="LBW01160" />
-		
-	<bean id="loggerBBW04250" class="th.co.toyota.st3.api.util.CST30000LoggerDb"
-		p:moduleId="BW04" p:functionId="LBW04250" />
-		
-	<bean id="loggerBBW01140" class="th.co.toyota.st3.api.util.CST30000LoggerDb"
-		p:moduleId="BW01" p:functionId="BBW01140" />
-	
-	<bean id="loggerBBW01170" class="th.co.toyota.st3.api.util.CST30000LoggerDb"
-		p:moduleId="BW01" p:functionId="BBW01170" />
-		
-	<bean id="loggerBBW02120" class="th.co.toyota.st3.api.util.CST30000LoggerDb"
-		p:moduleId="BW02" p:functionId="BBW02120" />
-		
+
 	<bean id="loggerBBW02130" class="th.co.toyota.st3.api.util.CST30000LoggerDb"
 		p:moduleId="BW02" p:functionId="BBW02130" />
 		
-	<bean id="loggerBBW02140" class="th.co.toyota.st3.api.util.CST30000LoggerDb"
-		p:moduleId="BW02" p:functionId="BBW02140" />
-		
-	<bean id="loggerBBW02150" class="th.co.toyota.st3.api.util.CST30000LoggerDb"
-		p:moduleId="BW02" p:functionId="BBW02150" />
-	
-	<bean id="loggerBBW02170" class="th.co.toyota.st3.api.util.CST30000LoggerDb"
-		p:moduleId="BW02" p:functionId="BBW02170" />
-	
-	<bean id="loggerBBW03220" class="th.co.toyota.st3.api.util.CST30000LoggerDb"
-		p:moduleId="BW03" p:functionId="BBW03220" />
-		
-	<bean id="loggerBBW03230" class="th.co.toyota.st3.api.util.CST30000LoggerDb"
-		p:moduleId="BW03" p:functionId="BBW03230" />
-	
-	<bean id="loggerBBW03240" class="th.co.toyota.st3.api.util.CST30000LoggerDb"
-		p:moduleId="BW03" p:functionId="BBW03240" />
-		
-	<bean id="loggerBBW03250" class="th.co.toyota.st3.api.util.CST30000LoggerDb"
-		p:moduleId="BW03" p:functionId="BBW03250" />
-			
-	<bean id="loggerBBW04220" class="th.co.toyota.st3.api.util.CST30000LoggerDb"
-		p:moduleId="BW04" p:functionId="BBW04220" />
-		
-	<bean id="loggerBBW04260" class="th.co.toyota.st3.api.util.CST30000LoggerDb"
-		p:moduleId="BW04" p:functionId="BBW04260" />
-		
-	<bean id="loggerBBW04221" class="th.co.toyota.st3.api.util.CST30000LoggerDb"
-		p:moduleId="BW04" p:functionId="LBW04221" />
-		
+
 	<bean id="batchUtil" class="th.co.toyota.bw0.batch.common.CBW00000BatchUtil" />
 		
 	<bean id="CST30000BatchManager" class="th.co.toyota.st3.api.util.CST30000BatchManager" scope="prototype" />
@@ -158,41 +109,17 @@
 		scope="prototype" p:templateFolder="${jr.template.folder}" p:destinationFolder="${jr.destination.folder}" 
 		p:virtualizerFolder="${jr.virtualizer.folder}" p:virtualMaxSize="${jr.virtualMaxSize}"/>	 -->
 	
-	<bean id="CBW03060Repository" class="th.co.toyota.bw0.api.repository.common.CBW03060Repository" scope="prototype" />
+	<bean id="SystemMasterAPIRepositoryImp" class="th.co.toyota.bw0.api.repository.common.SystemMasterAPIRepositoryImp" scope="prototype" />
 	
 	<!-- Batch -->
-	<bean id="CBW01140Preprocess" class="th.co.toyota.bw0.batch.preprocess.main.CBW01140Preprocess" scope="prototype" />
-	<bean id="CBW01140ExcelToStage" class="th.co.toyota.bw0.batch.main.CBW01140ExcelToStage" scope="prototype" />
-	
-	<bean id="CBW01170Preprocess" class="th.co.toyota.bw0.batch.preprocess.main.CBW01170Preprocess" scope="prototype" />
-	<bean id="CBW01170ExcelToStage" class="th.co.toyota.bw0.batch.main.CBW01170ExcelToStage" scope="prototype" />
-	
-	<bean id="CBW02120Preprocess" class="th.co.toyota.bw0.batch.preprocess.main.CBW02120Preprocess" scope="prototype" />
-	<bean id="CBW02120ExcelToStage" class="th.co.toyota.bw0.batch.main.CBW02120ExcelToStage" scope="prototype" />
-	
+	<!-- 
 	<bean id="CBW02130Preprocess" class="th.co.toyota.bw0.batch.preprocess.main.CBW02130Preprocess" scope="prototype" />
 	<bean id="CBW02130ExcelToStage" class="th.co.toyota.bw0.batch.main.CBW02130ExcelToStage" scope="prototype" />
-	
-	<bean id="CBW02140PAMsRundownDetailReport" class="th.co.toyota.bw0.batch.report.main.CBW02140PAMsRundownDetailReport" scope="prototype" />
-	<bean id="CBW02150KompoDetailReport" class="th.co.toyota.bw0.batch.report.main.CBW02150KompoDetailReport" scope="prototype" />
-	
-	<bean id="CBW02170Preprocess" class="th.co.toyota.bw0.batch.preprocess.main.CBW02170Preprocess" scope="prototype" />
-	<bean id="CBW02170ExcelToStage" class="th.co.toyota.bw0.batch.main.CBW02170ExcelToStage" scope="prototype" />
-	
-	<bean id="CBW04220Preprocess" class="th.co.toyota.bw0.batch.preprocess.main.CBW04220Preprocess" scope="prototype" />
-	<bean id="CBW04220ExcelToStage" class="th.co.toyota.bw0.batch.main.CBW04220ExcelToStage" scope="prototype" />
-	
-	<bean id="CBW04260ExcelToStage" class="th.co.toyota.bw0.batch.main.CBW04260ExcelToStage" scope="prototype" />
-	<bean id="CBW04260Preprocess" class="th.co.toyota.bw0.batch.preprocess.main.CBW04260Preprocess" scope="prototype" />
+	-->
+	<bean id="ExampleConvertExcelToStage" class="th.co.toyota.bw0.batch.main.ExampleConvertExcelToStage" scope="prototype" />
 	
 	<!-- Batch Report or Generate ASSCII-->
-	<bean id="CBW01130KaikiengTemplateDownload" class="th.co.toyota.bw0.batch.report.main.CBW01130KaikiengTemplateDownload" scope="prototype" />
-	<bean id="CBW01160GetsudoWorksheetDownload" class="th.co.toyota.bw0.batch.report.main.CBW01160GetsudoWorksheetDownload" scope="prototype" />
-	<bean id="CBW03220GetsudoWorksheetReport" class="th.co.toyota.bw0.batch.report.main.CBW03220GetsudoWorksheetReport" scope="prototype" />
-	<bean id="CBW03240UnitCapacityCheckingReport" class="th.co.toyota.bw0.batch.report.main.CBW03240UnitCapacityCheckingReport" scope="prototype" />
-	<bean id="CBW03250MultiLineOrderSplitingDownload" class="th.co.toyota.bw0.batch.report.main.CBW03250MultiLineOrderSplitingDownload" scope="prototype" />
-	<bean id="CBW04221CalendarDownload" class="th.co.toyota.bw0.batch.report.main.CBW04221CalendarDownload" scope="prototype" />
-	<bean id="CBW04250UnitCapacityDownload" class="th.co.toyota.bw0.batch.report.main.CBW04250UnitCapacityDownload" scope="prototype" />
+	<!--<bean id="CBW04221CalendarDownload" class="th.co.toyota.bw0.batch.report.main.CBW04221CalendarDownload" scope="prototype" /> -->
 	<!--START: Email -->
 	<!-- In batch do not use email function
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
@@ -225,5 +152,5 @@
 	<!--END: Email -->
 	 
 	 <!-- Common POI -->
-	 <bean id="CBW00000CommonPOI" class="th.co.toyota.bw0.api.common.CBW00000CommonPOI" scope="prototype" />
+	 <bean id="CommonPOI" class="th.co.toyota.bw0.api.common.CommonPOI" scope="prototype" />
 </beans>
