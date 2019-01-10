@@ -30,6 +30,7 @@ import java.io.Writer;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -46,7 +47,6 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -68,12 +68,12 @@ import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import th.co.toyota.bw0.api.common.CommonUtility;
+import th.co.toyota.bw0.api.common.CBW00000Util;
 import th.co.toyota.bw0.api.constants.AppConstants;
 import th.co.toyota.bw0.api.constants.MessagesConstants;
 import th.co.toyota.bw0.api.exception.common.CommonErrorException;
-import th.co.toyota.bw0.api.repository.common.CommonAPIRepository;
-import th.co.toyota.bw0.api.repository.common.SystemMasterRepository;
+import th.co.toyota.bw0.api.repository.common.IBW00000Repository;
+import th.co.toyota.bw0.api.repository.common.IBW03060Repository;
 import th.co.toyota.bw0.util.FormatUtil;
 import th.co.toyota.st3.api.constants.CST30000Messages;
 import th.co.toyota.st3.api.exception.FileUploadDownloadException;
@@ -90,109 +90,61 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 
 @Component
-public class CommonDataFileUpload {
-	    final Logger logger = LoggerFactory.getLogger(CommonDataFileUpload.class);
-	    
+public class CBW00000DataFileUpload {
+	    final Logger logger = LoggerFactory.getLogger(CBW00000DataFileUpload.class);
 	    @Autowired
 	    protected MessageSource messageSource;
-	    
 	    @Autowired
-	    private SystemMasterRepository systemRepository;
-	    
+	    private IBW03060Repository systemRepository;
 		@Autowired
-		private CommonAPIRepository commonRepository;
-		
+		public IBW00000Repository commonRepository;
 	    @Autowired
 	    private CST30000BatchManager batchManager;
-	    
 	    @Autowired
-	    private CST32020DataFileUploadConfig uploadConfig;
-	    
+	    public CST32020DataFileUploadConfig uploadConfig;
 		@Autowired
 		private CST32010DocNoGenerator docNoGenerator;
-		
 		@NotNull
 		@PersistenceContext(unitName = "entityManagerFactory")
 		private EntityManager em;
-		
 		@Transient
-		private CommonFileUploadXMLLoader xmlLoader;
-		
+		public CBW00000CommonXMLLoader xmlLoader;
 		@Transient
-		public CommonExcelConversionDTO xlsConvVo;
-		
+		public CBW00000CommonExcelConversionDTO xlsConvVo;
 		@Transient
 		public IST30000LoggerDb loggerDb;
 		
-		@Value(value="${ctl.file.path}")
-		private String ctlFilePath;
 		
-		private final String companyCode = "TMAP-EM";
+		@Value(value="${ctl.file.path}")
+		public String ctlFilePath;
+	    public final String companyCode = "TMAP-EM";
 		private String CHECK_WITH_PARAM = "CHECK_WITH_PARAM";
 	    private String subFolder;
-	    protected Map<String,Object> tableMetaData;
-	    private String appId;
-	    private String createBy;
-	    private String fileName;
-	    private String fileId;
+	    public int genAsciiCnt = 0;
+	    protected HashMap<String,Object> tableMetaData;
+	    public String appId;
+	    public String appId2;
+		public String createBy;
+		public String filename;
+		public String fileId;
 
-	    private boolean alreadyLoggedInvaidTemplate = false;
-	    private int maxColData = -1;
-
-	    private List<String> gmHeaderChk = new ArrayList<>();
+		public boolean alreadyLoggedInvaidTemplate = false;
+		public int maxColData = -1;
 		
-	    public boolean isAlreadyLoggedInvaidTemplate() {
-			return alreadyLoggedInvaidTemplate;
-		}
+	    public List<String> gmHeaderChk = new ArrayList<String>();
 
-		public void setAlreadyLoggedInvaidTemplate(boolean alreadyLoggedInvaidTemplate) {
-			this.alreadyLoggedInvaidTemplate = alreadyLoggedInvaidTemplate;
-		}
-
-		public String getAppId() {
-			return appId;
-		}
-
-		public void setAppId(String appId) {
-			this.appId = appId;
-		}
-
-		public String getCreateBy() {
-			return createBy;
-		}
-
-		public void setCreateBy(String createBy) {
-			this.createBy = createBy;
-		}
-
-		public String getFileName() {
-			return fileName;
-		}
-
-		public void setFileName(String fileName) {
-			this.fileName = fileName;
-		}
-
-		public String getFileId() {
-			return fileId;
-		}
-
-		public void setFileId(String fileId) {
-			this.fileId = fileId;
-		}
-
-		public String uploadFile(MultipartFile file, String userID, String screenID, String batchID, List<String> additionalParam) throws Exception {
+		public String uploadFile(MultipartFile file, String userID, String screenID, String batchID, ArrayList<String> additionalParam) throws Exception {
 	        try {
 	            this.checkUploadFile(file, batchID);
                 String newExcelFileName = this.processExcelFileUpload(file, true);
-                List<String> listParameter = new ArrayList<>();
+                ArrayList<String> listParameter = new ArrayList<String>();
                 if(additionalParam != null && !additionalParam.isEmpty()){
                 	for(int i=0; i<additionalParam.size(); i++){
                 		String value = additionalParam.get(i);
                 		if(AppConstants.REPLACE_NEW_FILE_NAME_OF_UPLOAD.equals(value)){
-                			listParameter.add(CommonUtility.addBlankSaparator(newExcelFileName));
+                			listParameter.add(CBW00000Util.addBlankSaparator(newExcelFileName));
                 		}else{
-                			listParameter.add(CommonUtility.addBlankSaparator(additionalParam.get(i)));
+                			listParameter.add(CBW00000Util.addBlankSaparator(additionalParam.get(i)));
                 		}                		
                 	}
                 }
@@ -201,12 +153,13 @@ public class CommonDataFileUpload {
                 return newExcelFileName;
 	        }
 	        catch (Exception e) {
+	            e.printStackTrace();
 	            this.logger.error(e.getMessage());
 	            throw e;
 	        }
 	    }
 	    
-	    public Object[] convertExcelToStaging(String stagingTbName, boolean checkFileSize, Map<String, String[]> paramHeaderChk, String deleteStageSQL) throws CommonErrorException {
+	    public Object[] convertExcelToStaging(String fileName, String functionId, String userID,String stagingTbName, boolean checkFileSize, HashMap<String, String[]> paramHeaderChk, String deleteStageSQL) throws CommonErrorException {
 	        int dataCnt = 0;
 	        boolean validAll = true;
 	    	String tmpFileName = "";
@@ -223,8 +176,8 @@ public class CommonDataFileUpload {
 	        	}
 	        	
 	        	//Load xml mapping configuration
-	        	xmlLoader = new CommonFileUploadXMLLoader();
-	    		xlsConvVo = xmlLoader.loadXMLConfig(ctlFilePath, this.getFileId()+".xml");
+	        	xmlLoader = new CBW00000CommonXMLLoader();
+	    		xlsConvVo = xmlLoader.loadXMLConfig(ctlFilePath, functionId+".xml");
 	    		
 	    		//Get table metadata
 	    		tableMetaData = commonRepository.getTableMeataData(stagingTbName);
@@ -232,12 +185,12 @@ public class CommonDataFileUpload {
 	            String tempFolder = this.uploadConfig.getTempUploadFolder(this.companyCode);
 	            
 	            
-	            this.validateUploadFile(this.getFileName(), tempFolder, checkFileSize, this.getFileId());
+	            this.validateUploadFile(fileName, tempFolder, checkFileSize, functionId);
 	            
 	            String targetFolder = this.uploadConfig.getTempUploadFolder(this.companyCode);
-	            file = new FileInputStream(new File(targetFolder + this.getFileName()));
-	            int iPos = this.getFileName().lastIndexOf('.');
-	            String fileExtension = this.getFileName().substring(iPos + 1, this.getFileName().length()).toUpperCase();
+	            file = new FileInputStream(new File(targetFolder + fileName));
+	            int iPos = fileName.lastIndexOf('.');
+	            String fileExtension = fileName.substring(iPos + 1, fileName.length()).toUpperCase();
 	            if (AppConstants.FILE_FORMAT_EXCEL_XLS.equals(fileExtension)) {
 	                workbook = new HSSFWorkbook((InputStream)file);
 	                objFormulaEvaluator = new HSSFFormulaEvaluator((HSSFWorkbook)workbook);
@@ -247,12 +200,13 @@ public class CommonDataFileUpload {
 	            }
 	            List<Sheet> workingSheet = this.getWokringSheet(workbook);
 	            boolean validHeader = this.checkHeaderTemplate(workingSheet, objFormulaEvaluator, paramHeaderChk);
-	            if(!validHeader){
-	            	if(!this.isAlreadyLoggedInvaidTemplate()){
-	            		this.setAlreadyLoggedInvaidTemplate(true);
+	            if(validHeader==false){
+	            	if(alreadyLoggedInvaidTemplate==false){
+	            		alreadyLoggedInvaidTemplate = true;
 	    				String errMsg = messageSource.getMessage(MessagesConstants.B_ERROR_INVALID_FILE_TEMPLATE, new String[]{}, Locale.getDefault());
 	    				logger.error(errMsg);
 	    				loggerDb.error(appId, MessagesConstants.B_ERROR_INVALID_FILE_TEMPLATE, errMsg, createBy);
+	    				if(!Strings.isNullOrEmpty(appId2)) loggerDb.error(appId2, MessagesConstants.B_ERROR_INVALID_FILE_TEMPLATE, errMsg, createBy);
 	            	}
     				validAll = validHeader;
 	            }else{
@@ -264,15 +218,19 @@ public class CommonDataFileUpload {
 					boolean validDetail = (boolean)result[0];
 					boolean validHeaderOfDetail = (boolean)result[1];
 					List<Object[]> dataLs = (List<Object[]>)result[2];
-					if(validHeader && !validHeaderOfDetail && !isAlreadyLoggedInvaidTemplate()){
-	            		this.setAlreadyLoggedInvaidTemplate(true);
-						String errMsg = messageSource.getMessage(MessagesConstants.B_ERROR_INVALID_FILE_TEMPLATE, new String[]{}, Locale.getDefault());
-						logger.error(errMsg);
-						loggerDb.error(appId, MessagesConstants.B_ERROR_INVALID_FILE_TEMPLATE, errMsg, createBy);
+					if(validHeader && validHeaderOfDetail == false){
+						if(alreadyLoggedInvaidTemplate==false){
+		            		alreadyLoggedInvaidTemplate = true;
+							String errMsg = messageSource.getMessage(MessagesConstants.B_ERROR_INVALID_FILE_TEMPLATE, new String[]{}, Locale.getDefault());
+							logger.error(errMsg);
+							loggerDb.error(appId, MessagesConstants.B_ERROR_INVALID_FILE_TEMPLATE, errMsg, createBy);
+							if(!Strings.isNullOrEmpty(appId2)) loggerDb.error(appId2, MessagesConstants.B_ERROR_INVALID_FILE_TEMPLATE, errMsg, createBy);
+						}
 					}
 					if(validDetail && validHeader){						
 						dataCnt = insertDataToStaging(dataLs);
 					}else{
+						//dataCnt = dataLs!=null?dataLs.size():0;
 						dataCnt = 0;
 						validAll = false;
 					}
@@ -292,14 +250,13 @@ public class CommonDataFileUpload {
 	        return new Object[]{validAll, dataCnt};
 	    }
 
-	    public Map<String, String[]> getHeaderParamToCheckWithExcel(String[] params){
+	    public HashMap<String, String[]> getHeaderParamToCheckWithExcel(String[] params){
 	    	return null;
 	    }
 	    
 	    public void deleteDataStaging(Connection conn, String deleteSQL) throws CommonErrorException{
 			boolean completed = false;
 			boolean closeConnection = true;
-			PreparedStatement ps = null;
 			try{
 				if(conn==null){
 					SessionImpl session = (SessionImpl)(em.getDelegate());
@@ -310,14 +267,31 @@ public class CommonDataFileUpload {
 				conn.setAutoCommit(false);
 				
 				//delete data from staging by user id
-				ps = conn.prepareStatement(deleteSQL);
+				PreparedStatement ps = conn.prepareStatement(deleteSQL);
 				ps.executeUpdate();
+				ps.close();
 				
 				completed = true;
 			}catch (Exception e) {
-				throw CommonUtility.handleExceptionToCommonErrorException(e, logger, true);
+				completed = false;
+				throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, true);
 			}finally{
-				CommonUtility.closeConnection(conn, null, ps, closeConnection, completed);
+				try {
+					if(conn!=null && !conn.isClosed()){
+						if(completed){
+							conn.commit();
+						}else{
+							conn.rollback();
+						}
+						
+						if(closeConnection){
+							conn.close();
+							conn = null;
+						}
+					}
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
 			}
 		}
 	    
@@ -327,7 +301,7 @@ public class CommonDataFileUpload {
 	    
 	    public List<Sheet> getWokringSheet(Workbook workbook) throws Exception {
 			//Generate Data
-			List<Sheet> sheetList = new ArrayList<>();
+			List<Sheet> sheetList = new ArrayList<Sheet>();
 			Integer[] intWrkShtIdx = xlsConvVo.getArrayWorkSheetIdx();
 			String[] strWrkShtName = xlsConvVo.getArrayWorkSheetName();
 			if (intWrkShtIdx != null && intWrkShtIdx.length > 0) {
@@ -400,7 +374,7 @@ public class CommonDataFileUpload {
 //	        return newName;
 //	    }
 
-	    protected void postODBatch(String screenId, String batchId, String userId, List<String> listParameter) throws PostODBFailedException {
+	    protected void postODBatch(String screenId, String batchId, String userId, ArrayList<String> listParameter) throws PostODBFailedException {
 	        try {
 	            this.logger.info("Posting process is started");
 	            BatchQueue batch = new BatchQueue();
@@ -420,33 +394,47 @@ public class CommonDataFileUpload {
 	        }
 	    }
 
+	    /*
+	     * WARNING - Removed try catching itself - possible behaviour change.
+	     */
 	    protected String createNameListFile(List<String> filenameList, String fileID) {
-	    	String fileNameNew = fileID + "_" + System.currentTimeMillis();
+	        String filename;
 	        String folder = this.uploadConfig.getInputFolder(this.companyCode, this.subFolder);
-	        try(Writer writer = new BufferedWriter(new FileWriter(new File(folder + fileNameNew)))) {
+	        filename = fileID + "_" + System.currentTimeMillis();
+	        Writer writer = null;
+	        try {
+	            File file = new File(folder + filename);
+	            writer = new BufferedWriter(new FileWriter(file));
 	            for (int i = 0; i < filenameList.size(); ++i) {
 	                writer.write(filenameList.get(i));
 	                writer.write("\r\n");
 	            }
 	        }
 	        catch (FileNotFoundException e) {
-	        	logger.error(ExceptionUtils.getStackTrace(e));
-	        }catch (IOException e) {
-	        	logger.error(ExceptionUtils.getStackTrace(e));
+	            e.printStackTrace();
 	        }
-	        return fileNameNew;
+	        catch (IOException e) {
+	            e.printStackTrace();
+	        }
+	        finally {
+	            try {
+	                if (writer != null) {
+	                    writer.close();
+	                }
+	            }
+	            catch (IOException e) {
+	                e.printStackTrace();
+	            }
+	        }
+	        return filename;
 	    }
 
 	    protected void checkUploadFile(MultipartFile file, String functionId) throws FileUploadDownloadException {
-	        if (file == null) {
-	            throw new FileUploadDownloadException(this.messageSource.getMessage(CST30000Messages.ERROR_FILE_NOT_SELECTED, 
-	            		(Object[])new String[0], Locale.getDefault()));
-	        }
 	    	
 	        this.getFileExtention(file);
 	        
 	        String originalFilename = file.getOriginalFilename();
-	        if(!FormatUtil.isValidByPattern("^[0-9a-zA-Z-_ ]*(.xls|.xlsx)$", originalFilename.toLowerCase())){
+	        if(FormatUtil.isValidByPattern("^[0-9a-zA-Z-_ ]*(.xls|.xlsx)$", originalFilename.toLowerCase()) == false){
 	        	throw new FileUploadDownloadException(this.messageSource.getMessage(CST30000Messages.ERROR_MESSAGE_INVALID_FIELD, 
 	        			(Object[])new String[]{"file name."}, Locale.getDefault()));
 			}
@@ -476,6 +464,11 @@ public class CommonDataFileUpload {
 	        if (iFileSize > maxFileSizeChk) {	        	
 	        	throw new FileUploadDownloadException(this.messageSource.getMessage(MessagesConstants.A_ERROR_FILE_SIZE_OVER, 
 	        			(Object[])new String[]{String.valueOf(maxFileSizeChk/ 1024)+" MB"}, Locale.getDefault()));
+	        }
+	        
+	        if (file == null) {
+	            throw new FileUploadDownloadException(this.messageSource.getMessage(CST30000Messages.ERROR_FILE_NOT_SELECTED, 
+	            		(Object[])new String[0], Locale.getDefault()));
 	        }
 
 	        if (file.isEmpty() || file.getSize() == 0) {
@@ -664,7 +657,8 @@ public class CommonDataFileUpload {
 	    }
 
 	    protected String getExtension(String fileName) {
-	        return fileName.substring(fileName.lastIndexOf('.') + 1);
+	        String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
+	        return extension;
 	    }
 
 	    protected String getFileExtention(MultipartFile file) throws FileUploadDownloadException {
@@ -746,11 +740,90 @@ public class CommonDataFileUpload {
 			}
     		return newFileName;
 	    }
+
+//		public boolean checkHeaderTemplate(List<Sheet> workingSheet, FormulaEvaluator objFormulaEvaluator, HashMap<String, String[]> paramHeaderChk) throws Exception {
+//			boolean valid = true;
+//			//int headerCheckStartRow = xlsConvVo.getCheckHeadersStartRow().intValue() - 1;
+//			int headerCheckEndRow = xlsConvVo.getCheckHeadersEndRow().intValue() - 1;
+//			List checkHeaderLs = xlsConvVo.getCheckHeaders();
+//			if(checkHeaderLs != null && checkHeaderLs.size() > 0){
+//				for(int i=0; i < workingSheet.size(); i++){
+//					Sheet curSheet = workingSheet.get(i);
+//					int lastRow = curSheet.getLastRowNum();
+//					if (lastRow == 0 || lastRow < headerCheckEndRow) {
+//						throw new CommonErrorException(MessagesConstants.B_ERROR_INVALID_FILE_TEMPLATE, new String[]{}, AppConstants.ERROR);
+//					}
+//					for(int ri=0; ri<lastRow; ri++){
+//						if(ri > headerCheckEndRow){
+//							break;
+//						}
+//						
+//						for(int j=0; j<checkHeaderLs.size(); j++){
+//							
+//							int headerCheckRow = xlsConvVo.getCheckHeaderStartRow(j).intValue() - 1;
+//							int headerStartCol = xlsConvVo.getCheckHeaderStartCol(j).intValue() - 1;
+//							int headerEndCol = xlsConvVo.getCheckHeaderEndCol(j).intValue() - 1;
+//							if(ri==headerCheckRow){
+//								HashMap obj = (HashMap)checkHeaderLs.get(j);
+//								if(obj != null){
+//									HashMap headerNameCheck = (HashMap)obj.get(CBW00000CommonExcelConversionDTO.TAG_CHECK_HEADER);
+//									Row headerRow = curSheet.getRow(ri);
+//									if (headerRow == null) {
+//										throw new CommonErrorException(MessagesConstants.B_ERROR_INVALID_FILE_TEMPLATE, new String[]{}, AppConstants.ERROR);
+//									}
+//									
+//									Iterator<Object> iter = headerNameCheck.entrySet().iterator();
+//									while(iter.hasNext()){
+//										Map.Entry<Object,Object> entry = (Map.Entry<Object,Object>) iter.next();
+//										String rowKey = (String)entry.getKey();
+//										int rowKeyIdx = Integer.parseInt(rowKey)-1;
+//										HashMap mapInfo =  (HashMap)entry.getValue();
+//										String value = (String)mapInfo.get(CBW00000CommonExcelConversionDTO.ATTR_VALUE);
+//										String cellValue = "";
+//										for (int k = headerStartCol; k <= headerEndCol; k++) {
+//											Cell colNameCell = headerRow.getCell((short)k);
+//											if (null == colNameCell) {
+//												throw new CommonErrorException(MessagesConstants.B_ERROR_INVALID_FILE_TEMPLATE, new String[]{}, AppConstants.ERROR);
+//											}
+//											
+//											if( colNameCell != null && 
+//													(colNameCell.getCellType() == Cell.CELL_TYPE_STRING)){						
+//													 cellValue = colNameCell.getStringCellValue();
+//													 if(cellValue != null){
+//														 cellValue = cellValue.trim();
+//													 }
+//												}
+//												else if(colNameCell != null && 
+//														(colNameCell.getCellType() == Cell.CELL_TYPE_NUMERIC)){
+//														 cellValue = Double.toString(colNameCell.getNumericCellValue());
+//												} 
+//												else if(colNameCell == null || 
+//														colNameCell.getCellType() == Cell.CELL_TYPE_BLANK){
+//														cellValue = "";
+//												}							
+//											
+//											if(k == rowKeyIdx){
+//												if(!Strings.nullToEmpty(value).trim().equals(Strings.nullToEmpty(cellValue).trim())){
+//													throw new CommonErrorException(MessagesConstants.B_ERROR_INVALID_FILE_TEMPLATE, new String[]{}, AppConstants.ERROR);
+//												}
+//												break;
+//											}
+//										}
+//									}
+//								}
+//							}
+//						}
+//					}
+//				}
+//			}
+//			return valid;
+//		}
 		
-		public boolean checkHeaderTemplate(List<Sheet> workingSheet, FormulaEvaluator objFormulaEvaluator, Map<String, String[]> paramHeaderChk) throws Exception {
+		public boolean checkHeaderTemplate(List<Sheet> workingSheet, FormulaEvaluator objFormulaEvaluator, HashMap<String, String[]> paramHeaderChk) throws Exception {
 			boolean valid = true;
+			//int headerCheckStartRow = xlsConvVo.getCheckHeadersStartRow().intValue() - 1;
 			int headerCheckEndRow = xlsConvVo.getCheckHeadersEndRow().intValue() - 1;
-			List<Map<String, Object>> checkHeaderLs = xlsConvVo.getCheckHeaders();
+			List checkHeaderLs = xlsConvVo.getCheckHeaders();
 			if(checkHeaderLs != null && !checkHeaderLs.isEmpty()){
 				for(int i=0; i < workingSheet.size(); i++){
 					String[] paramHChk = null;
@@ -775,9 +848,9 @@ public class CommonDataFileUpload {
 							int headerStartCol = xlsConvVo.getCheckHeaderStartCol(j).intValue() - 1;
 							int headerEndCol = xlsConvVo.getCheckHeaderEndCol(j).intValue() - 1;
 							if(ri==headerCheckRow){
-								Map<String, Object> obj = checkHeaderLs.get(j);
+								HashMap obj = (HashMap)checkHeaderLs.get(j);
 								if(obj != null){
-									HashMap headerNameCheck = (HashMap)obj.get(CommonExcelConversionDTO.TAG_CHECK_HEADER);
+									HashMap headerNameCheck = (HashMap)obj.get(CBW00000CommonExcelConversionDTO.TAG_CHECK_HEADER);
 									Row headerRow = curSheet.getRow(ri);
 									if (headerRow == null) {
 										valid = false;
@@ -790,26 +863,27 @@ public class CommonDataFileUpload {
 										String rowKey = (String)entry.getKey();
 										int rowKeyIdx = Integer.parseInt(rowKey)-1;
 										HashMap mapInfo =  (HashMap)entry.getValue();
-										String value = (String)mapInfo.get(CommonExcelConversionDTO.ATTR_VALUE);
-										String headLabel = (String)mapInfo.get(CommonExcelConversionDTO.ATTR_LABEL);
+										String value = (String)mapInfo.get(CBW00000CommonExcelConversionDTO.ATTR_VALUE);
+										String headLabel = (String)mapInfo.get(CBW00000CommonExcelConversionDTO.ATTR_LABEL);
 										for (int k = headerStartCol; k <= headerEndCol; k++) {
 											Cell colNameCell = headerRow.getCell((short)k);
 											String cellValue = readCellHeaderValue(colNameCell, objFormulaEvaluator);
 											
 											if(k == rowKeyIdx){
 												if(Strings.nullToEmpty(value).trim().equalsIgnoreCase(CHECK_WITH_PARAM)){
-													String mandatoryChk = (String)mapInfo.get(CommonExcelConversionDTO.ATTR_MANDATORY_FIELD);
+													String mandatoryChk = (String)mapInfo.get(CBW00000CommonExcelConversionDTO.ATTR_MANDATORY_FIELD);
 													if(Strings.nullToEmpty(mandatoryChk).trim().equalsIgnoreCase("true")){
 														if(Strings.isNullOrEmpty(cellValue)){
 															String errMsg = messageSource.getMessage(MessagesConstants.B_ERROR_INVALID_EMPTY_FIELD, 
 																	new String[]{headLabel}, Locale.getDefault());
 															logger.error(errMsg);
 															loggerDb.error(appId, MessagesConstants.B_ERROR_INVALID_EMPTY_FIELD, errMsg, createBy);
+															if(!Strings.isNullOrEmpty(appId2)) loggerDb.error(appId2, MessagesConstants.B_ERROR_INVALID_EMPTY_FIELD, errMsg, createBy);
 															valid = false;
 														}else{
-															String lengthChk = (String)mapInfo.get(CommonExcelConversionDTO.ATTR_LENGTH);
-															if(!Strings.isNullOrEmpty(lengthChk)){
-																
+															String lengthChk = (String)mapInfo.get(CBW00000CommonExcelConversionDTO.ATTR_LENGTH);
+															if(Strings.isNullOrEmpty(lengthChk)==false){
+																try{
 																	int valueLen = Strings.nullToEmpty(cellValue).trim().length();
 																	int intLengthChk = Integer.parseInt(lengthChk);
 																	if(valueLen>intLengthChk){
@@ -817,28 +891,33 @@ public class CommonDataFileUpload {
 																				new String[]{headLabel, lengthChk}, Locale.getDefault());
 																		logger.error(errMsg);
 																		loggerDb.error(appId, MessagesConstants.B_ERROR_INVALID_LENGTH, errMsg, createBy);
+																		if(!Strings.isNullOrEmpty(appId2)) loggerDb.error(appId2, MessagesConstants.B_ERROR_INVALID_LENGTH, errMsg, createBy);
 																		valid = false;
 																	}
+																}catch (Exception e){																
+																}
 															}
 															if(paramHChk!=null && paramHChk.length > 0){
-																String hparamchk = paramHChk[headerCheckRow];
+																String hparamchk = (String)paramHChk[headerCheckRow];
 																if(!Strings.nullToEmpty(cellValue).trim().equals(hparamchk)){
 																	String errMsg = messageSource.getMessage(MessagesConstants.B_ERROR_VALUE_COMPARE_NOT_MATCH, 
 																					new String[]{headLabel+"("+cellValue+")", headLabel+"("+hparamchk+") in Parameter data"}, Locale.getDefault());
 																	logger.error(errMsg);
 																	loggerDb.error(appId, MessagesConstants.B_ERROR_VALUE_COMPARE_NOT_MATCH, errMsg, createBy);
+																	if(!Strings.isNullOrEmpty(appId2)) loggerDb.error(appId2, MessagesConstants.B_ERROR_VALUE_COMPARE_NOT_MATCH, errMsg, createBy);
 																	valid = false;
 																}
 															}
 														}
 													}else{
 														if(paramHChk!=null && paramHChk.length > 0){
-															String hparamchk = paramHChk[headerCheckRow];
+															String hparamchk = (String)paramHChk[headerCheckRow];
 															if(!Strings.nullToEmpty(cellValue).trim().equals(hparamchk)){
 																String errMsg = messageSource.getMessage(MessagesConstants.B_ERROR_VALUE_COMPARE_NOT_MATCH, 
 																			    new String[]{headLabel+"("+cellValue+")", headLabel+"("+hparamchk+") in Parameter data"}, Locale.getDefault());
 																logger.error(errMsg);
 																loggerDb.error(appId, MessagesConstants.B_ERROR_VALUE_COMPARE_NOT_MATCH, errMsg, createBy);
+																if(!Strings.isNullOrEmpty(appId2)) loggerDb.error(appId2, MessagesConstants.B_ERROR_VALUE_COMPARE_NOT_MATCH, errMsg, createBy);
 																valid = false;
 															}
 														}
@@ -850,6 +929,7 @@ public class CommonDataFileUpload {
 																	    new String[]{cellValue, value+" in XML file"}, Locale.getDefault());
 														logger.error(errMsg);
 														loggerDb.error(appId, MessagesConstants.B_ERROR_VALUE_COMPARE_NOT_MATCH, errMsg, createBy);
+														if(!Strings.isNullOrEmpty(appId2)) loggerDb.error(appId2, MessagesConstants.B_ERROR_VALUE_COMPARE_NOT_MATCH, errMsg, createBy);
 														valid = false;
 													}
 												}
@@ -898,7 +978,7 @@ public class CommonDataFileUpload {
 		}
 		
 		public Object[] generateData(Sheet curSheet, FormulaEvaluator objFormulaEvaluator) throws Exception {
-			List<Object[]> dataList = new ArrayList<>();
+			List<Object[]> dataList = new ArrayList<Object[]>();
 			boolean validAll = true;
 			boolean validHeaderOfDetail = true;
 			if (xlsConvVo.getExcelDetailConfig() != null) {
@@ -926,15 +1006,17 @@ public class CommonDataFileUpload {
 					Row dataRow = curSheet.getRow(i);
 					if (dataRow != null) {	
 						
-						if(endCol == -1 && null == xlsConvVo.getDetailEndCol()) {
-							endCol = dataRow.getLastCellNum();
-							maxColData = endCol;
+						if(endCol == -1){
+							if (null == xlsConvVo.getDetailEndCol()) {
+								endCol = dataRow.getLastCellNum();
+								maxColData = endCol;
+							}
 						}
 						
 						int endColChk = dataRow.getLastCellNum();
 						if(endColChk > maxColData){
-							if(!isAlreadyLoggedInvaidTemplate()){
-								this.setAlreadyLoggedInvaidTemplate(true);
+							if(alreadyLoggedInvaidTemplate==false){
+			            		alreadyLoggedInvaidTemplate = true;
 								String errMsg = messageSource.getMessage(MessagesConstants.B_ERROR_INVALID_FILE_TEMPLATE, new String[]{}, Locale.getDefault());
 								logger.error(errMsg);
 								loggerDb.error(appId, MessagesConstants.B_ERROR_INVALID_FILE_TEMPLATE, errMsg, createBy);
@@ -949,10 +1031,10 @@ public class CommonDataFileUpload {
 						Object[] obj = getDataSection(detailStartCol, endCol, dataRow, i, null, objFormulaEvaluator, dataList);
 						boolean validDetail = (boolean)obj[0];
 						boolean validHd = (boolean)obj[1];
-						if(!validDetail){
+						if(validDetail == false){
 							validAll = validDetail;
 						}
-						if(!validHd){
+						if(validHd == false){
 							validHeaderOfDetail = validHd;
 						}
 					}
@@ -967,11 +1049,11 @@ public class CommonDataFileUpload {
 				  int rowIdx,
 				  Object[] headerChk,
 				  FormulaEvaluator objFormulaEvaluator,
-				  List<Object[]> dataList) throws CommonErrorException {
+				  List<Object[]> dataList) throws Exception {
 			return new Object[]{false, false, dataList};
 		}
 			    
-		protected Object[] readCell(Map<String, Object> mapInfo, Cell dataCell, String columnName, int columnIdx, String col1ofRow, int rowIdx) {
+		protected Object[] readCell(HashMap mapInfo, Cell dataCell, String columnName, int columnIdx, String col1ofRow, int rowIdx) {
 			boolean valid = true;
 		    String cellValue = "";
 		    String cellValueOriginal = "";
@@ -1010,12 +1092,12 @@ public class CommonDataFileUpload {
 		        		String convertToNumberic = "N";
 		        		String checkAlphaNumeric = "N";
 		        		
-		        		Map detailMap = this.xlsConvVo.getDetailMappingField();
+		        		HashMap detailMap = this.xlsConvVo.getDetailMappingField();
 		                if(detailMap != null){
-		                	Map mapInfoDetail = (HashMap)detailMap.get(columnName);
+		                	HashMap mapInfoDetail = (HashMap)detailMap.get(columnName);
 		                	if(mapInfoDetail!=null){
-				        		convertToNumberic = (String)mapInfoDetail.get(CommonExcelConversionDTO.ATTR_CONVERT_TO_NUMBERIC);
-				        		checkAlphaNumeric = (String)mapInfoDetail.get(CommonExcelConversionDTO.ATTR_ALPHANUMERIC_CHECK);
+				        		convertToNumberic = (String)mapInfoDetail.get(CBW00000CommonExcelConversionDTO.ATTR_CONVERT_TO_NUMBERIC);
+				        		checkAlphaNumeric = (String)mapInfoDetail.get(CBW00000CommonExcelConversionDTO.ATTR_ALPHANUMERIC_CHECK);
 		                	}
 			                if(convertToNumberic!=null && convertToNumberic.equalsIgnoreCase("Y") && !Strings.isNullOrEmpty(cellValue)){
 			        			Object[] result = convertNumbericValue(cellValue, columnName, columnIdx, col1ofRow, rowIdx);
@@ -1101,14 +1183,16 @@ public class CommonDataFileUpload {
 			return cellValue;
 		}
 	    
-		protected String checkAndReplaceValueBeforeChkLength(Map<String, Object> mapInfo, String cellValue){
-			String replaceValueBeforeChkLength = (String)mapInfo.get(CommonExcelConversionDTO.ATTR_REPLACE_CALUE_BEFORE_CHK_LENGTH);
+		protected String checkAndReplaceValueBeforeChkLength(HashMap mapInfo, String cellValue){
+			String replaceValueBeforeChkLength = (String)mapInfo.get(CBW00000CommonExcelConversionDTO.ATTR_REPLACE_CALUE_BEFORE_CHK_LENGTH);
 			if (replaceValueBeforeChkLength != null && replaceValueBeforeChkLength.equalsIgnoreCase("Y")) {
-				String replaceKey = (String)mapInfo.get(CommonExcelConversionDTO.ATTR_REPLACE_KEY);
+				String replaceKey = (String)mapInfo.get(CBW00000CommonExcelConversionDTO.ATTR_REPLACE_KEY);
 				if (replaceKey != null && replaceKey.length() > 0) {
-					String replaceToValue = (String)mapInfo.get(CommonExcelConversionDTO.ATTR_REPLACE_TO_VALUE);
-					if (replaceToValue != null && replaceToValue.length() > -1 && cellValue != null){
-						cellValue = cellValue.replaceAll(replaceKey, replaceToValue);
+					String replaceToValue = (String)mapInfo.get(CBW00000CommonExcelConversionDTO.ATTR_REPLACE_TO_VALUE);
+					if (replaceToValue != null && replaceToValue.length() > -1) {
+						if(cellValue != null){
+							cellValue = cellValue.replaceAll(replaceKey, replaceToValue);
+						}
 					}
 				}	
 			}
@@ -1116,21 +1200,21 @@ public class CommonDataFileUpload {
 		}
 		
 		private Object[] convertNumbericValue(String cellValue, String columnName, int columnIdx, String col1ofRow, int rowIdx){
-			Map<String, Object> detailMap = this.xlsConvVo.getDetailMappingField();
+			HashMap detailMap = this.xlsConvVo.getDetailMappingField();
 			boolean valid = true;
 	        if(detailMap != null){
-	        	Map<String, Object> mapInfo = (HashMap)detailMap.get(columnName);
+	        	HashMap mapInfo = (HashMap)detailMap.get(columnName);
 	        	if(mapInfo!=null){
 	        		Object[] objs = checkMatchRegularAndReplaceValueBeforeGenByFormat(mapInfo, cellValue, columnIdx, col1ofRow, rowIdx);
 	        		valid = (boolean)objs[0];
 	        		cellValue = Strings.nullToEmpty((String)objs[1]);
 	        		if(valid){
-		            	String decimal = (String)mapInfo.get(CommonExcelConversionDTO.ATTR_DECIMAL);
+		            	String decimal = (String)mapInfo.get(CBW00000CommonExcelConversionDTO.ATTR_DECIMAL);
 		            	if(decimal!=null && !decimal.equalsIgnoreCase("NULL")){
 		            		int intDecimal = Integer.parseInt(decimal);
 		            		
 		            		String roundHaftUp = "N";
-		            		roundHaftUp = (String)mapInfo.get(CommonExcelConversionDTO.ATTR_ROUND_HAFT_UP);
+		            		roundHaftUp = (String)mapInfo.get(CBW00000CommonExcelConversionDTO.ATTR_ROUND_HAFT_UP);
 		     
 		                    if(roundHaftUp!=null && roundHaftUp.equalsIgnoreCase("Y")){
 		                    	BigDecimal tmpcellValue = new BigDecimal(cellValue);
@@ -1138,7 +1222,7 @@ public class CommonDataFileUpload {
 		                		
 		                		cellValue = tmpcellValue.toString();
 		            		}else{
-		            			int index = cellValue.lastIndexOf('.');
+		            			int index = cellValue.lastIndexOf(".");
 		            			String paddingzero = "Y";
 		                		if(index > 0){
 		                			String decimalString = cellValue.substring(index+1, cellValue.length());
@@ -1160,11 +1244,13 @@ public class CommonDataFileUpload {
 	        return new Object[]{valid, cellValue};
 		}
 		
-		private Object[] checkAlphaNumeric(Map<String, Object> mapInfo, String cellValue, int rowIdx, int columnIdx, String colName){
-			String alphaNumericCheck = (String)mapInfo.get(CommonExcelConversionDTO.ATTR_ALPHANUMERIC_CHECK);
+		private Object[] checkAlphaNumeric(HashMap mapInfo, String cellValue, int rowIdx, int columnIdx, String colName){
+			String alphaNumericCheck = (String)mapInfo.get(CBW00000CommonExcelConversionDTO.ATTR_ALPHANUMERIC_CHECK);
 			boolean valid = true;
 			boolean passChkReg = true;
-			if (alphaNumericCheck != null && AppConstants.YES_STR.equals(alphaNumericCheck)) {
+			if (alphaNumericCheck != null && AppConstants.YES_STR.equals(alphaNumericCheck)) {	
+//				Pattern p = Pattern.compile("[^a-zA-Z0-9]");
+//				boolean hasSpecialChar = p.matcher(s).find();
 				if (cellValue != null && cellValue.trim().length() > 0 && StringUtils.isAlphanumeric(cellValue)) {
 					passChkReg = true;
 				}else{
@@ -1185,14 +1271,15 @@ public class CommonDataFileUpload {
 						new String[]{fieldLabel, "Character or Number only"}, Locale.getDefault());
 				logger.error(errMsg);
 				loggerDb.error(appId, MessagesConstants.B_ERROR_INVALID_FORMAT, errMsg, createBy);
+				if(!Strings.isNullOrEmpty(appId2)) loggerDb.error(appId2, MessagesConstants.B_ERROR_INVALID_FORMAT, errMsg, createBy);
 				valid = false;
 				
 			}
 			return new Object[]{valid, cellValue};
 		}
 		
-		private Object[] checkMatchRegularAndReplaceValueBeforeGenByFormat(Map<String, Object> mapInfo, String cellValue, int columnIdx, String col1ofRow, int rowIdx){
-			String regExCheck = (String)mapInfo.get(CommonExcelConversionDTO.ATTR_REGEX_CHECK);
+		private Object[] checkMatchRegularAndReplaceValueBeforeGenByFormat(HashMap mapInfo, String cellValue, int columnIdx, String col1ofRow, int rowIdx){
+			String regExCheck = (String)mapInfo.get(CBW00000CommonExcelConversionDTO.ATTR_REGEX_CHECK);
 			boolean valid = true;
 			boolean passChkReg = true;
 			if (regExCheck != null && regExCheck.length() > 0) {				
@@ -1203,11 +1290,13 @@ public class CommonDataFileUpload {
 				}
 			}
 			if(passChkReg){
-				String replaceKey = (String)mapInfo.get(CommonExcelConversionDTO.ATTR_REPLACE_KEY);
+				String replaceKey = (String)mapInfo.get(CBW00000CommonExcelConversionDTO.ATTR_REPLACE_KEY);
 				if (replaceKey != null && replaceKey.length() > 0) {
-					String replaceToValue = (String)mapInfo.get(CommonExcelConversionDTO.ATTR_REPLACE_TO_VALUE);
-					if (replaceToValue != null && replaceToValue.length() > -1 && cellValue != null){
-						cellValue = cellValue.replaceAll(replaceKey, replaceToValue);
+					String replaceToValue = (String)mapInfo.get(CBW00000CommonExcelConversionDTO.ATTR_REPLACE_TO_VALUE);
+					if (replaceToValue != null && replaceToValue.length() > -1) {
+						if(cellValue != null){
+							cellValue = cellValue.replaceAll(replaceKey, replaceToValue);
+						}
 					}
 				}	
 			}else{
@@ -1218,56 +1307,57 @@ public class CommonDataFileUpload {
 				if(rowIdx > 0){
 					fieldLabel = fieldLabel + " {Row No. "+(rowIdx+1)+"}";
 				}
-				if(gmHeaderChk!=null && !gmHeaderChk.isEmpty() 
-						&& this.gmHeaderChk.toArray()[columnIdx] !=null 
-						&& !Strings.isNullOrEmpty((String)this.gmHeaderChk.toArray()[columnIdx])){
-					fieldLabel+=" of "+this.gmHeaderChk.toArray()[columnIdx]+"("+cellValue+")";
+				if(gmHeaderChk!=null && !gmHeaderChk.isEmpty() && this.gmHeaderChk.toArray()[columnIdx] !=null){
+					if(Strings.isNullOrEmpty((String)this.gmHeaderChk.toArray()[columnIdx]) == false){
+						fieldLabel+=" of "+this.gmHeaderChk.toArray()[columnIdx]+"("+cellValue+")";
+					}				
 				}
-				String correctFormat = (String)mapInfo.get(CommonExcelConversionDTO.ATTR_CORRECT_NUMBER_FORMAT);
+				String correctFormat = (String)mapInfo.get(CBW00000CommonExcelConversionDTO.ATTR_CORRECT_NUMBER_FORMAT);
 				String errMsg = messageSource.getMessage(MessagesConstants.B_ERROR_INVALID_FORMAT, 
 						new String[]{fieldLabel, Strings.nullToEmpty(correctFormat)}, Locale.getDefault());
 				logger.error(errMsg);
 				loggerDb.error(appId, MessagesConstants.B_ERROR_INVALID_FORMAT, errMsg, createBy);
+				if(!Strings.isNullOrEmpty(appId2)) loggerDb.error(appId2, MessagesConstants.B_ERROR_INVALID_FORMAT, errMsg, createBy);
 				valid = false;
 				
 			}
 			return new Object[]{valid, cellValue};
 		}
 
-//		public Date convertToDate(HashMap mapInfo, 
-//								   String cellValue, 
-//								   String columnName) throws Exception {		
-//					String dbColumnName = (String)mapInfo.get(CBW00000CommonExcelConversionDTO.ATTR_VALUE);
-//					if(dbColumnName==null){
-//						dbColumnName = columnName;
-//					}
-//					HashMap colInfo = (HashMap)tableMetaData.get(dbColumnName);
-//					String colType = (String)colInfo.get("TYPE");
-//					if (colType.equals("DATE")) {
-//						int length = AppConstants.DATE_STRING_SCREEN_FORMAT.length();
-//						int dataLength = cellValue.length();
-//					
-//					
-//					}
-//					return null;
-//		}
+		public Date convertToDate(HashMap mapInfo, 
+								   String cellValue, 
+								   String columnName) throws Exception {		
+					String dbColumnName = (String)mapInfo.get(CBW00000CommonExcelConversionDTO.ATTR_VALUE);
+					if(dbColumnName==null){
+						dbColumnName = columnName;
+					}
+					HashMap colInfo = (HashMap)tableMetaData.get(dbColumnName);
+					String colType = (String)colInfo.get("TYPE");
+					if (colType.equals("DATE")) {
+						int length = AppConstants.DATE_STRING_SCREEN_FORMAT.length();
+						int dataLength = cellValue.length();
+					
+					
+					}
+					return null;
+		}
 
-		public Object[] checkLength(Map<String, Object> mapInfo, 
+		public Object[] checkLength(HashMap mapInfo, 
 									   String cellValue, 
 									   String columnName, 
 									   String cellValueOriginal,
 									   int columnIdx,
 									   String col1ofRow,
-									   int rowIdx) throws CommonErrorException {		
-			String dbColumnName = (String)mapInfo.get(CommonExcelConversionDTO.ATTR_VALUE);
+									   int rowIdx) throws Exception {		
+			String dbColumnName = (String)mapInfo.get(CBW00000CommonExcelConversionDTO.ATTR_VALUE);
 			if(dbColumnName==null){
 				dbColumnName = columnName;
 			}
-			Map<String, Object> colInfo = (HashMap<String, Object>) tableMetaData.get(dbColumnName);
+			HashMap colInfo = (HashMap)tableMetaData.get(dbColumnName);
 			String colType = (String)colInfo.get("TYPE");
 			if (colType.equals("DATE")) {				
 			    int length = AppConstants.DATE_STRING_SCREEN_FORMAT.length();
-				String convertToDateBy = (String)mapInfo.get(CommonExcelConversionDTO.ATTR_CONVERT_STRING_TO_DATE);
+				String convertToDateBy = (String)mapInfo.get(CBW00000CommonExcelConversionDTO.ATTR_CONVERT_STRING_TO_DATE);
 				if(convertToDateBy!=null){
 					length = convertToDateBy.length();
 				}
@@ -1282,7 +1372,7 @@ public class CommonDataFileUpload {
 			    if (((Integer)colInfo.get("SCALE")).intValue() > 0) {
 			        dbLength += 1;
 			    }
-				String overrideLength = (String)mapInfo.get(CommonExcelConversionDTO.ATTR_LENGTH);
+				String overrideLength = (String)mapInfo.get(CBW00000CommonExcelConversionDTO.ATTR_LENGTH);
 				if (overrideLength != null && overrideLength.length() > 0) {
 					dbLength = Integer.parseInt(overrideLength);
 				}
@@ -1293,7 +1383,7 @@ public class CommonDataFileUpload {
 			}
 			else {
 				int dbLength = ((Integer)colInfo.get("LENGTH")).intValue();
-				String overrideLength = (String)mapInfo.get(CommonExcelConversionDTO.ATTR_LENGTH);
+				String overrideLength = (String)mapInfo.get(CBW00000CommonExcelConversionDTO.ATTR_LENGTH);
 				if (overrideLength != null && overrideLength.length() > 0) {
 					dbLength = Integer.parseInt(overrideLength);
 				}
@@ -1317,15 +1407,16 @@ public class CommonDataFileUpload {
 				if(rowIdx > 0){
 					fieldLabel = fieldLabel + " {Row No. "+(rowIdx+1)+"}";
 				}
-				if(gmHeaderChk!=null && !gmHeaderChk.isEmpty() 
-						&& this.gmHeaderChk.toArray()[columnIdx] !=null 
-						&& !Strings.isNullOrEmpty((String)this.gmHeaderChk.toArray()[columnIdx])){
-					fieldLabel+=" of "+this.gmHeaderChk.toArray()[columnIdx]+"("+cellValue+")";
+				if(gmHeaderChk!=null && !gmHeaderChk.isEmpty() && this.gmHeaderChk.toArray()[columnIdx] !=null){
+					if(Strings.isNullOrEmpty((String)this.gmHeaderChk.toArray()[columnIdx]) == false){
+						fieldLabel+=" of "+this.gmHeaderChk.toArray()[columnIdx]+"("+cellValue+")";
+					}
 				}
 				String errMsg = messageSource.getMessage(MessagesConstants.B_ERROR_INVALID_LENGTH, 
 						new String[]{fieldLabel, Integer.toString(dbLength)}, Locale.getDefault());
 				logger.error(errMsg);
 				loggerDb.error(appId, MessagesConstants.B_ERROR_INVALID_LENGTH, errMsg, createBy);
+				if(!Strings.isNullOrEmpty(appId2)) loggerDb.error(appId2, MessagesConstants.B_ERROR_INVALID_LENGTH, errMsg, createBy);
 				valid = false;
 			}
 			return valid;

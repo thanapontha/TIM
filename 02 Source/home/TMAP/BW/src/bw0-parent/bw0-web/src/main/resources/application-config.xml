@@ -110,7 +110,7 @@
 				p:maxRowsPerPage="${rowsperpage}" p:sharedFolder="${default.download.folder}"
 				p:dateTimeFormat="${report.dateformat}" scope="prototype" />
 				
-	<!--START: Email 
+	<!--START: Email -->
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
 		<property name="host" value="${email.host}" />
 		<property name="defaultEncoding" value="utf-8" />
@@ -138,6 +138,6 @@
 		<property name="templateFixKaikiengData" value="TemplateEmailRejectKaikiengData.vm" />
 		
 	</bean>
-	END: Email -->
+	<!-- END: Email -->
         
 </beans>

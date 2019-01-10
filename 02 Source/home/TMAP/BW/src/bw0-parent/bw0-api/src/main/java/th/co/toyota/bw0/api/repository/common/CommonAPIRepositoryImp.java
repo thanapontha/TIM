@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import th.co.toyota.bw0.api.common.CommonUtility;
 import th.co.toyota.bw0.api.constants.AppConstants;
 import th.co.toyota.bw0.api.exception.common.CommonErrorException;
 import th.co.toyota.bw0.util.FormatUtil;
@@ -116,7 +115,20 @@ public class CommonAPIRepositoryImp implements CommonAPIRepository {
 	    	hashMetadata.put("PK", arrPK);
 
 		} finally {
-			CommonUtility.closeConnection(conn, rs, ps, true);
+			if ((conn != null) && !conn.isClosed()) {
+				if (rs !=null) {
+		            rs.close();
+		            rs = null;
+		        }
+				
+				if (ps !=null) {
+		            ps.close();
+		            ps = null;
+		        }
+				
+				conn.close();
+				conn = null;
+			}
 		}
 
     	return hashMetadata;

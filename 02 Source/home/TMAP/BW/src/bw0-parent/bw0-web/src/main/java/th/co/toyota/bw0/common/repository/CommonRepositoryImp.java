@@ -71,7 +71,7 @@ public class CommonRepositoryImp implements CommonRepository {
         	StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT CD, VALUE ");
 			sql.append(" FROM TB_M_SYSTEM ");
-			sql.append(" WHERE CATEGORY = '"+AppConstants.SYS_CATEGORY+"' ");
+			sql.append(" WHERE CATEGORY = 'CATEGORY' ");
 			sql.append(" AND SUB_CATEGORY = '"+ipAddress+"' ");
 			
 			SessionImpl session = (SessionImpl) (em.getDelegate());

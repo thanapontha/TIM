@@ -1,20 +1,20 @@
 /******************************************************
  * Program History
  * 
- * Project Name	            :  TIM : Toyota Insurance Management
+ * Project Name	            :  GWRDS : 
  * Client Name				:  TDEM
  * Package Name             :  th.co.toyota.bw0.batch.service
- * Program ID 	            :  ExampleConvertExcelToStageService.java
- * Program Description	    :  Example Upload
+ * Program ID 	            :  CBW02130Service.java
+ * Program Description	    :  Kompo Upload
  * Environment	 	    	:  Java 7
  * Author		    		:  Thanawut T.
  * Version		    		:  1.0
- * Creation Date            :  10 January 2019
+ * Creation Date            :  07 September 2017
  *
  * Modification History	    :
  * Version	   Date		   Person Name		Chng Req No		Remarks
  *
- * Copyright(C) 2019-TOYOTA Motor Asia Pacific. All Rights Reserved.             
+ * Copyright(C) 2013-TOYOTA Motor Asia Pacific. All Rights Reserved.             
  ********************************************************/
 package th.co.toyota.bw0.batch.service;
 
@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
@@ -35,11 +34,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import th.co.toyota.bw0.api.common.upload.CommonDataFileUpload;
-import th.co.toyota.bw0.api.common.upload.CommonExcelConversionDTO;
+import th.co.toyota.bw0.api.common.CBW00000Util;
+import th.co.toyota.bw0.api.common.upload.CBW00000CommonExcelConversionDTO;
+import th.co.toyota.bw0.api.common.upload.CBW00000DataFileUpload;
+import th.co.toyota.bw0.api.constants.AppConstants;
 import th.co.toyota.bw0.api.constants.MessagesConstants;
 import th.co.toyota.bw0.api.exception.common.CommonErrorException;
-import th.co.toyota.bw0.batch.repository.ExampleConvertExcelToStageRepository;
+import th.co.toyota.bw0.api.service.common.CBW00000CommonService;
+import th.co.toyota.bw0.batch.repository.IBW02130Repository;
 import th.co.toyota.bw0.util.FormatUtil;
 import th.co.toyota.st3.api.constants.CST30000Messages;
 import th.co.toyota.st3.api.util.IST30000LoggerDb;
@@ -47,14 +49,17 @@ import th.co.toyota.st3.api.util.IST30000LoggerDb;
 import com.google.common.base.Strings;
 
 @Service
-public class ExampleConvertExcelToStageService extends CommonDataFileUpload{
-	final Logger logger = LoggerFactory.getLogger(ExampleConvertExcelToStageService.class);
+public class CBW02130Service extends CBW00000DataFileUpload{
+	final Logger logger = LoggerFactory.getLogger(CBW02130Service.class);
 	
 	@Autowired
-	private IST30000LoggerDb loggerDB;
+	private IST30000LoggerDb loggerBBW02130;
 	
 	@Autowired
-	private ExampleConvertExcelToStageRepository repository;
+	CBW00000CommonService commonService;
+	
+	@Autowired
+	private IBW02130Repository repository;
 
 	protected String DEFAULT_SEPARATOR = "|";
 	protected static final String DEFAULT_PAD = " ";
@@ -76,20 +81,59 @@ public class ExampleConvertExcelToStageService extends CommonDataFileUpload{
 	String unitPlantAllSelected = null;
 	String unitModelAllSelected = null;
 	String unitTypeAllSelected = null;
+	private String selectSep = AppConstants.BATCH_CHARACTOR_REPLACE_SELECTED_MULTI_UNIT_BACK;
 
 	public boolean validateParameters(String[] params, int lengthParamCheck, String sAppId, String sCreateBy, String fileName, String fileId,Timestamp sysdate) {
-		this.setAppId(sAppId);
-		this.setCreateBy(sCreateBy);
-		this.setFileName(fileName);
-		this.setFileId(fileId);
+		this.appId = sAppId;
+		this.createBy = sCreateBy;
+		this.filename = fileName;
+		this.fileId = fileId;
 		this.sysdate = sysdate;
 		if (params.length != lengthParamCheck) {
 			String errMsg = messageSource.getMessage(CST30000Messages.ERROR_MESSAGE_MISSING_PARAMETER, null, Locale.getDefault());
 			errMsg = errMsg + "(" + params.length + "/"+lengthParamCheck+")";
 			logger.error(errMsg);
-			loggerDB.error(this.getAppId(), CST30000Messages.ERROR_MESSAGE_MISSING_PARAMETER, errMsg, this.getCreateBy());
+			loggerBBW02130.error(appId, CST30000Messages.ERROR_MESSAGE_MISSING_PARAMETER, errMsg, createBy);
 			return false;
 		}
+		this.userCompanyLogin = CBW00000Util.convertBatchParam(Strings.nullToEmpty(params[0]));
+		this.uploadType = CBW00000Util.convertBatchParam(Strings.nullToEmpty(params[1]));
+		this.getsudoMonth = CBW00000Util.convertBatchParam(Strings.nullToEmpty(params[2]));
+		this.timing = CBW00000Util.convertBatchParam(Strings.nullToEmpty(params[3]));
+		this.vehiclePlant = CBW00000Util.convertBatchParam(Strings.nullToEmpty(params[4]));
+		this.vehicleModel = CBW00000Util.convertBatchParam(Strings.nullToEmpty(params[5]));
+//		this.unitPlant = CBW00000Util.convertBatchParam(Strings.nullToEmpty(params[6]));
+//		this.unitType = CBW00000Util.convertBatchParam(Strings.nullToEmpty(params[7]));
+//		this.unitModel = CBW00000Util.convertBatchParam(Strings.nullToEmpty(params[8]));
+		
+		//CR UT-002 2018/02/16 Thanawut T. : select multiple Unit Model for Kompokung Validate
+		//KOMPO
+		if(AppConstants.UPLOAD_KOMPO_FLAG.equals(uploadType)){
+			if (!Strings.isNullOrEmpty(Strings.nullToEmpty(params[6])))
+				unitPlantAllSelected = CBW00000Util.convertBatchParam(Strings.nullToEmpty(params[6]));
+			if (!Strings.isNullOrEmpty(Strings.nullToEmpty(params[7])))
+				unitTypeAllSelected = CBW00000Util.convertBatchParam(Strings.nullToEmpty(params[7]));
+			if (!Strings.isNullOrEmpty(Strings.nullToEmpty(params[8])))
+				unitModelAllSelected = CBW00000Util.convertBatchParam(Strings.nullToEmpty(params[8]));
+			
+			String[] unitPlantArr = unitPlantAllSelected.split(selectSep);
+			unitPlant = (unitPlantArr != null) ? unitPlantArr[0] : unitPlantAllSelected;
+			
+			String[] unitTypeArr = unitTypeAllSelected.split(selectSep);
+			unitType = (unitTypeArr != null) ? unitTypeArr[0] : unitTypeAllSelected;
+			
+			String[] unitModelArr = unitModelAllSelected.split(selectSep);
+			unitModel = (unitModelArr != null) ? unitModelArr[0] : unitModelAllSelected;
+		}else{ //PAMs
+			//In Case PAMs use 1 unit model
+			if (!Strings.isNullOrEmpty(Strings.nullToEmpty(params[6])))
+				unitPlant = CBW00000Util.convertBatchParam(Strings.nullToEmpty(params[6]));
+			if (!Strings.isNullOrEmpty(Strings.nullToEmpty(params[7])))
+				unitType = CBW00000Util.convertBatchParam(Strings.nullToEmpty(params[7]));
+			if (!Strings.isNullOrEmpty(Strings.nullToEmpty(params[8])))
+				unitModel = CBW00000Util.convertBatchParam(Strings.nullToEmpty(params[8]));
+		}
+		//END CR UT-002 2018/02/16
 		
 		return true;
 	}
@@ -101,19 +145,18 @@ public class ExampleConvertExcelToStageService extends CommonDataFileUpload{
 
 	public Object[] convertExcelToStaging(String tableName) throws CommonErrorException{
 		try{
-			String deleteStageSQL = " DELETE FROM "+tableName+" WHERE CREATE_BY = '"+this.getCreateBy()+"'";
-	        return this.convertExcelToStaging(tableName, this.checkFileSize(), this.getHeaderParamToCheckWithExcel(null), deleteStageSQL);
+			String deleteStageSQL = " DELETE FROM "+tableName+" WHERE CREATE_BY = '"+this.createBy+"'";
+	        return this.convertExcelToStaging(this.filename, fileId, this.createBy, tableName, this.checkFileSize(), this.getHeaderParamToCheckWithExcel(null), deleteStageSQL);
 		}catch (CommonErrorException e){		
 			String errMsg = messageSource.getMessage(e.getMessageCode(),e.getMessageArg(), Locale.getDefault());
 			logger.error(errMsg);
-			loggerDB.error(this.getAppId(), e.getMessageCode(), errMsg, this.getCreateBy());
+			loggerBBW02130.error(appId, e.getMessageCode(), errMsg, createBy);
 			throw e;
 		}
 	}	
 	
-	@Override
 	public int insertDataToStaging(List<Object[]> dataLs)throws Exception {
-    	return repository.insertDataToStaging(null, dataLs, this.getCreateBy());
+    	return repository.insertDataToStaging(null, dataLs, this.createBy);
     }
 	
 	public boolean getDataHeaderOfEachFunction(List<Sheet> workingSheet, FormulaEvaluator objFormulaEvaluator) throws Exception {
@@ -123,7 +166,7 @@ public class ExampleConvertExcelToStageService extends CommonDataFileUpload{
 			int rowNum = curSheet.getLastRowNum();// End Row
 			if (rowNum == 0 || rowNum > hdStartRow) {
 				Row dataRow = curSheet.getRow(hdStartRow);
-				Map<String, Object> mapInfo = new HashMap<String, Object>();
+				HashMap mapInfo = new HashMap();
 				for (int j = 0; j < 2; j++) {
 					Cell cell = dataRow.getCell((short)j);
 					Object[] cellValues;
@@ -157,17 +200,16 @@ public class ExampleConvertExcelToStageService extends CommonDataFileUpload{
 		return true; //Need edit??
 	}
 	
-	@Override
 	public Object[] getDataSection(int startCol, 
 								  int endCol,
 								  Row dataRow,
 								  int rowIdx,
 								  Object[] headerChk,
 								  FormulaEvaluator objFormulaEvaluator,
-								  List<Object[]> dataList) throws CommonErrorException {
+								  List<Object[]> dataList) throws Exception {
 		boolean validAll = true;
 		boolean validHeaderOfDetail = true;	
-		Map<String, Object> dMapField = xlsConvVo.getDetailMappingField();
+		HashMap dMapField = xlsConvVo.getDetailMappingField();
 		
 		String col1ofRow = "";
 		List<Object> lsData = new ArrayList<Object>();
@@ -184,7 +226,7 @@ public class ExampleConvertExcelToStageService extends CommonDataFileUpload{
 			Cell cell = dataRow.getCell((short)j);
 			Object[] cellValues;
 			String colName = this.xlsConvVo.getColumnNames()[j];	
-			Map<String, Object> mapInfo = (HashMap)dMapField.get(colName);
+			HashMap mapInfo = (HashMap)dMapField.get(colName);
 			
 			cellValues = readCell(mapInfo, cell, colName, j, col1ofRow, rowIdx);
 			boolean valid = (boolean)cellValues[0];
@@ -197,15 +239,15 @@ public class ExampleConvertExcelToStageService extends CommonDataFileUpload{
 				if(valid){
 					cellValue = (String)cellValues[1];
 					
-					String convertDtFormat = (String)mapInfo.get(CommonExcelConversionDTO.ATTR_CONVERT_STRING_TO_DATE);
+					String convertDtFormat = (String)mapInfo.get(CBW00000CommonExcelConversionDTO.ATTR_CONVERT_STRING_TO_DATE);
 					if(!Strings.isNullOrEmpty(convertDtFormat)){
 						Date dt = null;
-						if(!Strings.isNullOrEmpty(cellValue)){
+						if(Strings.isNullOrEmpty(cellValue) == false){
 							if(FormatUtil.isValidDate(cellValue, convertDtFormat) == false){
 								String errMsg = messageSource.getMessage(MessagesConstants.B_ERROR_INVALID_FORMAT, 
 										new String[]{colName+" {Row No. "+(rowIdx+1)+"}", Strings.nullToEmpty(convertDtFormat)}, Locale.getDefault());
 								logger.error(errMsg);
-								loggerDb.error(this.getAppId(), MessagesConstants.B_ERROR_INVALID_FORMAT, errMsg, this.getCreateBy());
+								loggerDb.error(appId, MessagesConstants.B_ERROR_INVALID_FORMAT, errMsg, createBy);
 								validAll = false;
 							}else{
 								dt = FormatUtil.convertStringToDate(cellValue, convertDtFormat);								
@@ -222,10 +264,10 @@ public class ExampleConvertExcelToStageService extends CommonDataFileUpload{
 				validAll = valid;
 			}
 		}
-		lsData.add(this.getFileName());
-		lsData.add(this.getCreateBy());
+		lsData.add(this.filename);
+		lsData.add(this.createBy);
 		lsData.add(this.runningNo++);
-		lsData.add(this.getAppId());
+		lsData.add(this.appId);
 		if(validAll){
 			dataList.add(lsData.toArray());
 		}

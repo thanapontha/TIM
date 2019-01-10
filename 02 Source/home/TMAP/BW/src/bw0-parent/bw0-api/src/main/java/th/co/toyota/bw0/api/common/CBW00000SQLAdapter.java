@@ -7,10 +7,14 @@ import java.sql.SQLException;
 
 import th.co.toyota.bw0.util.FormatUtil;
 
-public class CommonSQLAdapter {
+public class CBW00000SQLAdapter {
 	public int execute(Connection con, String stQuery, Object oParams) throws Exception {
-	    try(PreparedStatement ps = con.prepareStatement(stQuery); ) {
-	      if ((oParams instanceof Object[]) && (((Object[])oParams)[0] instanceof Object[])) {
+	    PreparedStatement ps = null;
+	    int intResult = 0;
+	    try {
+	       ps = con.prepareStatement(stQuery);
+	      
+	      if ((oParams != null) && ((oParams instanceof Object[])) && ((((Object[])oParams)[0] instanceof Object[]))) {
 	        Object[] obTmp = (Object[])oParams;
 	        for (int i = 0; i < obTmp.length; i++) {
 	          assignParams(ps, obTmp[i]);
@@ -22,13 +26,26 @@ public class CommonSQLAdapter {
 	      }
 	      
 	      assignParams(ps, oParams);
-	      return ps.executeUpdate();
+	      intResult = ps.executeUpdate();
 	    }
+	    catch (Exception e)
+	    {
+	        throw e;
+	    } finally {
+	        if (ps != null) {
+	          ps.close();
+	          ps = null;
+	        }
+	    }
+	    
+	    return intResult;
 	  }
 
-	private void assignParams(PreparedStatement ps, Object oParams) throws SQLException
+	
+	private void assignParams(PreparedStatement ps, Object oParams)
+		    throws SQLException
 	  {
-	    Object[] arrParam = null;
+	    Object[] arrParam = (Object[])null;
 	    Object arrParamValue = null;
 	    if (oParams == null) {
 	      return;
@@ -55,11 +72,16 @@ public class CommonSQLAdapter {
 	          } else if ((arrParamValue instanceof BigDecimal)) {
 	            ps.setBigDecimal(i + 1, (BigDecimal)arrParamValue);
 	          }
-	        }else {
+	        }
+	        else if (arrParamValue == null) {
+	          ps.setString(i + 1, (String)arrParamValue);
+	        } else {
 	          ps.setObject(i + 1, arrParamValue);
 	        }
 	      }
-	    }else {
+	    }
+	    else
+	    {
 	      ps.setObject(1, oParams);
 	    }
 	  }
