@@ -17,8 +17,8 @@ import th.co.toyota.bw0.api.common.CommonUtility;
 import th.co.toyota.bw0.api.exception.common.CommonErrorException;
 
 @Repository
-public class CBW02130Repository implements IBW02130Repository {
-	final Logger logger = LoggerFactory.getLogger(CBW02130Repository.class);
+public class ExampleConvertExcelToStageRepositoryImp implements ExampleConvertExcelToStageRepository {
+	final Logger logger = LoggerFactory.getLogger(ExampleConvertExcelToStageRepositoryImp.class);
 	
 	@NotNull
 	@PersistenceContext(unitName = "entityManagerFactory")

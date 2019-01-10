@@ -23,7 +23,7 @@ import java.util.List;
 
 import th.co.toyota.bw0.api.exception.common.CommonErrorException;
 
-public interface IBW02130Repository {
+public interface ExampleConvertExcelToStageRepository {
 	public int insertDataToStaging(Connection conn, List<Object[]> dataList,
 			String userId) throws CommonErrorException;
 }
