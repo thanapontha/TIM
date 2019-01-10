@@ -99,8 +99,9 @@ public final class AppConstants {
 	public static final String RIGHT_PARENTHESIS = "\\)";
 
 	public static final String TABLE_TB_M_SYSTEM = "TB_M_SYSTEM";
-
 	public static final String SYS_CATEGORY_REPORT = "REPORT";
+	
+	public static final String SYS_CATEGORY_COMMON = "COMMON";
 	public static final String SYS_CATEGORY_REPORT_NAME = "REPORT_NAME";
 	public static final String SYS_CATEGORY_MASTER = "MASTER";
 	public static final String SYS_CATEGORY = "TIM";
@@ -150,4 +151,5 @@ public final class AppConstants {
 
 	public static final String LANGUAGE_THAI = "th";
 	public static final String LANGUAGE_ENG = "en";
+	public static final String SYSTEM_NAME = "SYSTEM";
 }
