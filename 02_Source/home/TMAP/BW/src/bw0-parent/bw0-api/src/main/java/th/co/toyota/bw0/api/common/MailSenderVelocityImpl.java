@@ -21,7 +21,6 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 
 import th.co.toyota.bw0.api.constants.AppConstants;
