@@ -80,7 +80,7 @@ public class ExampleConvertExcelToStage {
 		}
 
 		String batchName = "Example Upload Batch";
-		String fileId = "ExampleUpload";
+		String fileId = "BW02130";
 		String tableName = "TB_S_KOMPO";
 
 		String createBy = "SYSTEM";
