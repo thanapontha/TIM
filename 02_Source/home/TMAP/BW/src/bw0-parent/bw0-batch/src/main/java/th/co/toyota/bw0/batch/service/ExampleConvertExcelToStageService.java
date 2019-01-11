@@ -121,7 +121,7 @@ public class ExampleConvertExcelToStageService extends CBW00000DataFileUpload{
 						colName = "FILE_NAME";
 					}
 					String cellValue = "";
-					cellValues = readCell(mapInfo, cell, colName, j, "", -1);
+					cellValues = readCell(cell, colName, j, "", -1);
 					boolean valid = (boolean)cellValues[0];
 					if(valid){
 						cellValue = (String)cellValues[1];
@@ -172,7 +172,7 @@ public class ExampleConvertExcelToStageService extends CBW00000DataFileUpload{
 			String colName = this.xlsConvVo.getColumnNames()[j];	
 			HashMap mapInfo = (HashMap)dMapField.get(colName);
 			
-			cellValues = readCell(mapInfo, cell, colName, j, col1ofRow, rowIdx);
+			cellValues = readCell(cell, colName, j, col1ofRow, rowIdx);
 			boolean valid = (boolean)cellValues[0];
 			if(valid){
 				String cellValue = (String)cellValues[1];
