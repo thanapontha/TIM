@@ -1,15 +1,15 @@
 /******************************************************
  * Program History
  * 
- * Project Name	            :  GWRDS : 
+ * Project Name	            :  TIM : Toyota Insurance Management
  * Client Name				:  TDEM
  * Package Name             :  th.co.toyota.bw0.batch.repository
- * Program ID 	            :  CBW02130Repository.java
- * Program Description	    :  Kompo Upload
+ * Program ID 	            :  ExampleConvertExcelToStageRepositoryImp.java
+ * Program Description	    :  Example Upload
  * Environment	 	    	:  Java 7
  * Author		    		:  Thanawut T.
  * Version		    		:  1.0
- * Creation Date            :  07 September 2017
+ * Creation Date            :  10 January 2019
  *
  * Modification History	    :
  * Version	   Date		   Person Name		Chng Req No		Remarks
@@ -19,7 +19,6 @@
 package th.co.toyota.bw0.batch.repository;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -45,14 +44,22 @@ public class ExampleConvertExcelToStageRepositoryImp implements ExampleConvertEx
 	final Logger logger = LoggerFactory.getLogger(ExampleConvertExcelToStageRepositoryImp.class);
 	
 	@Override
+	public int insertDataToStaging(List<Object[]> dataList, String userId) throws CommonErrorException{
+		SessionImpl session = (SessionImpl)(em.getDelegate());
+		
+		try(Connection conn = session.getJdbcConnectionAccess().obtainConnection()){
+			
+			return this.insertDataToStaging(conn, dataList, userId);
+			
+		}catch (Exception e) {
+			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, true);
+		}
+	}
+	
+	@Override
 	public int insertDataToStaging(Connection conn, List<Object[]> dataList, String userId) throws CommonErrorException{
 		int inserted = 0;
-		boolean completed = false;
-		boolean closeConnection = true;
 		try{
-//			StringBuilder deleteSQL = new StringBuilder();
-//			deleteSQL.append(" DELETE FROM TB_S_KOMPO WHERE CREATE_BY = ?");
-			
 			StringBuilder insSQL = new StringBuilder();
 			insSQL.append("INSERT INTO TB_S_KOMPO  ");
 			insSQL.append(" ( GETSUDO_MONTH,  ");
@@ -84,47 +91,16 @@ public class ExampleConvertExcelToStageRepositoryImp implements ExampleConvertEx
 			insSQL.append("   ?, ? ");
 			insSQL.append(" )  ");
 			
-			if(conn==null){
-				SessionImpl session = (SessionImpl)(em.getDelegate());
-				conn = session.getJdbcConnectionAccess().obtainConnection();
-			}else{
-				closeConnection = false;
-			}
 			conn.setAutoCommit(false);
-			
-//			//delete data from staging by user id
-//			PreparedStatement ps = conn.prepareStatement(deleteSQL.toString());
-//			ps.setString(1, userId);
-//			ps.executeUpdate();
-//			ps.close();
 			
 			//insert data to staging
 			CBW00000SQLAdapter adapter = new CBW00000SQLAdapter();
 			if(dataList!=null && !dataList.isEmpty()){
 				inserted = adapter.execute(conn, insSQL.toString() , dataList.toArray());
 			}
-			completed = true;
 			return inserted;
 		}catch (Exception e) {
-			completed = false;
 			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, true);
-		}finally{
-			try {
-				if(conn!=null && !conn.isClosed()){
-					if(completed){
-						conn.commit();
-					}else{
-						conn.rollback();
-					}
-					
-					if(closeConnection){
-						conn.close();
-						conn = null;
-					}
-				}
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
 		}
 	}
 

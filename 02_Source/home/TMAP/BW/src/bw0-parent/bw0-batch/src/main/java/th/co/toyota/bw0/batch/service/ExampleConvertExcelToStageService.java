@@ -4,7 +4,7 @@
  * Project Name	            :  TIM : Toyota Insurance Management
  * Client Name				:  TDEM
  * Package Name             :  th.co.toyota.bw0.batch.service
- * Program ID 	            :  CBW02130Service.java
+ * Program ID 	            :  ExampleConvertExcelToStageService.java
  * Program Description	    :  Example Upload
  * Environment	 	    	:  Java 7
  * Author		    		:  Thanawut T.
@@ -18,7 +18,6 @@
  ********************************************************/
 package th.co.toyota.bw0.batch.service;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -36,7 +35,6 @@ import org.springframework.stereotype.Service;
 
 import th.co.toyota.bw0.api.common.upload.CBW00000CommonExcelConversionDTO;
 import th.co.toyota.bw0.api.common.upload.CBW00000DataFileUpload;
-import th.co.toyota.bw0.api.constants.AppConstants;
 import th.co.toyota.bw0.api.constants.MessagesConstants;
 import th.co.toyota.bw0.api.exception.common.CommonErrorException;
 import th.co.toyota.bw0.api.service.common.CBW00000CommonService;
@@ -60,29 +58,18 @@ public class ExampleConvertExcelToStageService extends CBW00000DataFileUpload{
 	@Autowired
 	private ExampleConvertExcelToStageRepository repository;
 
-	protected String DEFAULT_SEPARATOR = "|";
 	protected static final String DEFAULT_PAD = " ";
 	
-	public String userCompanyLogin;
-	public String uploadType;
-	public String getsudoMonth;
-	public String timing;
-	public String vehiclePlant;
-	public String vehicleModel;
-	public String unitPlant;
-	public String unitType;
-	public String unitModel;
-	public String fileNameInUploadFile;
-	public String fileIdInUploadFile;
-	public Timestamp sysdate;
 	private int runningNo = 1;
+
+	private String fileIdInUploadFile;
+	private String fileNameInUploadFile;
 	
-	public boolean validateParameters(String[] params, int lengthParamCheck, String appId, String createBy, String fileName, String fileId,Timestamp sysdate) {
+	public boolean validateParameters(String[] params, int lengthParamCheck, String appId, String createBy, String fileName, String fileId) {
 		this.appId = appId;
 		this.createBy = createBy;
 		this.filename = fileName;
 		this.fileId = fileId;
-		this.sysdate = sysdate;
 		if (params.length != lengthParamCheck) {
 			String errMsg = messageSource.getMessage(CST30000Messages.ERROR_MESSAGE_MISSING_PARAMETER, null, Locale.getDefault());
 			errMsg = errMsg + "(" + params.length + "/"+lengthParamCheck+")";
@@ -113,7 +100,7 @@ public class ExampleConvertExcelToStageService extends CBW00000DataFileUpload{
 	
 	@Override 
 	public int insertDataToStaging(List<Object[]> dataLs)throws Exception {
-    	return repository.insertDataToStaging(null, dataLs, this.createBy);
+    	return repository.insertDataToStaging(dataLs, this.createBy);
     }
 	
 	public boolean getDataHeaderOfEachFunction(List<Sheet> workingSheet, FormulaEvaluator objFormulaEvaluator) throws Exception {
@@ -170,12 +157,12 @@ public class ExampleConvertExcelToStageService extends CBW00000DataFileUpload{
 		
 		String col1ofRow = "";
 		List<Object> lsData = new ArrayList<>();
-		lsData.add(this.getsudoMonth);
-		lsData.add(this.timing);
-		lsData.add(this.vehiclePlant);
-		lsData.add(this.vehicleModel);
-		lsData.add(this.unitPlant);
-		lsData.add(this.unitModel);
+		lsData.add("201901");
+		lsData.add("D-11");
+		lsData.add("TMT");
+		lsData.add("Hilux");
+		lsData.add("STM");
+		lsData.add("DA1");
 		lsData.add(this.fileIdInUploadFile);
 		lsData.add(this.fileNameInUploadFile);
 		

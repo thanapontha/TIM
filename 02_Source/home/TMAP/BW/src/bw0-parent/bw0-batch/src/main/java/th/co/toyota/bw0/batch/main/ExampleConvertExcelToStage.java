@@ -129,7 +129,7 @@ public class ExampleConvertExcelToStage {
 
 			// Process : Convert Excel To Staging table
 			if (exampleConvertExcelToStage.service
-					.validateParameters(params, lengthParamCheck, appId, createBy, fileName, fileId, sysdate)) {
+					.validateParameters(params, lengthParamCheck, appId, createBy, fileName, fileId)) {
 				result = exampleConvertExcelToStage.convertExcelToStaging(tableName, exampleConvertExcelToStage.loggerBBW02130);
 			} else {
 				exampleConvertExcelToStage.logger.debug("error when validate parameters");
