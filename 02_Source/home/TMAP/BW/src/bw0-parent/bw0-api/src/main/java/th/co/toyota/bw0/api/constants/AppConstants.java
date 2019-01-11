@@ -272,7 +272,6 @@ public final class AppConstants {
 	public static final String UPLOAD_UNIT_PLANT_CAPACITY = "Unit Plant Capacity";
 	public static final String UPLOAD_TYPE_RUNDOWN = "PAMS Rundown";
 	public static final String UPLOAD_TYPE_KOMPOKUNG = "Kompokung";
-	public static final String UPLOAD_TYPE_MULTI_LINE_SPLITING = "Multi Line Spliting";
 	public static final String UPLOAD_TYPE_CALENDAR = "Calendar";
 	public static final String UPLOAD_TYPE_DOWNLOAD = "Download";
 	
