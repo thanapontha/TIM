@@ -32,7 +32,6 @@ import java.util.regex.Pattern;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
-import th.co.toyota.bw0.api.common.CBW00000Util;
 import th.co.toyota.bw0.api.constants.AppConstants;
 
 import com.google.common.base.Strings;
@@ -652,10 +651,6 @@ public class FormatUtil {
 	}
 	
     public static void main(String[] arg){
-    	String value = "H(H) (ss)";
-    	String result = CBW00000Util.addBlankSaparator(value);
-    	result = CBW00000Util.convertBatchParam(result);
-    	
     	Date dDate = convertStringToDate("Mar-99","MMM-yy");
     	String dtStr = convertDateToString(dDate);
     	System.out.println(dtStr);

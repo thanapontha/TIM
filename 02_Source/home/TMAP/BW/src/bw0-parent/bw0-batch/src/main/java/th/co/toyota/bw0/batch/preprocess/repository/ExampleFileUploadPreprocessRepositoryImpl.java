@@ -4,12 +4,12 @@
  * Project Name	            :  GWRDS : 
  * Client Name				:  TDEM
  * Package Name             :  th.co.toyota.bw0.batch.preprocess.repository
- * Program ID 	            :  CBW02130PreprocessRepository.java
- * Program Description	    :  KOMPO Upload
+ * Program ID 	            :  ExampleFileUploadPreprocessRepositoryImpl.java
+ * Program Description	    :  Example File Upload Preprocess Repository Implement
  * Environment	 	    	:  Java 7
- * Author		    		:  Thanawut T.
+ * Author		    		:  Thanapon T.
  * Version		    		:  1.0
- * Creation Date            :  08 September 2017
+ * Creation Date            :  January, 11 2018
  *
  * Modification History	    :
  * Version	   Date		   Person Name		Chng Req No		Remarks
@@ -38,37 +38,31 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import th.co.toyota.bw0.api.common.CBW00000Util;
+import th.co.toyota.bw0.api.common.CommonUtility;
 import th.co.toyota.bw0.api.constants.AppConstants;
 import th.co.toyota.bw0.api.constants.MessagesConstants;
 import th.co.toyota.bw0.api.exception.common.CommonErrorException;
-import th.co.toyota.bw0.api.model.common.GetsudoMonthConfigInfo;
-import th.co.toyota.bw0.api.repository.common.IBW00000Repository;
+import th.co.toyota.bw0.api.repository.common.CommonAPIRepository;
 import th.co.toyota.bw0.util.FormatUtil;
 import th.co.toyota.st3.api.constants.CST30000Constants;
 
 import com.google.common.base.Strings;
 
 @Repository
-public class CBW02130PreprocessRepository implements IBW02130PreprocessRepository {
+public class ExampleFileUploadPreprocessRepositoryImpl implements ExampleFileUploadPreprocessRepository {
 
 	@NotNull
 	@PersistenceContext(unitName = "entityManagerFactory")
 	private EntityManager em;
-
-	@Autowired
-	private IBW02120PreprocessRepository repositoryPams;
 	
 	@Autowired
-	private IBW00000Repository commonRepository;
+	private CommonAPIRepository commonRepository;
 	
-	final Logger logger = LoggerFactory.getLogger(CBW02130PreprocessRepository.class);
+	final Logger logger = LoggerFactory.getLogger(ExampleFileUploadPreprocessRepositoryImpl.class);
 	
 	@Override
 	public List<Object[]> getStagingList(Connection conn, String userId, String vehiclePlant, String vehicleModel, String getsudoMonth, String pamsKompoFlag) throws CommonErrorException{
-		
-		GetsudoMonthConfigInfo getsudoInfo = commonRepository.getGetsudoConfigInfo(null, getsudoMonth);
-		String endMonth = getsudoInfo.getEndMonth();
+	
 		
 		StringBuilder sql = new StringBuilder();
 		
@@ -142,7 +136,6 @@ public class CBW02130PreprocessRepository implements IBW02130PreprocessRepositor
 		sql.append("   AND S.UNIT_PLANT = CU.PLANT ");
 		
 		sql.append(" WHERE S.CREATE_BY = '"+userId+"' ");
-		sql.append("   AND S.PROD_DT <= LAST_DAY(TO_DATE('"+endMonth+"', 'Mon-YY')) ");
 		sql.append(" ORDER BY S.RUNNING_NO ");
 		
 		boolean closeConnection = true;
@@ -169,7 +162,7 @@ public class CBW02130PreprocessRepository implements IBW02130PreprocessRepositor
 			}
 			return ls;
 		}catch(Exception e){
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, true);
+			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, true);
 		} finally {
 			try{
 				if(conn!=null && !conn.isClosed()){
@@ -204,7 +197,6 @@ public class CBW02130PreprocessRepository implements IBW02130PreprocessRepositor
 		sql.append(" WHERE M.VEHICLE_PLANT = '"+vehiclePlant+"' ");
 		sql.append("   AND M.VEHICLE_MODEL = '"+vehicleModel+"' ");
 		sql.append("   AND ");
-		sql.append(commonRepository.getEffectiveCriteria(null, getsudoMonth, "M"));
 		sql.append("   AND EXISTS (SELECT 'x' ");
 		sql.append("   	          FROM TB_C_PACK_LT L ");
 		sql.append("   	         WHERE L.VEHICLE_PLANT = M.VEHICLE_PLANT ");
@@ -236,7 +228,7 @@ public class CBW02130PreprocessRepository implements IBW02130PreprocessRepositor
 			}
 			return ls;
 		}catch(Exception e){
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, true);
+			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, true);
 		} finally {
 			try{
 				if(conn!=null && !conn.isClosed()){
@@ -304,7 +296,7 @@ public class CBW02130PreprocessRepository implements IBW02130PreprocessRepositor
 			}
 			return ls;
 		}catch(Exception e){
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, true);
+			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, true);
 		} finally {
 			try{
 				if(conn!=null && !conn.isClosed()){
@@ -438,7 +430,7 @@ public class CBW02130PreprocessRepository implements IBW02130PreprocessRepositor
 			return insertedCnt;
 		}catch (Exception e) {
 			completed = false;
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, true);
+			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, true);
 		} finally {
 			try {
 				if ((conn != null) && !conn.isClosed()) {
@@ -489,7 +481,7 @@ public class CBW02130PreprocessRepository implements IBW02130PreprocessRepositor
 			String endMonth = params[12];
 			
 			//Delete and Insert PAMs Rundown
-			ps = conn.prepareStatement(repositoryPams.getDeletePamsRundownSQL());
+			ps = conn.prepareStatement("");
 			
 			ps.setString(1, version);
 			ps.setString(2, getsudoMonth);
@@ -516,12 +508,12 @@ public class CBW02130PreprocessRepository implements IBW02130PreprocessRepositor
 													unitType,
 													unitModel};
 			
-			String insPams = repositoryPams.getInsertPamsRundownSQL(paramGetUpdate, userId, version, getsudoMonth, timing, vehiclePlant, vehicleModel, appId);
+			//String insPams = repositoryPams.getInsertPamsRundownSQL(paramGetUpdate, userId, version, getsudoMonth, timing, vehiclePlant, vehicleModel, appId);
 //			int concurrentPams = repositoryPams.getConcurrencyPamsRundown(conn, paramGetUpdate, appId);
 			
 			Timestamp sysdate = FormatUtil.currentTimestampToOracleDB();
 			
-			ps = conn.prepareStatement(insPams);
+			ps = conn.prepareStatement("");
 			ps.setTimestamp(1, sysdate);
 			ps.setTimestamp(2, sysdate);
 			
@@ -933,7 +925,7 @@ public class CBW02130PreprocessRepository implements IBW02130PreprocessRepositor
 			}
 		}catch (Exception e) {
 			completed = false;
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, true);
+			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, true);
 		}finally{
 			try {
 				if(conn!=null && !conn.isClosed()){
@@ -1036,7 +1028,7 @@ public class CBW02130PreprocessRepository implements IBW02130PreprocessRepositor
 			}
 			return ls;
 		}catch(Exception e){
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, true);
+			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, true);
 		} finally {
 			try{
 				if(conn!=null && !conn.isClosed()){

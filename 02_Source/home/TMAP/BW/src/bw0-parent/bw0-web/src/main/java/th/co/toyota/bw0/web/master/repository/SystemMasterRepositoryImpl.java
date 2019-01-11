@@ -23,7 +23,7 @@ import th.co.toyota.bw0.api.common.CommonUtility;
 import th.co.toyota.bw0.api.constants.AppConstants;
 import th.co.toyota.bw0.api.exception.common.CommonErrorException;
 import th.co.toyota.bw0.common.form.CommonBaseForm;
-import th.co.toyota.bw0.common.repository.CommonRepository;
+import th.co.toyota.bw0.common.repository.CommonWebRepository;
 import th.co.toyota.bw0.util.ComboValue;
 import th.co.toyota.bw0.util.FormatUtil;
 import th.co.toyota.bw0.web.master.form.SystemMasterForm;
@@ -35,15 +35,15 @@ import th.co.toyota.st3.api.model.SystemInfoId;
 import com.google.common.base.Strings;
 
 @Repository
-public class SystemMasterRepositoryImp implements SystemMasterRepository{
+public class SystemMasterRepositoryImpl implements SystemMasterRepository{
 	@NotNull
 	@PersistenceContext(unitName = "entityManagerFactory")
 	private EntityManager em;
 	
-	final Logger logger = LoggerFactory.getLogger(SystemMasterRepositoryImp.class);
+	final Logger logger = LoggerFactory.getLogger(SystemMasterRepositoryImpl.class);
 
 	@Autowired
-	private CommonRepository commonRepository;	
+	private CommonWebRepository commonRepository;	
 	
 	private String sep = "\\" + AppConstants.CHECKBOX_SEPERATER;
 

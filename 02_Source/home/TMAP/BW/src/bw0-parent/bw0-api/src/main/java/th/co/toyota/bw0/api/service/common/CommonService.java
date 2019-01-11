@@ -19,10 +19,8 @@
 package th.co.toyota.bw0.api.service.common;
 
 import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,29 +29,24 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
-import th.co.toyota.bw0.api.common.CBW00000Util;
-import th.co.toyota.bw0.api.constants.AppConstants;
-import th.co.toyota.bw0.api.constants.MessagesConstants;
-import th.co.toyota.bw0.api.exception.common.CommonErrorException;
-import th.co.toyota.bw0.api.model.common.GetsudoMonthConfigInfo;
-import th.co.toyota.bw0.api.repository.common.IBW00000Repository;
-import th.co.toyota.st3.api.constants.CST30000Constants;
-import th.co.toyota.st3.api.download.CST30090ExcelGenerator;
-import th.co.toyota.st3.api.exception.PostODBFailedException;
-import th.co.toyota.st3.api.model.BatchQueue;
-import th.co.toyota.st3.api.model.ExcelDownloadStatus;
-import th.co.toyota.st3.api.model.ModuleDetailInfo;
-import th.co.toyota.st3.api.model.ODBRoles;
-import th.co.toyota.st3.api.util.CST30000BatchManager;
-
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 
+import th.co.toyota.bw0.api.constants.AppConstants;
+import th.co.toyota.bw0.api.constants.MessagesConstants;
+import th.co.toyota.bw0.api.exception.common.CommonErrorException;
+import th.co.toyota.bw0.api.repository.common.CommonAPIRepository;
+import th.co.toyota.st3.api.constants.CST30000Constants;
+import th.co.toyota.st3.api.download.CST30090ExcelGenerator;
+import th.co.toyota.st3.api.model.BatchQueue;
+import th.co.toyota.st3.api.model.ModuleDetailInfo;
+import th.co.toyota.st3.api.util.CST30000BatchManager;
+
 @Service
-public class CBW00000CommonService{
+public class CommonService{
 
 	@Autowired
-	private IBW00000Repository repository;
+	private CommonAPIRepository repository;
 
 	@Autowired
 	protected MessageSource messageSource;
@@ -127,61 +120,6 @@ public class CBW00000CommonService{
 	public String genAppId() throws CommonErrorException{
 		return repository.genAppId();
 	}
-	
-	public GetsudoMonthConfigInfo getGetsudoMonthInfo(Connection conn, String getsudoMonth) throws CommonErrorException{
-		return repository.getGetsudoConfigInfo(conn, getsudoMonth);
-	}	
-	
-//	public String fixEncoding(String latin1) {
-//		try {
-//			byte[] bytes = latin1.getBytes("ISO-8859-1");
-//			if (!this.validUTF8(bytes))
-//				return latin1;   
-//			return new String(bytes, "UTF-8");  
-//		} catch (UnsupportedEncodingException e) {
-//			// Impossible, throw unchecked
-//			throw new IllegalStateException("No Latin1 or UTF-8: " + e.getMessage());
-//		}
-//	}
-	
-//	private boolean validUTF8(byte[] input) {
-//		  int i = 0;
-//		  // Check for BOM
-//		  if (input.length >= 3 && (input[0] & 0xFF) == 0xEF
-//		    && (input[1] & 0xFF) == 0xBB & (input[2] & 0xFF) == 0xBF) {
-//		   i = 3;
-//		  }
-//
-//		  int end;
-//		  for (int j = input.length; i < j; ++i) {
-//		   int octet = input[i];
-//		   if ((octet & 0x80) == 0) {
-//		    continue; // ASCII
-//		   }
-//
-//		   // Check for UTF-8 leading byte
-//		   if ((octet & 0xE0) == 0xC0) {
-//		    end = i + 1;
-//		   } else if ((octet & 0xF0) == 0xE0) {
-//		    end = i + 2;
-//		   } else if ((octet & 0xF8) == 0xF0) {
-//		    end = i + 3;
-//		   } else {
-//		    // Java only supports BMP so 3 is max
-//		    return false;
-//		   }
-//
-//		   while (i < end) {
-//		    i++;
-//		    octet = input[i];
-//		    if ((octet & 0xC0) != 0x80) {
-//		     // Not a valid trailing byte
-//		     return false;
-//		    }
-//		   }
-//		  }
-//		  return true;
-//		 }
 
 	public Object[] getPrevGetsudoMonthAndTiming(Connection conn, String getsudoMonthCurrent, String timingCurrent){
 		try {

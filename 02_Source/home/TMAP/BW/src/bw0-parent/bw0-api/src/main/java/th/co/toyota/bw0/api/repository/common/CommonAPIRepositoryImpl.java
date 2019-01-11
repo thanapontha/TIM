@@ -1,15 +1,15 @@
 /******************************************************
  * Program History
  *
- * Project Name	            :  GWRDS :
+ * Project Name	            :  
  * Client Name				:  TMAP-EM
  * Package Name             :  th.co.toyota.bw0.repository.common
- * Program ID 	            :  CBW00000Repository.java
- * Program Description	    :  Common Repository
+ * Program ID 	            :  CommonAPIRepositoryImpl.java
+ * Program Description	    :  Common API Repository
  * Environment	 	        :  Java 7
  * Author					:  Thanapon T.
  * Version					:  1.0
- * Creation Date            :  September 08, 2016
+ * Creation Date            :  January 08, 2018
  *
  * Modification History	    :
  * Version	   Date		   Person Name		Chng Req No		Remarks
@@ -47,14 +47,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import th.co.toyota.bw0.api.common.CBW00000SQLAdapter;
-import th.co.toyota.bw0.api.common.CBW00000Util;
+import th.co.toyota.bw0.api.common.CommonSQLAdapter;
+import th.co.toyota.bw0.api.common.CommonUtility;
 import th.co.toyota.bw0.api.common.EmailNotification;
 import th.co.toyota.bw0.api.constants.AppConstants;
 import th.co.toyota.bw0.api.constants.MessagesConstants;
 import th.co.toyota.bw0.api.exception.common.CommonErrorException;
-import th.co.toyota.bw0.api.model.common.Authorization;
-import th.co.toyota.bw0.api.model.common.GetsudoMonthConfigInfo;
 import th.co.toyota.bw0.util.ComboValue;
 import th.co.toyota.bw0.util.FormatUtil;
 import th.co.toyota.st3.api.model.ModuleDetailInfo;
@@ -65,7 +63,7 @@ import th.co.toyota.st3.api.util.CST32010DocNoGenerator;
 import com.google.common.base.Strings;
 
 @Repository
-public class CBW00000Repository implements IBW00000Repository {
+public class CommonAPIRepositoryImpl implements CommonAPIRepository {
 	int IDX_L_GETSUDO_MONTH = 0;
 	int IDX_L_TIMING = 1;
 	int IDX_L_VEHICLE_PLANT = 2;
@@ -81,7 +79,7 @@ public class CBW00000Repository implements IBW00000Repository {
 	int IDX_L_ERROR_STOCK_MIN = 12;
 	int IDX_L_ERROR_STOCK_MAX = 13;
 	
-	final Logger logger = LoggerFactory.getLogger(CBW00000Repository.class);
+	final Logger logger = LoggerFactory.getLogger(CommonAPIRepositoryImpl.class);
 
 	@NotNull
 	@PersistenceContext(unitName = "entityManagerFactory")
@@ -91,7 +89,7 @@ public class CBW00000Repository implements IBW00000Repository {
 	private CST32010DocNoGenerator docNoGenerator;
 
 	@Autowired
-	private IBW03060Repository systemMasterRepository;
+	private SystemMasterAPIRepository systemMasterRepository;
 	
 //	@Override
 //	public boolean isSeqMasterExist(String seqCode) {
@@ -212,7 +210,7 @@ public class CBW00000Repository implements IBW00000Repository {
 				comboLs.add(new ComboValue(Strings.nullToEmpty(rs.getString("ST_VALUE").trim()), Strings.nullToEmpty(rs.getString("ST_LABEL").trim())));
 			}
 		} catch (Exception e) {
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, false);
+			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, false);
 		} finally {
 			try {
 				if(conn!=null && !conn.isClosed()){
@@ -234,73 +232,6 @@ public class CBW00000Repository implements IBW00000Repository {
 			}
 		}
 		return comboLs;
-	}
-
-	@Override
-	public List<Authorization> getUserAuth(Connection conn, String userCompany, String userId) throws CommonErrorException {
-		List<Authorization> auList = new ArrayList<Authorization>();
-
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		boolean closeConnection = true;
-		try {
-			if(conn==null){
-				SessionImpl session = (SessionImpl)(em.getDelegate());
-				conn = session.getJdbcConnectionAccess().obtainConnection();
-			}else{
-				closeConnection = false;
-			}
-			
-			StringBuilder SQL = new StringBuilder();
-			SQL.append(" SELECT VALUE FROM TB_M_SYSTEM ");
-			SQL.append(" WHERE CATEGORY = ?  AND upper(SUB_CATEGORY) = upper(?) AND upper(VALUE) LIKE upper(?) AND STATUS = 'Y' ");
-			SQL.append(" ORDER BY UPPER(VALUE) ASC ");
-			
-			ps = conn.prepareStatement(SQL.toString());
-			ps.setString(1, AppConstants.SYS_CATEGORY_PIC);
-			ps.setString(2, userCompany);
-			ps.setString(3, "%:" + userId + ":%");
-			rs = ps.executeQuery();
-			while (rs.next()) {
-				String value = rs.getString("VALUE");
-				if (!Strings.isNullOrEmpty(value)) {
-					String[] values = value.split("\\" + AppConstants.COLON);
-					if ((values != null) && (values.length >= 3)) {
-
-						String email = "";
-						if (values.length > 3) {
-							email = values[3];
-						}
-						Authorization au = new Authorization(Strings.nullToEmpty(values[0]), Strings.nullToEmpty(values[1]),
-								Strings.nullToEmpty(values[2]), email);
-						auList.add(au);
-					}
-				}
-			}
-		} catch (Exception e) {
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, false);
-		} finally {
-			try {
-				if(conn!=null && !conn.isClosed()){
-					if (rs != null) {
-						rs.close();
-						rs = null;
-					}
-					if (ps != null) {
-						ps.close();
-						ps = null;
-					}
-					if(closeConnection){
-						conn.close();
-						conn = null;
-					}
-				}
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
-		}
-
-		return auList;
 	}
 
 	@Override
@@ -373,7 +304,7 @@ public class CBW00000Repository implements IBW00000Repository {
 						, AppConstants.ERROR);
 			}
 		} catch (Exception e) {
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, false);
+			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, false);
 		} finally {
 			try {
 				if(conn!=null && !conn.isClosed()){
@@ -428,7 +359,7 @@ public class CBW00000Repository implements IBW00000Repository {
 				comboLs.add(new ComboValue(Strings.nullToEmpty(rs.getString("ST_VALUE")), Strings.nullToEmpty(rs.getString("ST_LABEL"))));
 			}
 		} catch (Exception e) {
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, false);
+			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, false);
 		} finally {
 			try {
 				if(conn!=null && !conn.isClosed()){
@@ -450,79 +381,6 @@ public class CBW00000Repository implements IBW00000Repository {
 			}
 		}
 		return comboLs;
-	}
-
-	@Override
-	public GetsudoMonthConfigInfo getGetsudoConfigInfo(Connection conn, String getsudoMonth) throws CommonErrorException {
-		GetsudoMonthConfigInfo result = null;
-		boolean closeConnection = true;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		try {
-			if(conn==null){
-				SessionImpl session = (SessionImpl)(em.getDelegate());
-				conn = session.getJdbcConnectionAccess().obtainConnection();
-			}else{
-				closeConnection = false;
-			}
-
-			StringBuilder sql = new StringBuilder();
-			sql.append("SELECT T.MONTH MONTH, ");
-			sql.append("       '").append(getsudoMonth).append("' START_MONTH, ");
-			sql.append("       (CASE WHEN T.DISPLAY_MONTH = 0 THEN '").append(getsudoMonth).append("'  ");
-			sql.append("             ELSE TO_CHAR(ADD_MONTHS(TO_DATE('").append(getsudoMonth).append("', 'Mon-YY'), T.DISPLAY_MONTH - 1),'Mon-YY')   ");
-			sql.append("        END) AS END_MONTH, ");
-			sql.append(" 		T.DISPLAY_MONTH, ");
-			sql.append(" 		T.CHECK_MONTH ");
-			sql.append("  FROM TB_C_GETSUDO_MONTH T");
-			sql.append(" WHERE INITCAP(T.MONTH) = TRIM(TO_CHAR(TO_DATE('").append(getsudoMonth).append("','Mon-YY'), 'Month'))");
-
-			ps = conn.prepareStatement(sql.toString());
-			rs = ps.executeQuery();
-			while (rs.next()) {
-				if (result == null) {
-					result = new GetsudoMonthConfigInfo();
-				}
-				result.setMonth(Strings.nullToEmpty(rs.getString("MONTH")));
-				result.setStartMonth(Strings.nullToEmpty(rs.getString("START_MONTH")));
-				result.setEndMonth(Strings.nullToEmpty(rs.getString("END_MONTH")));
-				result.setDisplayMonth(rs.getBigDecimal("DISPLAY_MONTH").intValue());
-				result.setCheckMonth(rs.getBigDecimal("CHECK_MONTH").intValue());
-			}
-		} catch (Exception e) {
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, false);
-		} finally {
-			try {
-				if(conn!=null && !conn.isClosed()){
-					if (rs != null) {
-						rs.close();
-						rs = null;
-					}
-					if (ps != null) {
-						ps.close();
-						ps = null;
-					}
-					if(closeConnection){
-						conn.close();
-						conn = null;
-					}
-				}
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
-		}
-		if (result == null) {
-			Date gmDate = FormatUtil.convertStringToDate(getsudoMonth);
-            String monthFullname = FormatUtil.convertDateToString(gmDate, AppConstants.DATE_STRING_MONTH_FULLNAME);
-			String[] params = new String[5];
-			params[0] = "Getsudo Month:" + monthFullname;
-			params[1] = "Getsudo Month Config (TB_C_GETSUDO_MONTH)";
-			params[2] = "";
-			params[3] = "";
-			params[4] = "";
-			throw new CommonErrorException(MessagesConstants.B_ERROR_DATA_NOT_FOUND_FROM, params, AppConstants.ERROR);
-		}
-		return result;
 	}
 
 	@Override
@@ -550,7 +408,7 @@ public class CBW00000Repository implements IBW00000Repository {
 				result = rs.getString("STATUS");
 			}
 		} catch (Exception e) {
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, false);
+			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, false);
 		}finally{
 			try {
 				if(conn!=null && !conn.isClosed()){
@@ -598,7 +456,7 @@ public class CBW00000Repository implements IBW00000Repository {
 				result = String.valueOf(rs.getTimestamp("TRANS_UPDATE_DT").getTime());
 			}
 		} catch (Exception e) {
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, false);
+			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, false);
 		}finally{
 			try {
 				if(conn!=null && !conn.isClosed()){
@@ -674,7 +532,7 @@ public class CBW00000Repository implements IBW00000Repository {
 			return updatedCnt;
 		} catch (Exception e) {
 			completed = false;
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, false);
+			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, false);
 		} finally {
 			try {
 				if ((conn != null) && !conn.isClosed()) {
@@ -754,7 +612,7 @@ public class CBW00000Repository implements IBW00000Repository {
 			sql.append(" 			VALUES ");
 			sql.append(" 			  (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ");
 
-			CBW00000SQLAdapter adapter = new CBW00000SQLAdapter();
+			CommonSQLAdapter adapter = new CommonSQLAdapter();
 			if ((dataList != null) && (!dataList.isEmpty())) {
 				insertedCnt = adapter.execute(conn, sql.toString(), dataList.toArray());
 			}
@@ -763,7 +621,7 @@ public class CBW00000Repository implements IBW00000Repository {
 			return insertedCnt;
 		} catch (Exception e) {
 			completed = false;
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, false);
+			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, false);
 		} finally {
 			try {
 				if ((conn != null) && !conn.isClosed()) {
@@ -779,22 +637,6 @@ public class CBW00000Repository implements IBW00000Repository {
 				e1.printStackTrace();
 			}
 		}
-	}
-	
-	@Override
-	public String getEffectiveCriteria(Connection conn, String getsudoMonth, String aliasTable) throws CommonErrorException{
-		GetsudoMonthConfigInfo getsudoInfo = this.getGetsudoConfigInfo(conn, getsudoMonth);
-		String endMonth = getsudoInfo.getEndMonth();
-		StringBuilder criteria = new StringBuilder();
-		aliasTable = Strings.nullToEmpty(aliasTable);
-		if("".equals(aliasTable)){
-			aliasTable = "";
-		}else{
-			aliasTable = aliasTable + ".";
-		}
-		criteria.append(" TRUNC(").append(aliasTable).append("TC_FROM,'MONTH') <= TO_DATE('").append(endMonth).append("','Mon-YY')");
-		criteria.append(" and NVL(LAST_DAY(").append(aliasTable).append("TC_TO), TO_DATE('"+AppConstants.DEFULAT_DATE+"','DD/MM/YYYY')) >= TO_DATE('").append(getsudoMonth).append("','Mon-YY')");
-		return criteria.toString();
 	}
 	
 	@Override
@@ -828,7 +670,7 @@ public class CBW00000Repository implements IBW00000Repository {
 			}
 			
 		}catch (Exception e) {
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, false);
+			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, false);
 		}finally{
 			try {
 				if(conn!=null && !conn.isClosed()){
@@ -896,7 +738,7 @@ public class CBW00000Repository implements IBW00000Repository {
 			}
 			
 		}catch (Exception e) {
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, false);
+			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, false);
 		}finally{
 			try {
 				if(conn!=null && !conn.isClosed()){
@@ -949,7 +791,6 @@ public class CBW00000Repository implements IBW00000Repository {
 			SQL.append(" 	UNIT_PLANT  ");
 			SQL.append(" FROM TB_M_UNIT_PLANT ");
 			SQL.append(" WHERE ");
-			SQL.append(this.getEffectiveCriteria(conn, getsudoMonth, ""));
 			SQL.append(" GROUP BY UNIT_PLANT ");
 			SQL.append(" ORDER BY UPPER(UNIT_PLANT) ");
 			
@@ -959,7 +800,7 @@ public class CBW00000Repository implements IBW00000Repository {
 				ls.add(rs.getString("UNIT_PLANT"));
 			}
 		} catch (Exception e) {
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, false);
+			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, false);
 		}finally {
         	try{
         		if(conn!=null && !conn.isClosed()){
@@ -1004,7 +845,6 @@ public class CBW00000Repository implements IBW00000Repository {
 			SQL.append(" 	VEHICLE_PLANT  ");
 			SQL.append(" FROM TB_M_VEHICLE_PLANT ");
 			SQL.append(" WHERE ");
-			SQL.append(this.getEffectiveCriteria(conn, getsudoMonth, ""));
 			SQL.append(" GROUP BY VEHICLE_PLANT ");
 			
 			ps = conn.prepareStatement(SQL.toString());
@@ -1013,7 +853,7 @@ public class CBW00000Repository implements IBW00000Repository {
 				ls.add(rs.getString("VEHICLE_PLANT"));
 			}
 		} catch (Exception e) {
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, false);
+			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, false);
 		}finally {
         	try{
         		if(conn!=null && !conn.isClosed()){
@@ -1058,7 +898,6 @@ public class CBW00000Repository implements IBW00000Repository {
 			SQL.append(" 	VEHICLE_PLANT  ");
 			SQL.append(" FROM TB_M_VEHICLE_UNIT_RELATION ");
 			SQL.append(" WHERE ");
-			SQL.append(this.getEffectiveCriteria(conn, getsudoMonth, ""));
 			SQL.append(" GROUP BY VEHICLE_PLANT ORDER BY UPPER(VEHICLE_PLANT) ASC");
 			
 			ps = conn.prepareStatement(SQL.toString());
@@ -1067,7 +906,7 @@ public class CBW00000Repository implements IBW00000Repository {
 				ls.add(rs.getString("VEHICLE_PLANT"));
 			}
 		} catch (Exception e) {
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, false);
+			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, false);
 		}finally {
 	    	try{
 	    		if(conn!=null && !conn.isClosed()){
@@ -1116,7 +955,7 @@ public class CBW00000Repository implements IBW00000Repository {
 			
 			ps.executeUpdate();
 		}catch (Exception e) {
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, false);
+			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, false);
 		}finally{
 			try {
 				if(conn!=null && !conn.isClosed()){
@@ -1189,7 +1028,7 @@ public class CBW00000Repository implements IBW00000Repository {
 			}
 			sql.append("   ?, ?, ?, ?) "); //Create/Update
 			
-			CBW00000SQLAdapter adapter = new CBW00000SQLAdapter();
+			CommonSQLAdapter adapter = new CommonSQLAdapter();
 			if(dataList!=null && !dataList.isEmpty()){
 			
 				insertedCnt = adapter.execute(conn, sql.toString() , dataList.toArray());
@@ -1198,7 +1037,7 @@ public class CBW00000Repository implements IBW00000Repository {
 		}catch (CommonErrorException e){
 			throw e;
 		}catch (Exception e) {
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, false);
+			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, false);
 		}
 	}
 	
@@ -1370,7 +1209,7 @@ public class CBW00000Repository implements IBW00000Repository {
 			return insertedCnt;
 		} catch (Exception e) {
 			completed = false;
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, false);
+			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, false);
 		} finally {
 			try {
 				if ((conn != null) && !conn.isClosed()) {
@@ -1464,7 +1303,7 @@ public class CBW00000Repository implements IBW00000Repository {
 			sql.append("  (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ");
 			sql.append("   ?, ?, ?, ?, ?, ?, ?) ");
 
-			CBW00000SQLAdapter adapter = new CBW00000SQLAdapter();
+			CommonSQLAdapter adapter = new CommonSQLAdapter();
 			if ((datas != null) && (!datas.isEmpty())) {
 				insertedCnt = adapter.execute(conn, sql.toString(), datas.toArray());
 			}
@@ -1473,7 +1312,7 @@ public class CBW00000Repository implements IBW00000Repository {
 			return insertedCnt;
 		} catch (Exception e) {
 			completed = false;
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, false);
+			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, false);
 		} finally {
 			try {
 				if ((conn != null) && !conn.isClosed()) {
@@ -1569,7 +1408,7 @@ public class CBW00000Repository implements IBW00000Repository {
 				}
 			}
 		}catch(Exception e){
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, false);
+			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, false);
 		} finally {
 			try{
 				if(conn!=null && !conn.isClosed()){
@@ -1728,7 +1567,7 @@ public class CBW00000Repository implements IBW00000Repository {
         }catch (CommonErrorException e){
 				throw e;
         }catch(Exception e){
-        	throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, false);
+        	throw CommonUtility.handleExceptionToCommonErrorException(e, logger, false);
         } finally {
         	try{
 				if (rs !=null) {
@@ -1838,7 +1677,7 @@ public class CBW00000Repository implements IBW00000Repository {
         }catch (CommonErrorException e){
 				throw e;
         }catch(Exception e){
-        	throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, false);
+        	throw CommonUtility.handleExceptionToCommonErrorException(e, logger, false);
         } finally {
         	try{
 				if (rs !=null) {
@@ -1891,7 +1730,7 @@ public class CBW00000Repository implements IBW00000Repository {
 				totalRows = rs.getBigDecimal("TOTAL_ROW");
 			}
 		} catch (Exception e) {
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, false);
+			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, false);
 		} finally {
 			try {
 				if ((conn != null) && !conn.isClosed()) {
@@ -1948,7 +1787,7 @@ public class CBW00000Repository implements IBW00000Repository {
 				}
 			}
 		} catch (Exception e) {
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, false);
+			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, false);
 		} finally {
 			try {
 				if ((conn != null) && !conn.isClosed()) {

@@ -31,18 +31,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import th.co.toyota.bw0.api.common.CBW00000SQLAdapter;
-import th.co.toyota.bw0.api.common.CBW00000Util;
+import th.co.toyota.bw0.api.common.CommonSQLAdapter;
+import th.co.toyota.bw0.api.common.CommonUtility;
 import th.co.toyota.bw0.api.exception.common.CommonErrorException;
 
 @Repository
-public class ExampleConvertExcelToStageRepositoryImp implements ExampleConvertExcelToStageRepository {
+public class ExampleConvertExcelToStageRepositoryImpl implements ExampleConvertExcelToStageRepository {
 
 	@NotNull
 	@PersistenceContext(unitName = "entityManagerFactory")
 	private EntityManager em;
 
-	final Logger logger = LoggerFactory.getLogger(ExampleConvertExcelToStageRepositoryImp.class);
+	final Logger logger = LoggerFactory.getLogger(ExampleConvertExcelToStageRepositoryImpl.class);
 	
 	@Override
 	public int insertDataToStaging(List<Object[]> dataList, String userId) throws CommonErrorException{
@@ -53,7 +53,7 @@ public class ExampleConvertExcelToStageRepositoryImp implements ExampleConvertEx
 			return this.insertDataToStaging(conn, dataList, userId);
 			
 		}catch (Exception e) {
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, true);
+			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, true);
 		}
 	}
 	
@@ -96,7 +96,7 @@ public class ExampleConvertExcelToStageRepositoryImp implements ExampleConvertEx
 			conn.setAutoCommit(false);
 			
 			//insert data to staging
-			CBW00000SQLAdapter adapter = new CBW00000SQLAdapter();
+			CommonSQLAdapter adapter = new CommonSQLAdapter();
 			if(dataList!=null && !dataList.isEmpty()){
 				inserted = adapter.execute(conn, insSQL.toString() , dataList.toArray());
 			}
@@ -104,7 +104,7 @@ public class ExampleConvertExcelToStageRepositoryImp implements ExampleConvertEx
 			completed = true;
 			return inserted;
 		}catch (Exception e) {
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, true);
+			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, true);
 		}finally {
 			try {
 				if(completed){

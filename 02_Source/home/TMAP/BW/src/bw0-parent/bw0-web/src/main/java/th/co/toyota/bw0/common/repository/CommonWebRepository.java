@@ -7,7 +7,7 @@ import java.util.Map;
 import th.co.toyota.bw0.api.exception.common.CommonErrorException;
 import th.co.toyota.bw0.util.ComboValue;
 
-public interface CommonRepository {
+public interface CommonWebRepository {
 	String genAppId() throws CommonErrorException;
 	Connection getConnection();
 	Map<String, String> getUserInfoForTestOnDev(String ipAddress);

@@ -37,7 +37,7 @@ import org.springframework.stereotype.Component;
 import th.co.toyota.bw0.api.constants.AppConstants;
 import th.co.toyota.bw0.api.constants.MessagesConstants;
 import th.co.toyota.bw0.api.exception.common.CommonErrorException;
-import th.co.toyota.bw0.api.repository.common.IBW03060Repository;
+import th.co.toyota.bw0.api.repository.common.SystemMasterAPIRepository;
 import th.co.toyota.bw0.util.FormatUtil;
 import th.co.toyota.st3.api.constants.CST30000Messages;
 import th.co.toyota.st3.api.exception.FileDoesNotExistException;
@@ -45,13 +45,13 @@ import th.co.toyota.st3.api.model.SystemInfo;
 import th.co.toyota.st3.api.model.SystemInfoId;
 
 @Component
-public class CBW00000CommonPOI {
+public class CommonPOI {
 
-	final static Logger logger = LoggerFactory.getLogger(CBW00000CommonPOI.class);
+	final static Logger logger = LoggerFactory.getLogger(CommonPOI.class);
     public static final int BUFFER_SIZE = 4096;
 
 	@Autowired
-	protected IBW03060Repository systemMasterRepository;
+	protected SystemMasterAPIRepository systemMasterRepository;
 
 	@Value("${template.report.folder}")
 	protected String templateReportFolder;

@@ -21,7 +21,7 @@ package th.co.toyota.bw0.batch.report.repository;
 import java.sql.Connection;
 import java.util.List;
 
-public interface IBW04221Repository {
+public interface CommonDownloadReportRepository {
 	public List<Object[]> searchObject(Connection conn, String getsudoMonth, String timing,
 			String plantCondition) throws Exception;
 }

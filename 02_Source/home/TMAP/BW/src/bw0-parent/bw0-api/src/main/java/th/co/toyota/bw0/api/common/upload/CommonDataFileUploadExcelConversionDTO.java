@@ -3,7 +3,7 @@ package th.co.toyota.bw0.api.common.upload;
 import java.util.HashMap;
 import java.util.List;
 
-public class CBW00000CommonExcelConversionDTO {
+public class CommonDataFileUploadExcelConversionDTO {
 	public static final String TAG_EXCEL_CONVERSION_CONFIG = "excel-conversion-config";
 	public static final String TAG_CONVERSION_INFO = "conversion-info";
 	public static final String TAG_CONVERSION_HEADER = "conversion-header";

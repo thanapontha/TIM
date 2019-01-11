@@ -60,9 +60,6 @@ public class AppConfig {
 												"classpath:properties/MessageResources", // For application messages
 												"classpath:properties/MessageResources_ST3" // Development Standard
 												}); // Development Standard
-
-		// messageSource.setBasenames(new String[] {
-		// "classpath:properties/MessageResources_ST3" });
 		messageSource.setDefaultEncoding("UTF-8");
 
 		LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
@@ -78,9 +75,6 @@ public class AppConfig {
 												"classpath:properties/MessageResources", // For application messages
 												"classpath:properties/MessageResources_ST3" // Development Standard
 												}); // Development Standard
-
-		// messageSource.setBasenames(new String[] {
-		// "classpath:properties/MessageResources_ST3" });
 		messageSource.setDefaultEncoding("UTF-8");
 
 		return messageSource;

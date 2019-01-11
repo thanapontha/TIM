@@ -30,12 +30,12 @@ import th.co.toyota.st3.api.model.SystemInfo_;
 import com.google.common.base.Strings;
 
 @Repository
-public class CBW03060Repository implements IBW03060Repository {
+public class SystemMasterAPIRepositoryImpl implements SystemMasterAPIRepository {
 	@NotNull
 	@PersistenceContext(unitName = "entityManagerFactory")
 	private EntityManager em;
 
-	final Logger logger = LoggerFactory.getLogger(CBW03060Repository.class);
+	final Logger logger = LoggerFactory.getLogger(SystemMasterAPIRepositoryImpl.class);
 
 	@Override
 	public List<SystemInfo> querySystemMasterInfo(SystemInfoId sysInfoId) {

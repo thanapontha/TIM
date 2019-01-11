@@ -1,15 +1,15 @@
 /******************************************************
  * Program History
  * 
- * Project Name	            :  GWRDS : Getsudo Worksheet Rundown System
+ * Project Name	            :  
  * Client Name				:  TDEM
  * Package Name             :  th.co.toyota.bw0.web.report.main
- * Program ID 	            :  CBW04221CalendarDownload.java
- * Program Description	    :  <put description>
+ * Program ID 	            :  CommonDownloadReport.java
+ * Program Description	    :  Common Download Report
  * Environment	 	        :  Java 7
- * Author					:  Thanawut T.
+ * Author					:  Thanapon T.
  * Version					:  1.0
- * Creation Date            :  August 28, 2017
+ * Creation Date            :  January, 11 2018
  *
  * Modification History	    :
  * Version	   Date		   Person Name		Chng Req No		Remarks
@@ -48,14 +48,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 
-import th.co.toyota.bw0.api.common.CBW00000CommonPOI;
-import th.co.toyota.bw0.api.common.CBW00000Util;
+import th.co.toyota.bw0.api.common.CommonPOI;
+import th.co.toyota.bw0.api.common.CommonUtility;
 import th.co.toyota.bw0.api.constants.AppConstants;
 import th.co.toyota.bw0.api.constants.MessagesConstants;
 import th.co.toyota.bw0.api.exception.common.CommonErrorException;
-import th.co.toyota.bw0.api.repository.common.IBW00000Repository;
-import th.co.toyota.bw0.api.repository.common.IBW03060Repository;
-import th.co.toyota.bw0.batch.report.repository.IBW04221Repository;
+import th.co.toyota.bw0.api.repository.common.CommonAPIRepository;
+import th.co.toyota.bw0.api.repository.common.SystemMasterAPIRepository;
+import th.co.toyota.bw0.batch.report.repository.CommonDownloadReportRepository;
 import th.co.toyota.bw0.util.FormatUtil;
 import th.co.toyota.st3.api.constants.CST30000Constants;
 import th.co.toyota.st3.api.constants.CST30000Messages;
@@ -63,15 +63,15 @@ import th.co.toyota.st3.api.util.IST30000LoggerDb;
 
 import com.google.common.base.Strings;
 
-public class CBW04221CalendarDownload {
+public class CommonDownloadReport {
 
-	final Logger logger = LoggerFactory.getLogger(CBW04221CalendarDownload.class);
+	final Logger logger = LoggerFactory.getLogger(CommonDownloadReport.class);
 	protected IST30000LoggerDb loggerBBW04221;
 	protected MessageSource messageSource;
-	protected IBW03060Repository systemRepository;
-	protected IBW00000Repository commonRepository;
-	protected IBW04221Repository repository;
-	protected CBW00000CommonPOI poi;
+	protected SystemMasterAPIRepository systemRepository;
+	protected CommonAPIRepository commonRepository;
+	protected CommonDownloadReportRepository repository;
+	protected CommonPOI poi;
 	protected String downloadFolder;
 
 	private SXSSFWorkbook swb = null;
@@ -120,11 +120,11 @@ public class CBW04221CalendarDownload {
 		Connection conn = null;
 		try {
 			if(args != null && args.length == 5) {
-				this.version = CBW00000Util.toString(args[0]);
-				this.getsudoMonth = CBW00000Util.toString(args[1]);
-				this.timing = CBW00000Util.toString(args[2]);
-				this.userLog = CBW00000Util.toString(args[3]);
-				this.appId = CBW00000Util.toString(args[4]);						
+				this.version = Strings.nullToEmpty(args[0]);
+				this.getsudoMonth = Strings.nullToEmpty(args[1]);
+				this.timing = Strings.nullToEmpty(args[2]);
+				this.userLog = Strings.nullToEmpty(args[3]);
+				this.appId = Strings.nullToEmpty(args[4]);						
 			}
 			
 			//Add by Thanawut T. 2017/12/12 BCT-Vendor for detect download processing
@@ -314,7 +314,7 @@ public class CBW04221CalendarDownload {
 			loggerBBW04221.error(appId, e.getMessageCode(), message, this.userLog);
 			status = CST30000Constants.ERROR;
 		} catch (Exception e) {
-			message = messageSource.getMessage(CST30000Messages.ERROR_UNDEFINED_ERROR, new String[] { CBW00000Util.genMessageOfException(e) }, Locale.getDefault());
+			message = messageSource.getMessage(CST30000Messages.ERROR_UNDEFINED_ERROR, new String[] { CommonUtility.genMessageOfException(e) }, Locale.getDefault());
 			logger.error(message);
 			loggerBBW04221.error(appId, CST30000Messages.ERROR_UNDEFINED_ERROR, message, this.userLog);
 			status = CST30000Constants.ERROR;

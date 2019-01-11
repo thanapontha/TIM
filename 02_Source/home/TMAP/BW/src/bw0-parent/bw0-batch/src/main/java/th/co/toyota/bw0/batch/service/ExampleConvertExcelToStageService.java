@@ -33,11 +33,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import th.co.toyota.bw0.api.common.upload.CBW00000CommonExcelConversionDTO;
-import th.co.toyota.bw0.api.common.upload.CBW00000DataFileUpload;
+import th.co.toyota.bw0.api.common.upload.CommonDataFileUploadExcelConversionDTO;
+import th.co.toyota.bw0.api.common.upload.CommonDataFileUpload;
 import th.co.toyota.bw0.api.constants.MessagesConstants;
 import th.co.toyota.bw0.api.exception.common.CommonErrorException;
-import th.co.toyota.bw0.api.service.common.CBW00000CommonService;
+import th.co.toyota.bw0.api.service.common.CommonService;
 import th.co.toyota.bw0.batch.repository.ExampleConvertExcelToStageRepository;
 import th.co.toyota.bw0.util.FormatUtil;
 import th.co.toyota.st3.api.constants.CST30000Messages;
@@ -46,14 +46,14 @@ import th.co.toyota.st3.api.util.IST30000LoggerDb;
 import com.google.common.base.Strings;
 
 @Service
-public class ExampleConvertExcelToStageService extends CBW00000DataFileUpload{
+public class ExampleConvertExcelToStageService extends CommonDataFileUpload{
 	final Logger logger = LoggerFactory.getLogger(ExampleConvertExcelToStageService.class);
 	
 	@Autowired
 	private IST30000LoggerDb loggerBBW02130;
 	
 	@Autowired
-	CBW00000CommonService commonService;
+	CommonService commonService;
 	
 	@Autowired
 	private ExampleConvertExcelToStageRepository repository;
@@ -183,7 +183,7 @@ public class ExampleConvertExcelToStageService extends CBW00000DataFileUpload{
 				if(valid){
 					cellValue = (String)cellValues[1];
 					
-					String convertDtFormat = (String)mapInfo.get(CBW00000CommonExcelConversionDTO.ATTR_CONVERT_STRING_TO_DATE);
+					String convertDtFormat = (String)mapInfo.get(CommonDataFileUploadExcelConversionDTO.ATTR_CONVERT_STRING_TO_DATE);
 					if(!Strings.isNullOrEmpty(convertDtFormat)){
 						Date dt = null;
 						if(!Strings.isNullOrEmpty(cellValue)){

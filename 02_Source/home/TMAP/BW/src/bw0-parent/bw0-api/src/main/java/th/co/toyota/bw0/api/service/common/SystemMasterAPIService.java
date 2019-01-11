@@ -1,15 +1,15 @@
 /******************************************************
  * Program History
  * 
- * Project Name	            :  GWRDS : 
- * Client Name				:  TMAP-EM
+ * Project Name	            :  
+ * Client Name				:  TDEM
  * Package Name             :  th.co.toyota.bw0.api.service.common
- * Program ID 	            :  CBW03060SystemMasterService.java
+ * Program ID 	            :  SystemMasterAPIService.java
  * Program Description	    :  <put description>
  * Environment	 	        :  Java 7
  * Author					:  Thanapon T.
  * Version					:  1.0
- * Creation Date            :  July 14, 2016
+ * Creation Date            :  January 11, 2018
  *
  * Modification History	    :
  * Version	   Date		   Person Name		Chng Req No		Remarks
@@ -30,13 +30,13 @@ import th.co.toyota.st3.api.model.SystemInfoId;
 import th.co.toyota.bw0.api.constants.AppConstants;
 import th.co.toyota.bw0.api.constants.MessagesConstants;
 import th.co.toyota.bw0.api.exception.common.CommonErrorException;
-import th.co.toyota.bw0.api.repository.common.SystemMasterRepository;
+import th.co.toyota.bw0.api.repository.common.SystemMasterAPIRepository;
 
 @Service
 public class SystemMasterAPIService {
 
 	@Autowired
-	private SystemMasterRepository systemMasterRepository;
+	private SystemMasterAPIRepository systemMasterRepository;
 	
 	public List<SystemInfo> getSystemMaster(SystemInfoId id) {
 		return systemMasterRepository.querySystemMasterInfo(id);

@@ -23,7 +23,7 @@ import java.util.List;
 
 import th.co.toyota.bw0.api.exception.common.CommonErrorException;
 
-public interface IBW02130PreprocessRepository {
+public interface ExampleFileUploadPreprocessRepository {
 	
 	public int IDX_L_GETSUDO_MONTH = 0;
 	public int IDX_L_TIMING = 1;
