@@ -19,6 +19,7 @@
 package th.co.toyota.bw0.batch.repository;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -58,6 +59,7 @@ public class ExampleConvertExcelToStageRepositoryImp implements ExampleConvertEx
 	
 	@Override
 	public int insertDataToStaging(Connection conn, List<Object[]> dataList, String userId) throws CommonErrorException{
+		boolean completed = false;
 		int inserted = 0;
 		try{
 			StringBuilder insSQL = new StringBuilder();
@@ -98,9 +100,21 @@ public class ExampleConvertExcelToStageRepositoryImp implements ExampleConvertEx
 			if(dataList!=null && !dataList.isEmpty()){
 				inserted = adapter.execute(conn, insSQL.toString() , dataList.toArray());
 			}
+			
+			completed = true;
 			return inserted;
 		}catch (Exception e) {
 			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, true);
+		}finally {
+			try {
+				if(completed){
+					conn.commit();
+				}else{
+					conn.rollback();
+				}
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 

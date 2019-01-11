@@ -51,7 +51,7 @@ jar {
 
 dependencies {
 	compile project(':bw0-api')
-	compile group: 'th.co.toyota.st3.batch', name: 'st3-batch', version:'1.1.14-RELEASE'
+	compile group: 'th.co.toyota.st3.batch', name: 'st3-batch', version:'1.1.16-RELEASE'
 
     compile group: 'org.apache.camel', name: 'camel-core', version:'2.12.2'
     compile group: 'com.lexicalscope.jewelcli', name: 'jewelcli', version:'0.8.9'
