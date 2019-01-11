@@ -38,7 +38,6 @@ import th.co.toyota.bw0.api.constants.AppConstants;
 import th.co.toyota.bw0.api.constants.MessagesConstants;
 import th.co.toyota.bw0.api.exception.common.CommonErrorException;
 import th.co.toyota.bw0.api.repository.common.SystemMasterAPIRepository;
-import th.co.toyota.bw0.util.FormatUtil;
 import th.co.toyota.st3.api.constants.CST30000Messages;
 import th.co.toyota.st3.api.exception.FileDoesNotExistException;
 import th.co.toyota.st3.api.model.SystemInfo;
