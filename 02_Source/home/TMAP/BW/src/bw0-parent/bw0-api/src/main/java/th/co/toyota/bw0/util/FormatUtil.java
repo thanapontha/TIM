@@ -41,13 +41,6 @@ public class FormatUtil {
 	public static String DATE_MMM_YYYY = "MMM-yyyy";
 	public static String DASH = "-";
 	
-    /**
-	 * Format string to date
-	 * @param value
-	 * @param stFormat
-	 * @return date
-	 * @throws Exception 
-	 */
     public static Date convertStringToDate(String value, String stFormat) {
     	if((stFormat!=null && stFormat.trim().length() <= 0) || (stFormat == null)){
     		stFormat = AppConstants.DATE_SHOW_IN_SCREEN;
