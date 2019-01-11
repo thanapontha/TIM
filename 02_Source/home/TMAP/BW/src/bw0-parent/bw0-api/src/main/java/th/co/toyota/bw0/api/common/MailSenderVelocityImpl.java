@@ -27,7 +27,7 @@ import com.google.common.base.Strings;
 import th.co.toyota.bw0.api.constants.AppConstants;
 import th.co.toyota.bw0.api.constants.MessagesConstants;
 import th.co.toyota.bw0.api.exception.common.CommonErrorException;
-import th.co.toyota.bw0.api.repository.common.IBW03060Repository;
+import th.co.toyota.bw0.api.repository.common.SystemMasterAPIRepository;
 import th.co.toyota.st3.api.constants.CST30000Messages;
 import th.co.toyota.st3.api.model.SystemInfo;
 import th.co.toyota.st3.api.model.SystemInfoId;
@@ -62,7 +62,7 @@ public class MailSenderVelocityImpl implements MailSender {
     private String templateFixKaikiengData;
 
 	@Autowired
-	private IBW03060Repository systemRepository;
+	private SystemMasterAPIRepository systemRepository;
 	
 	@Autowired
 	protected MessageSource messageSource;

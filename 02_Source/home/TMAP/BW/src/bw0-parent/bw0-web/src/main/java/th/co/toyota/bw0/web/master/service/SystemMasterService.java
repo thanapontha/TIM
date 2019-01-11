@@ -29,7 +29,7 @@ import org.springframework.stereotype.Service;
 
 import th.co.toyota.application.model.Payload;
 import th.co.toyota.bw0.api.constants.AppConstants;
-import th.co.toyota.bw0.common.repository.CommonRepository;
+import th.co.toyota.bw0.common.repository.CommonWebRepository;
 import th.co.toyota.bw0.util.ComboValue;
 import th.co.toyota.bw0.web.master.form.SystemMasterForm;
 import th.co.toyota.bw0.web.master.repository.SystemMasterRepository;
@@ -46,7 +46,7 @@ public class SystemMasterService {
 	private SystemMasterRepository repository;
 	
 	@Autowired
-	private CommonRepository commonRepository;
+	private CommonWebRepository commonRepository;
 	
 	public List<String> submitAddObject(SystemMasterForm form, CSC22110UserInfo userInfo) throws Exception {
 		try(Connection conn = commonRepository.getConnection()){

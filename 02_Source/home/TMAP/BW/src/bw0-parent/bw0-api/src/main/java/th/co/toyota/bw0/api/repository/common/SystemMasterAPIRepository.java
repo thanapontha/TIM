@@ -7,7 +7,7 @@ import th.co.toyota.st3.api.model.SystemInfo;
 import th.co.toyota.st3.api.model.SystemInfoId;
 
 
-public interface IBW03060Repository {
+public interface SystemMasterAPIRepository {
 	List<SystemInfo> querySystemMasterInfo(SystemInfoId infoId);
 	List<SystemInfo> querySystemMasterCodeValue(String category,
 			String subCategory);

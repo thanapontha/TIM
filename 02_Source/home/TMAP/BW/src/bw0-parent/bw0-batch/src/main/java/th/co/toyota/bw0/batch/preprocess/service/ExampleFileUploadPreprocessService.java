@@ -4,12 +4,12 @@
  * Project Name	            :  GWRDS : 
  * Client Name				:  TDEM
  * Package Name             :  th.co.toyota.bw0.batch.preprocess.service
- * Program ID 	            :  CBW02130PreprocessService.java
- * Program Description	    :  KOMPO Upload
+ * Program ID 	            :  ExampleFileUploadPreprocessService.java
+ * Program Description	    :  Example File Upload Preprocess Service
  * Environment	 	    	:  Java 7
- * Author		    		:  Thanawut T.
+ * Author		    		:  Thanapon T.
  * Version		    		:  1.0
- * Creation Date            :  04 September 2017
+ * Creation Date            :  January, 11 2018
  *
  * Modification History	    :
  * Version	   Date		   Person Name		Chng Req No		Remarks
@@ -34,13 +34,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
-import th.co.toyota.bw0.api.common.CBW00000Util;
+import th.co.toyota.bw0.api.common.CommonUtility;
 import th.co.toyota.bw0.api.constants.AppConstants;
 import th.co.toyota.bw0.api.constants.MessagesConstants;
 import th.co.toyota.bw0.api.exception.common.CommonErrorException;
-import th.co.toyota.bw0.api.model.common.GetsudoMonthConfigInfo;
-import th.co.toyota.bw0.api.repository.common.IBW00000Repository;
-import th.co.toyota.bw0.batch.preprocess.repository.IBW02130PreprocessRepository;
+import th.co.toyota.bw0.api.repository.common.CommonAPIRepository;
+import th.co.toyota.bw0.batch.preprocess.repository.ExampleFileUploadPreprocessRepository;
 import th.co.toyota.bw0.util.FormatUtil;
 import th.co.toyota.st3.api.constants.CST30000Constants;
 import th.co.toyota.st3.api.constants.CST30000Messages;
@@ -51,8 +50,8 @@ import com.google.common.base.Strings;
 
 
 @Service
-public class CBW02130PreprocessService {
-	final Logger logger = LoggerFactory.getLogger(CBW02130PreprocessService.class);
+public class ExampleFileUploadPreprocessService {
+	final Logger logger = LoggerFactory.getLogger(ExampleFileUploadPreprocessService.class);
 
 	@Autowired
 	private IST30000LoggerDb loggerBBW02130;
@@ -61,10 +60,10 @@ public class CBW02130PreprocessService {
 	protected MessageSource messageSource;
 	
 	@Autowired
-	private IBW02130PreprocessRepository repositoryKompo;
+	private ExampleFileUploadPreprocessRepository repositoryKompo;
 	
 	@Autowired
-	private IBW00000Repository commonRepository;
+	private CommonAPIRepository commonRepository;
 
 	@Value("${projectCode}")
 	protected String PROJECT_CODE;
@@ -145,20 +144,20 @@ public class CBW02130PreprocessService {
 	private void loadParameter(CST31250FileReceivingCmdOptions params)throws CommonErrorException {
 		// parameter1-5 from common receiving
 		// args[0] = (-r)Project Id
-		//projectId = CBW00000Util.convertBatchParam(params.getProjectId());
+		//projectId = CommonUtility.convertBatchParam(params.getProjectId());
 		// args[1] = (-m)Module Id
-		moduleId = CBW00000Util.convertBatchParam(params.getModuleId());
+		moduleId = CommonUtility.convertBatchParam(params.getModuleId());
 		// args[2] = (-n)Function Id
-		functionId = CBW00000Util.convertBatchParam(params.getFunctionId());
+		functionId = CommonUtility.convertBatchParam(params.getFunctionId());
 		// args[3] = (-f)File Id
-		//fileId = CBW00000Util.convertBatchParam(params.getFileId());
+		//fileId = CommonUtility.convertBatchParam(params.getFileId());
 		// args[4] = (-e)File name
 		// logger.debug("filename:" + params.getFileName());
-//		 filename = CBW00000Util.convertBatchParam(params.getFileName());
+//		 filename = CommonUtility.convertBatchParam(params.getFileName());
 		// args[5] = (-a)Application Id (AppId)
-		appId = CBW00000Util.convertBatchParam(params.getApplicationId());
+		appId = CommonUtility.convertBatchParam(params.getApplicationId());
 //		// (-u)UserId
-		createBy = CBW00000Util.convertBatchParam(params.getUser());
+		createBy = CommonUtility.convertBatchParam(params.getUser());
 //		// (-x)Additional Param
 		
 		logger.debug("[loadParameter] moduleId:" + moduleId + ", functionId:" + functionId + ", appId:" + appId);
@@ -168,16 +167,16 @@ public class CBW02130PreprocessService {
 		if (paramList== null || (paramList!=null && paramList.size() < 5)) {
 			throw new CommonErrorException(CST30000Messages.ERROR_MESSAGE_MISSING_PARAMETER, new String[]{}, AppConstants.ERROR);
 		}
-		this.version = CBW00000Util.convertBatchParam(Strings.nullToEmpty(paramList.get(0)));
-		this.pamsKompoFlag = CBW00000Util.convertBatchParam(Strings.nullToEmpty(paramList.get(1)));
-		this.getsudoMonth = CBW00000Util.convertBatchParam(Strings.nullToEmpty(paramList.get(2)));
-		this.timing = CBW00000Util.convertBatchParam(Strings.nullToEmpty(paramList.get(3)));
-		this.vehiclePlant = CBW00000Util.convertBatchParam(Strings.nullToEmpty(paramList.get(4)));
-		this.vehicleModel = CBW00000Util.convertBatchParam(Strings.nullToEmpty(paramList.get(5)));
-//		this.unitPlant = CBW00000Util.convertBatchParam(Strings.nullToEmpty(paramList.get(6)));
-//		this.unitType = CBW00000Util.convertBatchParam(Strings.nullToEmpty(paramList.get(7)));
-//		this.unitModel = CBW00000Util.convertBatchParam(Strings.nullToEmpty(paramList.get(8)));
-		this.fileName = CBW00000Util.convertBatchParam(Strings.nullToEmpty(paramList.get(9)));
+		this.version = CommonUtility.convertBatchParam(Strings.nullToEmpty(paramList.get(0)));
+		this.pamsKompoFlag = CommonUtility.convertBatchParam(Strings.nullToEmpty(paramList.get(1)));
+		this.getsudoMonth = CommonUtility.convertBatchParam(Strings.nullToEmpty(paramList.get(2)));
+		this.timing = CommonUtility.convertBatchParam(Strings.nullToEmpty(paramList.get(3)));
+		this.vehiclePlant = CommonUtility.convertBatchParam(Strings.nullToEmpty(paramList.get(4)));
+		this.vehicleModel = CommonUtility.convertBatchParam(Strings.nullToEmpty(paramList.get(5)));
+//		this.unitPlant = CommonUtility.convertBatchParam(Strings.nullToEmpty(paramList.get(6)));
+//		this.unitType = CommonUtility.convertBatchParam(Strings.nullToEmpty(paramList.get(7)));
+//		this.unitModel = CommonUtility.convertBatchParam(Strings.nullToEmpty(paramList.get(8)));
+		this.fileName = CommonUtility.convertBatchParam(Strings.nullToEmpty(paramList.get(9)));
 		
 		//CR UT-002 2018/02/16 Thanawut T. : select multiple Unit Model for Kompokung Validate
 		//KOMPO
@@ -187,11 +186,11 @@ public class CBW02130PreprocessService {
 			String unitTypeAllSelected = null;
 			
 			if (!Strings.isNullOrEmpty(Strings.nullToEmpty(paramList.get(6))))
-				unitPlantAllSelected = CBW00000Util.convertBatchParam(Strings.nullToEmpty(paramList.get(6)));
+				unitPlantAllSelected = CommonUtility.convertBatchParam(Strings.nullToEmpty(paramList.get(6)));
 			if (!Strings.isNullOrEmpty(Strings.nullToEmpty(paramList.get(7))))
-				unitTypeAllSelected = CBW00000Util.convertBatchParam(Strings.nullToEmpty(paramList.get(7)));
+				unitTypeAllSelected = CommonUtility.convertBatchParam(Strings.nullToEmpty(paramList.get(7)));
 			if (!Strings.isNullOrEmpty(Strings.nullToEmpty(paramList.get(8))))
-				unitModelAllSelected = CBW00000Util.convertBatchParam(Strings.nullToEmpty(paramList.get(8)));
+				unitModelAllSelected = CommonUtility.convertBatchParam(Strings.nullToEmpty(paramList.get(8)));
 			
 			this.unitPlantArr = unitPlantAllSelected.split(selectSep);
 			this.unitPlant = (unitPlantArr != null) ? unitPlantArr[0] : unitPlantAllSelected;
@@ -204,11 +203,11 @@ public class CBW02130PreprocessService {
 		}else{ //PAMs
 			//In Case PAMs use 1 unit model
 			if (!Strings.isNullOrEmpty(Strings.nullToEmpty(paramList.get(6))))
-				this.unitPlant = CBW00000Util.convertBatchParam(Strings.nullToEmpty(paramList.get(6)));
+				this.unitPlant = CommonUtility.convertBatchParam(Strings.nullToEmpty(paramList.get(6)));
 			if (!Strings.isNullOrEmpty(Strings.nullToEmpty(paramList.get(7))))
-				this.unitType = CBW00000Util.convertBatchParam(Strings.nullToEmpty(paramList.get(7)));
+				this.unitType = CommonUtility.convertBatchParam(Strings.nullToEmpty(paramList.get(7)));
 			if (!Strings.isNullOrEmpty(Strings.nullToEmpty(paramList.get(8))))
-				this.unitModel = CBW00000Util.convertBatchParam(Strings.nullToEmpty(paramList.get(8)));
+				this.unitModel = CommonUtility.convertBatchParam(Strings.nullToEmpty(paramList.get(8)));
 		}
 		//END CR UT-002 2018/02/16
 	}
@@ -248,7 +247,7 @@ public class CBW02130PreprocessService {
 				Object[] currentObj = objList.get(iRowStage);
 				this.generateKeys(currentObj);
 				boolean error = false;
-				boolean duplicate = ((BigDecimal)currentObj[IBW02130PreprocessRepository.IDX_DUPCNT]).intValue()>1?true:false;
+				boolean duplicate = ((BigDecimal)currentObj[ExampleFileUploadPreprocessRepository.IDX_DUPCNT]).intValue()>1?true:false;
 				if(!duplicate){
 					boolean valid = this.validateMandatory(currentObj, iRowStage);
 					boolean passMandatoryChk = false;
@@ -324,48 +323,31 @@ public class CBW02130PreprocessService {
 		return (this.errorCnt>0||validateErrorCount > 0) ? CST30000Constants.ERROR:(warning?CST30000Constants.WARNING:CST30000Constants.SUCCESS);
 	}
 	
-	public HashMap<String, String> getHeaderCheckMandatory(GetsudoMonthConfigInfo getsudoMonthInfo) {
-		HashMap<String, String> mapChkMadatory = new HashMap<>();
-		if(getsudoMonthInfo!=null){
-			int cnt = getsudoMonthInfo.getDisplayMonth().intValue();
-			if(AppConstants.COMPANY_CD_TMAP_MS.equals(this.version)){
-				cnt = getsudoMonthInfo.getCheckMonth().intValue();
-			}
-			Date gm = FormatUtil.convertStringToDate(getsudoMonth, AppConstants.DATE_SHOW_IN_SCREEN); 
-			for(int j=0;j<cnt;j++){
-				Date gmDt = FormatUtil.addMonth(gm, j); 
-				String gmStr = FormatUtil.convertDateToString(gmDt, AppConstants.DATE_SHOW_IN_SCREEN);
-				mapChkMadatory.put(gmStr, gmStr);
-			}
-			
-		}
-		return mapChkMadatory;
-	}
 	
 	private void generateKeys(Object[] currentObj){
 		keys = new StringBuilder();
 		keys.append("{Keys:");
-		keys.append(this.labelVanningDate+"=").append(FormatUtil.convertDateToString((Date)currentObj[IBW02130PreprocessRepository.IDX_VANNING_DT], AppConstants.DATE_STRING_SCREEN_FORMAT));
+		keys.append(this.labelVanningDate+"=").append(FormatUtil.convertDateToString((Date)currentObj[ExampleFileUploadPreprocessRepository.IDX_VANNING_DT], AppConstants.DATE_STRING_SCREEN_FORMAT));
 		keys.append(" ,");
-		keys.append(this.labelProductionDate+"=").append(FormatUtil.convertDateToString((Date)currentObj[IBW02130PreprocessRepository.IDX_PROD_DT], AppConstants.DATE_STRING_SCREEN_FORMAT));
+		keys.append(this.labelProductionDate+"=").append(FormatUtil.convertDateToString((Date)currentObj[ExampleFileUploadPreprocessRepository.IDX_PROD_DT], AppConstants.DATE_STRING_SCREEN_FORMAT));
 		keys.append("}");
 	}
 	
 	private boolean validateMandatory(Object[] currentObj, int iRowStage) {
 		boolean valid = true;
 		if(currentObj!=null){
-			String fileId = (String)currentObj[IBW02130PreprocessRepository.IDX_FILE_ID];
-			String fileNameUL = (String)currentObj[IBW02130PreprocessRepository.IDX_FILE_NAME];
-			String importer = (String)currentObj[IBW02130PreprocessRepository.IDX_IMPORTER];
-			String rundownKey = (String)currentObj[IBW02130PreprocessRepository.IDX_RUNDOWN_KEY];
-			String exporter = (String)currentObj[IBW02130PreprocessRepository.IDX_EXPORTER];
-			Date orderDate = (Date)currentObj[IBW02130PreprocessRepository.IDX_ORDER_DT];
-			BigDecimal vanningVolume = (BigDecimal)currentObj[IBW02130PreprocessRepository.IDX_VANNING_VOLUME];
-			Date vanningDate = (Date)currentObj[IBW02130PreprocessRepository.IDX_VANNING_DT];
-			Date loadingDate = (Date)currentObj[IBW02130PreprocessRepository.IDX_LOADING_DT];
-			Date unloadingDate = (Date)currentObj[IBW02130PreprocessRepository.IDX_UNLOADING_DT];
-			Date productionDate = (Date)currentObj[IBW02130PreprocessRepository.IDX_PROD_DT];
-			BigDecimal productionVolume = (BigDecimal)currentObj[IBW02130PreprocessRepository.IDX_PROD_VOLUME];
+			String fileId = (String)currentObj[ExampleFileUploadPreprocessRepository.IDX_FILE_ID];
+			String fileNameUL = (String)currentObj[ExampleFileUploadPreprocessRepository.IDX_FILE_NAME];
+			String importer = (String)currentObj[ExampleFileUploadPreprocessRepository.IDX_IMPORTER];
+			String rundownKey = (String)currentObj[ExampleFileUploadPreprocessRepository.IDX_RUNDOWN_KEY];
+			String exporter = (String)currentObj[ExampleFileUploadPreprocessRepository.IDX_EXPORTER];
+			Date orderDate = (Date)currentObj[ExampleFileUploadPreprocessRepository.IDX_ORDER_DT];
+			BigDecimal vanningVolume = (BigDecimal)currentObj[ExampleFileUploadPreprocessRepository.IDX_VANNING_VOLUME];
+			Date vanningDate = (Date)currentObj[ExampleFileUploadPreprocessRepository.IDX_VANNING_DT];
+			Date loadingDate = (Date)currentObj[ExampleFileUploadPreprocessRepository.IDX_LOADING_DT];
+			Date unloadingDate = (Date)currentObj[ExampleFileUploadPreprocessRepository.IDX_UNLOADING_DT];
+			Date productionDate = (Date)currentObj[ExampleFileUploadPreprocessRepository.IDX_PROD_DT];
+			BigDecimal productionVolume = (BigDecimal)currentObj[ExampleFileUploadPreprocessRepository.IDX_PROD_VOLUME];
 			
 			int iRowExcel = iRowStage + FIRST_DATA_ROW;
 			
@@ -487,12 +469,12 @@ public class CBW02130PreprocessService {
 		boolean valid = true;
 		//Run last record only
 		if(currentObj != null && isLastRecord){
-			String startProdExist = (String)currentObj[IBW02130PreprocessRepository.IDX_START_PROD_EXIST];
-			String startEffectiveKKVolMonth = (String)currentObj[IBW02130PreprocessRepository.IDX_START_EFF_KK_MONTH];
+			String startProdExist = (String)currentObj[ExampleFileUploadPreprocessRepository.IDX_START_PROD_EXIST];
+			String startEffectiveKKVolMonth = (String)currentObj[ExampleFileUploadPreprocessRepository.IDX_START_EFF_KK_MONTH];
 			if(AppConstants.NO_INFO.equals(startProdExist)){
 				StringBuilder k = new StringBuilder();
 				k.append("{Keys:");
-				k.append(this.labelProductionDate+"=").append(FormatUtil.convertDateToString((Date)currentObj[IBW02130PreprocessRepository.IDX_START_PROD_DT], AppConstants.DATE_SHOW_IN_SCREEN_MMM_YYYY));
+				k.append(this.labelProductionDate+"=").append(FormatUtil.convertDateToString((Date)currentObj[ExampleFileUploadPreprocessRepository.IDX_START_PROD_DT], AppConstants.DATE_SHOW_IN_SCREEN_MMM_YYYY));
 				k.append("}");
 				String errMsg = messageSource.getMessage(MessagesConstants.B_ERROR_INVALID_VALUE,
 						new String[] {"Start Month of Diagram data " + k.toString(), "Start on " + 
@@ -619,7 +601,7 @@ public class CBW02130PreprocessService {
 			}
 			return result;	
 		} catch (Exception e) {
-			String errMsg = messageSource.getMessage("MSTD0067AERR", new String[] { CBW00000Util.genMessageOfException(e) }, Locale.getDefault());
+			String errMsg = messageSource.getMessage("MSTD0067AERR", new String[] { CommonUtility.genMessageOfException(e) }, Locale.getDefault());
 			if (!validateLogError(errMsg)) {
 				loggerBBW02130.error(appId, "MSTD0067AERR", errMsg, createBy);
 			}

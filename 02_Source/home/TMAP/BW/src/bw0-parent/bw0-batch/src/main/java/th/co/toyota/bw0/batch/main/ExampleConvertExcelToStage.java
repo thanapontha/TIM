@@ -31,7 +31,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 import th.co.toyota.bw0.api.common.CommonUtility;
 import th.co.toyota.bw0.api.constants.AppConstants;
-import th.co.toyota.bw0.batch.common.CBW00000BatchUtil;
+import th.co.toyota.bw0.batch.common.CommonBatchUtil;
 import th.co.toyota.bw0.batch.service.ExampleConvertExcelToStageService;
 import th.co.toyota.bw0.util.FormatUtil;
 import th.co.toyota.config.AppConfig;
@@ -53,7 +53,7 @@ public class ExampleConvertExcelToStage {
 	protected MessageSource messageSource;
 
 	@Autowired
-	protected CBW00000BatchUtil batchUtil;
+	protected CommonBatchUtil batchUtil;
 
 	@Autowired
 	private ExampleConvertExcelToStageService service;

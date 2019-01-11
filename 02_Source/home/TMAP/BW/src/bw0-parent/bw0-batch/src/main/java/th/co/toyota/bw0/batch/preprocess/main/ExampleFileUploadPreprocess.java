@@ -4,12 +4,12 @@
  * Project Name	            :  GWRDS : 
  * Client Name				:  TDEM
  * Package Name             :  th.co.toyota.bw0.batch.preprocess.main
- * Program ID 	            :  CBW02130Preprocess.java
- * Program Description	    :  PAMs Rundown Upload
+ * Program ID 	            :  ExampleFileUploadPreprocess.java
+ * Program Description	    :  Example File Upload PreProcess
  * Environment	 	    	:  Java 7
- * Author		    		:  Thanawut T.
+ * Author		    		:  Thanapon T.
  * Version		    		:  1.0
- * Creation Date            :  08 September 2017
+ * Creation Date            :  January, 11 2018
  *
  * Modification History	    :
  * Version	   Date		   Person Name		Chng Req No		Remarks
@@ -35,37 +35,33 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import com.google.common.base.Strings;
 
 import th.co.toyota.config.AppConfig;
-import th.co.toyota.bw0.api.common.CBW00000Util;
+import th.co.toyota.bw0.api.common.CommonUtility;
 import th.co.toyota.bw0.api.constants.AppConstants;
 import th.co.toyota.bw0.api.constants.MessagesConstants;
 import th.co.toyota.bw0.api.exception.common.CommonErrorException;
-import th.co.toyota.bw0.api.repository.common.IBW00000Repository;
-import th.co.toyota.bw0.batch.preprocess.service.CBW02120PreprocessService;
-import th.co.toyota.bw0.batch.preprocess.service.CBW02130PreprocessService;
+import th.co.toyota.bw0.api.repository.common.CommonAPIRepository;
+import th.co.toyota.bw0.batch.preprocess.service.ExampleFileUploadPreprocessService;
 import th.co.toyota.st3.api.constants.CST30000Constants;
 import th.co.toyota.st3.api.constants.CST30000Messages;
 import th.co.toyota.st3.api.util.IST30000LoggerDb;
 import th.co.toyota.st3.batch.receiving.CST31250FileReceivingCmdOptions;
 import th.co.toyota.st3.batch.receiving.IST31250PreProcessClass;
 
-public class CBW02130Preprocess implements IST31250PreProcessClass {
+public class ExampleFileUploadPreprocess implements IST31250PreProcessClass {
 
-	final Logger logger = LoggerFactory.getLogger(CBW02130Preprocess.class);
+	final Logger logger = LoggerFactory.getLogger(ExampleFileUploadPreprocess.class);
 
 	@Autowired
 	private IST30000LoggerDb loggerBBW02130;
 
 	@Autowired
 	protected MessageSource messageSource;
-
-	@Autowired
-	private CBW02120PreprocessService servicePams;
 	
 	@Autowired
-	private CBW02130PreprocessService serviceKompo;
+	private ExampleFileUploadPreprocessService serviceKompo;
 
 	@Autowired
-	private IBW00000Repository repository;
+	private CommonAPIRepository repository;
 	private String batchName = "Upload KOMPO preprocess";
 	private String batchNameMsg = " Upload KOMPO.";
 	
@@ -78,7 +74,7 @@ public class CBW02130Preprocess implements IST31250PreProcessClass {
 	@SuppressWarnings("resource")
 	public static void main(String[] args) {
 		ApplicationContext appContext = new AnnotationConfigApplicationContext(AppConfig.class);
-		CBW02130Preprocess main = appContext.getBean(CBW02130Preprocess.class);
+		ExampleFileUploadPreprocess main = appContext.getBean(ExampleFileUploadPreprocess.class);
 		CST31250FileReceivingCmdOptions arg0 = new CST31250FileReceivingCmdOptions();
 		arg0.setModuleId(AppConstants.MODULE_ID_BW02);
 		arg0.setFunctionId(AppConstants.FUNCTION_ID_BBW02130);
@@ -122,34 +118,14 @@ public class CBW02130Preprocess implements IST31250PreProcessClass {
 			logger.info(msg);
 			loggerBBW02130.start(appId, CST30000Messages.INFO_PROCESS_START, msg, createBy);
 			
-			servicePams.sysdate = this.sysdate;
 			serviceKompo.sysdate = this.sysdate;
-			
-			//Validate Sheet 1 (PAMs Rundown)
-			int resultPams = servicePams.validate(conn, arg0);
-			
-			//Copy PAMs Rundown parameters to Kompo parameters (for continue use)
-			serviceKompo.mapError = servicePams.mapError;
-			serviceKompo.nextRunNoVCalendar = servicePams.nextRunNoVCalendar;
-			serviceKompo.nextRunNoUCalendar = servicePams.nextRunNoUCalendar;
-			serviceKompo.nextRunNoStock = servicePams.nextRunNoStock;
-			serviceKompo.nextRunNoProdVol = servicePams.nextRunNoProdVol;
-			serviceKompo.nextRunNoPackVol = servicePams.nextRunNoPackVol;
-			serviceKompo.nextRunNoOther = servicePams.nextRunNoOther;
-			serviceKompo.endMonth = servicePams.endMonth;
-			serviceKompo.logDetailCalendar = servicePams.logDetailCalendar;
-			serviceKompo.logDetailStdStock = servicePams.logDetailStdStock;
-			serviceKompo.logDetailProdVol = servicePams.logDetailProdVol;
-			serviceKompo.logDetailPackVol = servicePams.logDetailPackVol;
-			serviceKompo.logDetailOther = servicePams.logDetailOther;
+
 			
 			//Validate Sheet 2 (Diagram)
 			int resultKompo = serviceKompo.validate(conn, arg0);
 			
 			//Save data to result table
-			if ((resultPams == CST30000Constants.SUCCESS || resultPams == CST30000Constants.WARNING)
-					&& (resultKompo == CST30000Constants.SUCCESS || resultKompo == CST30000Constants.WARNING) 
-					&& servicePams.totalRead > 0
+			if ( (resultKompo == CST30000Constants.SUCCESS || resultKompo == CST30000Constants.WARNING) 
 					&& serviceKompo.totalRead > 0) {
 
 				// Manage Transaction
@@ -162,19 +138,19 @@ public class CBW02130Preprocess implements IST31250PreProcessClass {
 				}
 			}
 				
-			paramStr1.append("TOTAL SUMMARY INPUT: TB_S_PAMS_RUNDOWN : Total read records=").append(servicePams.totalRead);
+			paramStr1.append("TOTAL SUMMARY INPUT: TB_S_PAMS_RUNDOWN : Total read records=").append("");
 			paramStr1.append(" TB_S_KOMPO : Total read records=").append(serviceKompo.totalRead);
 			
 			paramStr2.append(" OUTPUT:");
 			paramStr2.append(" TB_R_RUNDOWN_KOMPO_STS : Total inserted records = " + unitModelCount);
 			paramStr2.append(" TB_R_PAMS_RUNDOWN : Total inserted records = ").append(serviceKompo.insertedPamsCnt);
 			paramStr2.append(" TB_R_KOMPO : Total inserted records = ").append(serviceKompo.insertedKompoCnt);
-			paramStr2.append(", Total warning records = ").append(servicePams.warningCnt + serviceKompo.warningCnt);
-			paramStr2.append(", Total error records = ").append(servicePams.errorCnt + serviceKompo.errorCnt);
+			paramStr2.append(", Total warning records = ").append(serviceKompo.warningCnt);
+			paramStr2.append(", Total error records = ").append(serviceKompo.errorCnt);
 			
 			paramStr3.append("Upload file: "+ serviceKompo.fileName);
 			
-			if (resultPams == CST30000Constants.SUCCESS && resultKompo == CST30000Constants.SUCCESS) {
+			if (resultKompo == CST30000Constants.SUCCESS) {
 				msg = messageSource.getMessage(
 						CST30000Messages.INFO_PROCESS_END_SUCCESS,
 						new String[] { batchName, paramStr1.toString(), paramStr2.toString(), paramStr3.toString() },
@@ -184,7 +160,7 @@ public class CBW02130Preprocess implements IST31250PreProcessClass {
 				
 				repository.updateStatusOfLogUpload(appId, createBy, AppConstants.STATUS_SUCCESS, AppConstants.STATUS_SUCCESS_DESC+batchNameMsg);
 				result = CST30000Constants.SUCCESS;
-			}else if (resultPams == CST30000Constants.ERROR || resultKompo == CST30000Constants.ERROR) {				
+			}else if (resultKompo == CST30000Constants.ERROR) {				
 				msg = messageSource.getMessage(
 						CST30000Messages.INFO_PROCESS_END_ERROR,
 						new String[] { batchName, paramStr1.toString(), paramStr2.toString(), paramStr3.toString() },
@@ -199,7 +175,7 @@ public class CBW02130Preprocess implements IST31250PreProcessClass {
 		} catch (Exception e) {		
 			String errMsg = messageSource
 					.getMessage(CST30000Messages.ERROR_UNDEFINED_ERROR,
-							new String[] { CBW00000Util.genMessageOfException(e) },
+							new String[] { CommonUtility.genMessageOfException(e) },
 							Locale.getDefault());
 			logger.error(errMsg);
 			loggerBBW02130.error(appId, CST30000Messages.ERROR_UNDEFINED_ERROR,
@@ -217,7 +193,7 @@ public class CBW02130Preprocess implements IST31250PreProcessClass {
 			} catch (CommonErrorException e1) {
 				errMsg = messageSource
 						.getMessage(CST30000Messages.ERROR_UNDEFINED_ERROR,
-								new String[] { CBW00000Util.genMessageOfException(e1) },
+								new String[] { CommonUtility.genMessageOfException(e1) },
 								Locale.getDefault());
 				logger.error(errMsg);
 				loggerBBW02130.error(appId, CST30000Messages.ERROR_UNDEFINED_ERROR, errMsg, createBy);
@@ -251,7 +227,7 @@ public class CBW02130Preprocess implements IST31250PreProcessClass {
 			throw e;
 		}catch (Exception e) {
 			completed = false;
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, true);
+			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, true);
 		}finally{
 			try {
 				if(conn!=null && !conn.isClosed()){
@@ -283,7 +259,7 @@ public class CBW02130Preprocess implements IST31250PreProcessClass {
 			throw e;
 		}catch (Exception e) {
 			completed = false;
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, true);
+			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, true);
 		}finally{
 			try {
 				if(conn!=null && !conn.isClosed()){

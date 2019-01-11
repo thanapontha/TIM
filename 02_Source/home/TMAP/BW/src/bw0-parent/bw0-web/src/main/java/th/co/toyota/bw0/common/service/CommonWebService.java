@@ -11,18 +11,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import th.co.toyota.bw0.common.repository.CommonRepository;
+import th.co.toyota.bw0.common.repository.CommonWebRepository;
 import th.co.toyota.sc2.client.CSC22110Constant;
 import th.co.toyota.sc2.client.model.simple.CSC22110UserInfo;
 
 import com.google.common.base.Strings;
 
 @Service
-public class CommonService{
+public class CommonWebService{
 	final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Autowired
-	private CommonRepository repository;
+	private CommonWebRepository repository;
 	
 	@Value("${projectCode}")
 	private String projectCode;

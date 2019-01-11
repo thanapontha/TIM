@@ -24,7 +24,7 @@ import com.google.common.base.Strings;
 import th.co.toyota.application.model.Payload;
 import th.co.toyota.application.repository.IST33060SystemMasterRepository;
 import th.co.toyota.application.web.form.IST30000Form;
-import th.co.toyota.bw0.common.repository.CommonRepository;
+import th.co.toyota.bw0.common.repository.CommonWebRepository;
 import th.co.toyota.sc2.client.CSC22110Constant;
 import th.co.toyota.sc2.client.model.simple.CSC22110AccessControlList;
 import th.co.toyota.sc2.client.model.simple.CSC22110UserInfo;
@@ -61,7 +61,7 @@ public class CommonBaseController {
 	private IST33060SystemMasterRepository systemRepository;
 	
 	@Autowired
-	public CommonRepository commonRepository;
+	public CommonWebRepository commonRepository;
 	
 	@Value("${projectCode}")
 	private String projectCode;

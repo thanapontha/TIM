@@ -1,15 +1,15 @@
 /******************************************************
  * Program History
  * 
- * Project Name	            :  GWRDS : Getsudo Worksheet Rundown System
+ * Project Name	            :  
  * Client Name				:  TDEM
  * Package Name             :  th.co.toyota.bw0.web.report.main
- * Program ID 	            :  CBW04221Repository.java
- * Program Description	    :  <put description>
+ * Program ID 	            :  CommonDownloadReportRepositoryImpl.java
+ * Program Description	    :  Common Download Report Repository Implement
  * Environment	 	        :  Java 7
- * Author					:  Thanawut T.
+ * Author					:  Thanapon T.
  * Version					:  1.0
- * Creation Date            :  August 28, 2017
+ * Creation Date            :  January 11, 2018
  *
  * Modification History	    :
  * Version	   Date		   Person Name		Chng Req No		Remarks
@@ -34,11 +34,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import th.co.toyota.bw0.api.common.CBW00000Util;
+import th.co.toyota.bw0.api.common.CommonUtility;
 
 @Repository
-public class CBW04221Repository implements IBW04221Repository {
-	final Logger logger = LoggerFactory.getLogger(CBW04221Repository.class);
+public class CommonDownloadReportRepositoryImpl implements CommonDownloadReportRepository {
+	final Logger logger = LoggerFactory.getLogger(CommonDownloadReportRepositoryImpl.class);
 	
 	@NotNull
 	@PersistenceContext(unitName = "entityManagerFactory")
@@ -48,7 +48,7 @@ public class CBW04221Repository implements IBW04221Repository {
 	@Override
 	public List<Object[]> searchObject(Connection conn, String getsudoMonth, String timing, String plantCondition) throws Exception {
 		
-		StringBuffer SQL = new StringBuffer();
+		StringBuilder SQL = new StringBuilder();
 		SQL.append("SELECT CAL.CAL_DATE, T2.* ");
 		SQL.append("  FROM (SELECT T.PLANT, TO_CHAR(T.CALENDAR_DATE,'DD-Mon-YYYY') CALENDAR_DATE, T.CALENDAR_FLAG ");
 		SQL.append("          FROM TB_M_CALENDAR T ");
@@ -100,7 +100,7 @@ public class CBW04221Repository implements IBW04221Repository {
 			}
 			return ls;
 		}catch(Exception e){
-			throw CBW00000Util.handleExceptionToCommonErrorException(e, logger, false);
+			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, false);
 		} finally {
 			try{
 				if(conn!=null && !conn.isClosed()){

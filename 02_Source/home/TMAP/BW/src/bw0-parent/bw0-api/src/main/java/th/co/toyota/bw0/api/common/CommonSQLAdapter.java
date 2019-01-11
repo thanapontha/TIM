@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 import th.co.toyota.bw0.util.FormatUtil;
 
-public class CBW00000SQLAdapter {
+public class CommonSQLAdapter {
 	public int execute(Connection con, String stQuery, Object oParams) throws Exception {
 	    PreparedStatement ps = null;
 	    int intResult = 0;

@@ -31,21 +31,21 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
-import th.co.toyota.bw0.api.common.CBW00000CommonPOI;
-import th.co.toyota.bw0.api.common.CBW00000Util;
+import th.co.toyota.bw0.api.common.CommonPOI;
+import th.co.toyota.bw0.api.common.CommonUtility;
 import th.co.toyota.bw0.api.exception.common.CommonErrorException;
-import th.co.toyota.bw0.api.repository.common.IBW00000Repository;
-import th.co.toyota.bw0.api.repository.common.IBW03060Repository;
-import th.co.toyota.bw0.batch.report.repository.IBW04221Repository;
+import th.co.toyota.bw0.api.repository.common.CommonAPIRepository;
+import th.co.toyota.bw0.api.repository.common.SystemMasterAPIRepository;
+import th.co.toyota.bw0.batch.report.repository.CommonDownloadReportRepository;
 import th.co.toyota.config.AppConfig;
 import th.co.toyota.st3.api.constants.CST30000Messages;
 import th.co.toyota.st3.api.util.CST32010DocNoGenerator;
 import th.co.toyota.st3.api.util.IST30000LoggerDb;
 
 @Component
-public class CBW04221CalendarDownloadMain {
+public class CommonDownloadReportMain {
 
-	final Logger logger = LoggerFactory.getLogger(CBW04221CalendarDownloadMain.class);
+	final Logger logger = LoggerFactory.getLogger(CommonDownloadReportMain.class);
 	
 	@Autowired
 	private IST30000LoggerDb loggerBBW04221;
@@ -54,26 +54,23 @@ public class CBW04221CalendarDownloadMain {
 	protected MessageSource messageSource;
 	
 	@Autowired
-	private IBW03060Repository systemRepository;
+	private SystemMasterAPIRepository systemRepository;
 	
 	@Autowired
-	private IBW00000Repository commonRepository;
+	private CommonAPIRepository commonRepository;
 	
 	@Autowired
-	private IBW04221Repository repository;
+	private CommonDownloadReportRepository repository;
 	
 	@Autowired
-	protected CBW00000CommonPOI poi;
-	
-	@Autowired
-	private CST32010DocNoGenerator docNoGenerator;
+	protected CommonPOI poi;
 
 	@Value("${default.download.folder}")
 	protected String downloadFolder;
 	
 	public static void main(String[] args) {
 		ApplicationContext appContext = new AnnotationConfigApplicationContext(AppConfig.class);
-		CBW04221CalendarDownloadMain main = appContext.getBean(CBW04221CalendarDownloadMain.class);
+		CommonDownloadReportMain main = appContext.getBean(CommonDownloadReportMain.class);
 
 		String[] params = {
 				"TDEM", //param 1: Version (User Company Login TMAP-MS or TDEM)
@@ -89,7 +86,7 @@ public class CBW04221CalendarDownloadMain {
 		try {
 			main.generateReport(params);
 		} catch (CommonErrorException e) {
-			String message = main.messageSource.getMessage(CST30000Messages.ERROR_UNDEFINED_ERROR, new String[] { CBW00000Util.genMessageOfException(e) }, Locale.getDefault());
+			String message = main.messageSource.getMessage(CST30000Messages.ERROR_UNDEFINED_ERROR, new String[] { CommonUtility.genMessageOfException(e) }, Locale.getDefault());
 			main.logger.error(message);
 		}
 		
@@ -99,7 +96,7 @@ public class CBW04221CalendarDownloadMain {
 	}
 	
 	public List<String> generateReport(String[] args) throws CommonErrorException {
-		CBW04221CalendarDownload download = new CBW04221CalendarDownload();
+		CommonDownloadReport download = new CommonDownloadReport();
 		download.loggerBBW04221 = loggerBBW04221;
 		download.messageSource = messageSource;
 		download.systemRepository = systemRepository;

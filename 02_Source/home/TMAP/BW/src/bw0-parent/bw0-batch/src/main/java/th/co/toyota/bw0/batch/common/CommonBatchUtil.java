@@ -13,9 +13,9 @@ import th.co.toyota.st3.batch.util.CST30000BatchUtils;
 
 import com.google.common.base.Strings;
 
-public class CBW00000BatchUtil {
+public class CommonBatchUtil {
 
-	final Logger logger = LoggerFactory.getLogger(CBW00000BatchUtil.class);
+	final Logger logger = LoggerFactory.getLogger(CommonBatchUtil.class);
 
 	@Autowired
 	protected MessageSource messageSource;

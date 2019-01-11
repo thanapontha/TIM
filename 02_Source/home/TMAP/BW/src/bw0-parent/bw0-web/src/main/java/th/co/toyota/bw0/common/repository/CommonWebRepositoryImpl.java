@@ -32,8 +32,8 @@ import th.co.toyota.bw0.util.FormatUtil;
 import th.co.toyota.st3.api.util.CST32010DocNoGenerator;
 
 @Repository
-public class CommonRepositoryImp implements CommonRepository {
-	final Logger logger = LoggerFactory.getLogger(CommonRepositoryImp.class);
+public class CommonWebRepositoryImpl implements CommonWebRepository {
+	final Logger logger = LoggerFactory.getLogger(CommonWebRepositoryImpl.class);
 
 	@NotNull
 	@PersistenceContext(unitName = "entityManagerFactory")
