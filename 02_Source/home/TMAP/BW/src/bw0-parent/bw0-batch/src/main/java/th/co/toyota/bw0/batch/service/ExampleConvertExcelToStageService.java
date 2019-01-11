@@ -1,15 +1,15 @@
 /******************************************************
  * Program History
  * 
- * Project Name	            :  GWRDS : 
+ * Project Name	            :  TIM : Toyota Insurance Management
  * Client Name				:  TDEM
  * Package Name             :  th.co.toyota.bw0.batch.service
  * Program ID 	            :  CBW02130Service.java
- * Program Description	    :  Kompo Upload
+ * Program Description	    :  Example Upload
  * Environment	 	    	:  Java 7
  * Author		    		:  Thanawut T.
  * Version		    		:  1.0
- * Creation Date            :  07 September 2017
+ * Creation Date            :  10 January 2019
  *
  * Modification History	    :
  * Version	   Date		   Person Name		Chng Req No		Remarks
@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import th.co.toyota.bw0.api.common.CBW00000Util;
 import th.co.toyota.bw0.api.common.upload.CBW00000CommonExcelConversionDTO;
 import th.co.toyota.bw0.api.common.upload.CBW00000DataFileUpload;
 import th.co.toyota.bw0.api.constants.AppConstants;
@@ -78,14 +77,9 @@ public class ExampleConvertExcelToStageService extends CBW00000DataFileUpload{
 	public Timestamp sysdate;
 	private int runningNo = 1;
 	
-	String unitPlantAllSelected = null;
-	String unitModelAllSelected = null;
-	String unitTypeAllSelected = null;
-	private String selectSep = AppConstants.BATCH_CHARACTOR_REPLACE_SELECTED_MULTI_UNIT_BACK;
-
-	public boolean validateParameters(String[] params, int lengthParamCheck, String sAppId, String sCreateBy, String fileName, String fileId,Timestamp sysdate) {
-		this.appId = sAppId;
-		this.createBy = sCreateBy;
+	public boolean validateParameters(String[] params, int lengthParamCheck, String appId, String createBy, String fileName, String fileId,Timestamp sysdate) {
+		this.appId = appId;
+		this.createBy = createBy;
 		this.filename = fileName;
 		this.fileId = fileId;
 		this.sysdate = sysdate;
@@ -96,45 +90,7 @@ public class ExampleConvertExcelToStageService extends CBW00000DataFileUpload{
 			loggerBBW02130.error(appId, CST30000Messages.ERROR_MESSAGE_MISSING_PARAMETER, errMsg, createBy);
 			return false;
 		}
-		this.userCompanyLogin = CBW00000Util.convertBatchParam(Strings.nullToEmpty(params[0]));
-		this.uploadType = CBW00000Util.convertBatchParam(Strings.nullToEmpty(params[1]));
-		this.getsudoMonth = CBW00000Util.convertBatchParam(Strings.nullToEmpty(params[2]));
-		this.timing = CBW00000Util.convertBatchParam(Strings.nullToEmpty(params[3]));
-		this.vehiclePlant = CBW00000Util.convertBatchParam(Strings.nullToEmpty(params[4]));
-		this.vehicleModel = CBW00000Util.convertBatchParam(Strings.nullToEmpty(params[5]));
-//		this.unitPlant = CBW00000Util.convertBatchParam(Strings.nullToEmpty(params[6]));
-//		this.unitType = CBW00000Util.convertBatchParam(Strings.nullToEmpty(params[7]));
-//		this.unitModel = CBW00000Util.convertBatchParam(Strings.nullToEmpty(params[8]));
-		
-		//CR UT-002 2018/02/16 Thanawut T. : select multiple Unit Model for Kompokung Validate
-		//KOMPO
-		if(AppConstants.UPLOAD_KOMPO_FLAG.equals(uploadType)){
-			if (!Strings.isNullOrEmpty(Strings.nullToEmpty(params[6])))
-				unitPlantAllSelected = CBW00000Util.convertBatchParam(Strings.nullToEmpty(params[6]));
-			if (!Strings.isNullOrEmpty(Strings.nullToEmpty(params[7])))
-				unitTypeAllSelected = CBW00000Util.convertBatchParam(Strings.nullToEmpty(params[7]));
-			if (!Strings.isNullOrEmpty(Strings.nullToEmpty(params[8])))
-				unitModelAllSelected = CBW00000Util.convertBatchParam(Strings.nullToEmpty(params[8]));
-			
-			String[] unitPlantArr = unitPlantAllSelected.split(selectSep);
-			unitPlant = (unitPlantArr != null) ? unitPlantArr[0] : unitPlantAllSelected;
-			
-			String[] unitTypeArr = unitTypeAllSelected.split(selectSep);
-			unitType = (unitTypeArr != null) ? unitTypeArr[0] : unitTypeAllSelected;
-			
-			String[] unitModelArr = unitModelAllSelected.split(selectSep);
-			unitModel = (unitModelArr != null) ? unitModelArr[0] : unitModelAllSelected;
-		}else{ //PAMs
-			//In Case PAMs use 1 unit model
-			if (!Strings.isNullOrEmpty(Strings.nullToEmpty(params[6])))
-				unitPlant = CBW00000Util.convertBatchParam(Strings.nullToEmpty(params[6]));
-			if (!Strings.isNullOrEmpty(Strings.nullToEmpty(params[7])))
-				unitType = CBW00000Util.convertBatchParam(Strings.nullToEmpty(params[7]));
-			if (!Strings.isNullOrEmpty(Strings.nullToEmpty(params[8])))
-				unitModel = CBW00000Util.convertBatchParam(Strings.nullToEmpty(params[8]));
-		}
-		//END CR UT-002 2018/02/16
-		
+
 		return true;
 	}
 	
@@ -145,7 +101,7 @@ public class ExampleConvertExcelToStageService extends CBW00000DataFileUpload{
 
 	public Object[] convertExcelToStaging(String tableName) throws CommonErrorException{
 		try{
-			String deleteStageSQL = " DELETE FROM "+tableName+" WHERE CREATE_BY = '"+this.createBy+"'";
+			String deleteStageSQL = " DELETE FROM " + tableName + " WHERE CREATE_BY = '" + this.createBy + "'";
 	        return this.convertExcelToStaging(this.filename, fileId, this.createBy, tableName, this.checkFileSize(), this.getHeaderParamToCheckWithExcel(null), deleteStageSQL);
 		}catch (CommonErrorException e){		
 			String errMsg = messageSource.getMessage(e.getMessageCode(),e.getMessageArg(), Locale.getDefault());
@@ -153,8 +109,9 @@ public class ExampleConvertExcelToStageService extends CBW00000DataFileUpload{
 			loggerBBW02130.error(appId, e.getMessageCode(), errMsg, createBy);
 			throw e;
 		}
-	}	
+	}
 	
+	@Override 
 	public int insertDataToStaging(List<Object[]> dataLs)throws Exception {
     	return repository.insertDataToStaging(null, dataLs, this.createBy);
     }
@@ -212,7 +169,7 @@ public class ExampleConvertExcelToStageService extends CBW00000DataFileUpload{
 		HashMap dMapField = xlsConvVo.getDetailMappingField();
 		
 		String col1ofRow = "";
-		List<Object> lsData = new ArrayList<Object>();
+		List<Object> lsData = new ArrayList<>();
 		lsData.add(this.getsudoMonth);
 		lsData.add(this.timing);
 		lsData.add(this.vehiclePlant);
@@ -242,8 +199,8 @@ public class ExampleConvertExcelToStageService extends CBW00000DataFileUpload{
 					String convertDtFormat = (String)mapInfo.get(CBW00000CommonExcelConversionDTO.ATTR_CONVERT_STRING_TO_DATE);
 					if(!Strings.isNullOrEmpty(convertDtFormat)){
 						Date dt = null;
-						if(Strings.isNullOrEmpty(cellValue) == false){
-							if(FormatUtil.isValidDate(cellValue, convertDtFormat) == false){
+						if(!Strings.isNullOrEmpty(cellValue)){
+							if(!FormatUtil.isValidDate(cellValue, convertDtFormat)){
 								String errMsg = messageSource.getMessage(MessagesConstants.B_ERROR_INVALID_FORMAT, 
 										new String[]{colName+" {Row No. "+(rowIdx+1)+"}", Strings.nullToEmpty(convertDtFormat)}, Locale.getDefault());
 								logger.error(errMsg);
