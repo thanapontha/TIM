@@ -303,19 +303,6 @@ public final class AppConstants {
 	
 	public static final String CONTACT_NAME_OF_EMAIL = "Admin";
 	
-	public static final String UNIT_CAPA_MNG_REMARK_MU = "Multi-Order Source";
-	public static final String UNIT_CAPA_MNG_REMARK_MS = "Multi-Sub Line";
-	public static final String UNIT_CAPA_MNG_REMARK_M2 = "Multi Source, Multi-Sub Line";
-	
-	public static final String UNIT_CAPA_MNG_REMARK_MU_CD = "MU";
-	public static final String UNIT_CAPA_MNG_REMARK_MS_CD = "MS";
-	public static final String UNIT_CAPA_MNG_REMARK_M2_CD = "M2";
-	
-	public static final String UNIT_CAPA_MNG_INCOMING_VOL_STS_W1 = "Waiting";
-	public static final String UNIT_CAPA_MNG_INCOMING_VOL_STS_W2 = "Waiting other vehicle plants";
-	public static final String UNIT_CAPA_MNG_INCOMING_VOL_STS_R2 = "All vehicle plants received";
-	public static final String UNIT_CAPA_MNG_INCOMING_VOL_STS_R1 = "Received";
-	
 	public static final String UNIT_CAPA_MNG_INCOMING_VOL_STS_W1_CD = "W1";
 	public static final String UNIT_CAPA_MNG_INCOMING_VOL_STS_W2_CD = "W2";
 	public static final String UNIT_CAPA_MNG_INCOMING_VOL_STS_R2_CD = "R2";
