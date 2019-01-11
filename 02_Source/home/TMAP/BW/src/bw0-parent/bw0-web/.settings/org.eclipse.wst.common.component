@@ -5,10 +5,10 @@
 		<wb-resource deploy-path="/WEB-INF/classes" source-path="src/main/resources"/>
 		<wb-resource deploy-path="/WEB-INF/classes" source-path="src/main/java"/>
 		<wb-resource deploy-path="/" source-path="src/main/webapp"/>
-		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/bw0-api/bw0-api">
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/bw0-batch/bw0-batch">
 			<dependency-type>uses</dependency-type>
 		</dependent-module>
-		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/bw0-batch/bw0-batch">
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/bw0-api/bw0-api">
 			<dependency-type>uses</dependency-type>
 		</dependent-module>
 	</wb-module>
