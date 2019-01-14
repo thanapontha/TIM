@@ -21,7 +21,6 @@
 
 	<!-- enables scanning for @Transactional annotations -->
 	<tx:annotation-driven />
-	
 	<!-- JPA EntityManagerFactory -->
 	<bean id="entityManagerFactory"
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
@@ -37,12 +36,16 @@
 		</property>
 		<!-- BOTH Persistence Unit and Packages to Scan are NOT compatible, persistenceUnit 
 			will win -->
-		<property name="persistenceUnitName" value="st3main" />
+		<property name="persistenceUnitName" value="bw0main" />
+
 		<property name="packagesToScan">
 			<list>
 				<value>th.co.toyota.st3.api.model</value>
+				<value>th.co.toyota.bw0.api.model.common</value>
+				<value>th.co.toyota.bw0.api.model.batch</value>
+				<value>th.co.toyota.bw0.api.model.report</value>
 			</list>
-		</property>
+		</property>	
 	</bean>
 
 	<bean id="entityManagerFactory_bfw"
@@ -59,7 +62,7 @@
 		</property>
 		<!-- BOTH Persistence Unit and Packages to Scan are NOT compatible, persistenceUnit 
 			will win -->
-		<property name="persistenceUnitName" value="st3main_bfw" />
+		<property name="persistenceUnitName" value="bw0main_bfw" />
 		<property name="packagesToScan" value="th.co.toyota.st3.api.model" />
 	</bean>
 
@@ -79,6 +82,8 @@
 	<camel:camelContext id="camelContext">
 		<camel:template id="camelTemplate" />
 	</camel:camelContext>
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
 	<bean
 		class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
 	
@@ -94,8 +99,61 @@
 	<bean id="loggerST33020" class="th.co.toyota.st3.api.util.CST30000LoggerDb"
 		p:moduleId="ST3200" p:functionId="ST3302" />
 		
-	<!-- document number generator -->	
-	<bean id="CST32010DocNoGenerator" class="th.co.toyota.st3.api.util.CST32010DocNoGenerator" 
-		scope="prototype"/>
+	<bean id="loggerBBW02120" class="th.co.toyota.st3.api.util.CST30000LoggerDb"
+		p:moduleId="BW02" p:functionId="BBW02120" />
 		
+	<bean id="loggerBBW02130" class="th.co.toyota.st3.api.util.CST30000LoggerDb"
+		p:moduleId="BW02" p:functionId="BBW02130" />
+		
+	<bean id="loggerBBW04221" class="th.co.toyota.st3.api.util.CST30000LoggerDb"
+		p:moduleId="BW04" p:functionId="LBW04221" />
+		
+	<bean id="batchUtil" class="th.co.toyota.bw0.batch.common.CommonBatchUtil" />
+		
+	<bean id="CST30000BatchManager" class="th.co.toyota.st3.api.util.CST30000BatchManager" scope="prototype" />
+		
+	<bean id="CST30170JasperReportConnector" class="th.co.toyota.st3.api.report.CST30170JasperReportConnector" 
+		scope="prototype" p:templateFolder="${jr.template.folder}" p:destinationFolder="${jr.destination.folder}" 
+		p:virtualizerFolder="${jr.virtualizer.folder}" p:virtualMaxSize="${jr.virtualMaxSize}"/>
+	
+	<!-- Batch -->
+	<bean id="ExampleFileUploadPreprocess" class="th.co.toyota.bw0.batch.preprocess.main.ExampleFileUploadPreprocess" scope="prototype" />
+	<bean id="ExampleConvertExcelToStage" class="th.co.toyota.bw0.batch.main.ExampleConvertExcelToStage" scope="prototype" />
+	
+	
+	<!-- Batch Report or Generate ASSCII-->
+	<bean id="CommonDownloadReport" class="th.co.toyota.bw0.batch.report.main.CommonDownloadReport" scope="prototype" />
+	<!--START: Email -->
+	<!-- In batch do not use email function
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="${email.host}" />
+		<property name="defaultEncoding" value="utf-8" />
+	</bean>
+
+	<bean id="velocityEngine"
+		class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+		<property name="velocityProperties">
+			<value>
+				resource.loader=class
+				class.resource.loader.class=org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+			</value>
+		</property>
+	</bean>
+
+	<bean id="mailerVelocity" class="th.co.toyota.bw0.api.common.MailSenderVelocityImpl"
+		p:encoding="utf-8" p:applicationUrl="${application.url}"
+		p:mailFrom="${email.from}" p:mailFromDescription="${email.senderDescription}" p:templateLocation="${email.velocityPath}" >
+		<constructor-arg index="0" ref="velocityEngine" />
+		<constructor-arg index="1" ref="mailSender" />		
+		<property name="senderFooter" value="System" />
+		
+		<property name="templateSubmitKaikiengData" value="TemplateEmailSubmitKaikiengData.vm" />
+		<property name="templateRejectKaikiengData" value="TemplateEmailRejectKaikiengData.vm" />
+		
+	</bean>
+	 -->
+	<!--END: Email -->
+	 
+	 <!-- Common POI -->
+	 <bean id="CommonPOI" class="th.co.toyota.bw0.api.common.CommonPOI" scope="prototype" />
 </beans>

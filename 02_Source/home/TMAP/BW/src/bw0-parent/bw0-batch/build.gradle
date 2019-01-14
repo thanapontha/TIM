@@ -60,10 +60,10 @@ dependencies {
     //compile group: 'org.apache.camel', name: 'camel-ftp', version:'2.12.2'
     compile group: 'org.apache.camel', name: 'camel-spring', version:'2.12.2'
     
-    //testCompile(group: 'org.springframework', name: 'spring-test', version:'3.2.4.RELEASE') {
-	//	exclude(module: 'commons-logging')
-    //}
-    //testCompile group: 'junit', name: 'junit', version:'4.8.1'
+    testCompile(group: 'org.springframework', name: 'spring-test', version:'3.2.4.RELEASE') {
+		exclude(module: 'commons-logging')
+    }
+    testCompile group: 'junit', name: 'junit', version:'4.8.1'
     //testCompile group: 'org.mockito', name: 'mockito-all', version:'1.9.5'
   
 }

@@ -30,14 +30,12 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import th.co.toyota.bw0.api.common.CommonUtility;
-import th.co.toyota.bw0.api.constants.AppConstants;
 import th.co.toyota.bw0.batch.common.CommonBatchUtil;
 import th.co.toyota.bw0.batch.service.ExampleConvertExcelToStageService;
 import th.co.toyota.bw0.util.FormatUtil;
 import th.co.toyota.config.AppConfig;
 import th.co.toyota.st3.api.constants.CST30000Constants;
 import th.co.toyota.st3.api.constants.CST30000Messages;
-import th.co.toyota.st3.api.util.CST32010DocNoGenerator;
 import th.co.toyota.st3.api.util.IST30000LoggerDb;
 
 import com.google.common.base.Strings;
@@ -57,9 +55,6 @@ public class ExampleConvertExcelToStage {
 
 	@Autowired
 	private ExampleConvertExcelToStageService service;
-
-	@Autowired
-	private CST32010DocNoGenerator docNoGenerator;
 
 	public static final Integer IDX_VALIDATE_STATUS = 0;
 	public static final Integer IDX_ROWS_EFFECTED = 1;
@@ -102,19 +97,9 @@ public class ExampleConvertExcelToStage {
 		ApplicationContext appContext = new AnnotationConfigApplicationContext(AppConfig.class);
 		ExampleConvertExcelToStage exampleConvertExcelToStage = appContext.getBean(ExampleConvertExcelToStage.class);
 
-		if (Strings.isNullOrEmpty(appId)) {
-			try {
-				appId = exampleConvertExcelToStage.docNoGenerator.generateDocNo(AppConstants.SEQ_CODE_APP_ID, sysdate);
-			} catch (Exception e) {
-				String messageCode = CST30000Messages.ERROR_UNDEFINED_ERROR;
-				appId = "999990";
-				String errMsg = exampleConvertExcelToStage.messageSource.getMessage(messageCode,
-						new String[] { "Can't generate APP_ID " + e.getMessage() + " then use APP_ID=999990" },
-						Locale.getDefault());
-				exampleConvertExcelToStage.logger.error(errMsg);
-				exampleConvertExcelToStage.loggerBBW02130.error(appId, messageCode, errMsg, createBy);
-			}
-		}
+		//Get App ID
+		appId = exampleConvertExcelToStage.service.getAppId(appId, sysdate, createBy);
+		
 		int status = CST30000Constants.SUCCESS;
 		try {
 			int[] result = new int[2];
@@ -194,4 +179,5 @@ public class ExampleConvertExcelToStage {
 			return result;
 		}
 	}
+	
 }

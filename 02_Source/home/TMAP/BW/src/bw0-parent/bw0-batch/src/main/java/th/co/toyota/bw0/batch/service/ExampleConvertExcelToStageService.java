@@ -18,6 +18,7 @@
  ********************************************************/
 package th.co.toyota.bw0.batch.service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,12 +36,14 @@ import org.springframework.stereotype.Service;
 
 import th.co.toyota.bw0.api.common.upload.CommonDataFileUploadExcelConversionDTO;
 import th.co.toyota.bw0.api.common.upload.CommonDataFileUpload;
+import th.co.toyota.bw0.api.constants.AppConstants;
 import th.co.toyota.bw0.api.constants.MessagesConstants;
 import th.co.toyota.bw0.api.exception.common.CommonErrorException;
 import th.co.toyota.bw0.api.service.common.CommonService;
 import th.co.toyota.bw0.batch.repository.ExampleConvertExcelToStageRepository;
 import th.co.toyota.bw0.util.FormatUtil;
 import th.co.toyota.st3.api.constants.CST30000Messages;
+import th.co.toyota.st3.api.util.CST32010DocNoGenerator;
 import th.co.toyota.st3.api.util.IST30000LoggerDb;
 
 import com.google.common.base.Strings;
@@ -57,6 +60,9 @@ public class ExampleConvertExcelToStageService extends CommonDataFileUpload{
 	
 	@Autowired
 	private ExampleConvertExcelToStageRepository repository;
+	
+	@Autowired
+	private CST32010DocNoGenerator docNoGenerator;
 
 	protected static final String DEFAULT_PAD = " ";
 	
@@ -219,4 +225,20 @@ public class ExampleConvertExcelToStageService extends CommonDataFileUpload{
 	}
 	
 	
+	public String getAppId(String appId, Timestamp sysdate, String createBy) {
+		if (Strings.isNullOrEmpty(appId)) {
+			try {
+				appId = docNoGenerator.generateDocNo(AppConstants.SEQ_CODE_APP_ID, sysdate);
+			} catch (Exception e) {
+				String messageCode = CST30000Messages.ERROR_UNDEFINED_ERROR;
+				appId = "999990";
+				String errMsg = messageSource.getMessage(messageCode,
+						new String[] { "Can't generate APP_ID " + e.getMessage() + " then use APP_ID=999990" },
+						Locale.getDefault());
+				logger.error(errMsg);
+				loggerBBW02130.error(appId, messageCode, errMsg, createBy);
+			}
+		}
+		return appId;
+	}
 }

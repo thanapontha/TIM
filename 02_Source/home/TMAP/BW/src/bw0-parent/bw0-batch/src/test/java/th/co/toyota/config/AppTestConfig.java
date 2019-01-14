@@ -37,9 +37,15 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 	"classpath:properties/batch-test.properties" })
 @ImportResource(value = { "classpath:application-config-test.xml" })
 @ComponentScan(value = { "th.co.toyota.st3.api.util", 
-						 "th.co.toyota.st3.api.repository", 
-						 "th.co.toyota.st3.api.download",
-						 "th.co.toyota.st3.batch" })
+						"th.co.toyota.st3.api.repository", 
+						"th.co.toyota.st3.api.download",
+						"th.co.toyota.st3.batch",
+						"th.co.toyota.st3.api.report",
+						"th.co.toyota.st3.api.upload",
+						"th.co.toyota.bw0.api.common.upload",
+						"th.co.toyota.bw0.api.repository.common",
+						"th.co.toyota.bw0.api.service.common",
+						"th.co.toyota.bw0.batch"})
 @EnableTransactionManagement
 public class AppTestConfig {
 	@Bean
@@ -50,8 +56,10 @@ public class AppTestConfig {
 	@Bean
 	public Validator getValidator() {
 		ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-		messageSource
-				.setBasenames(new String[] { "classpath:properties/MessageResources_ST3" });
+		messageSource.setBasenames(new String[] {
+												"classpath:properties/MessageResources", // For application messages
+												"classpath:properties/MessageResources_ST3" // Development Standard
+												}); // Development Standard
 		messageSource.setDefaultEncoding("UTF-8");
 
 		LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
@@ -63,11 +71,14 @@ public class AppTestConfig {
 	@Bean
 	public MessageSource messageSource() {
 		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-		messageSource
-				.setBasenames(new String[] { "classpath:properties/MessageResources_ST3" });
+		messageSource.setBasenames(new String[] {
+												"classpath:properties/MessageResources", // For application messages
+												"classpath:properties/MessageResources_ST3" // Development Standard
+												}); // Development Standard
 		messageSource.setDefaultEncoding("UTF-8");
 
 		return messageSource;
 	}
+
 
 }

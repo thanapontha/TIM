@@ -113,7 +113,7 @@ public class ExampleConvertExcelToStageRepositoryImpl implements ExampleConvertE
 					conn.rollback();
 				}
 			} catch (SQLException e1) {
-				e1.printStackTrace();
+				logger.error(e1.getMessage());
 			}
 		}
 	}
