@@ -11,6 +11,7 @@ public interface CommonWebRepository {
 	String genAppId() throws CommonErrorException;
 	Connection getConnection();
 	Map<String, String> getUserInfoForTestOnDev(String ipAddress);
+	Object executeQuery(String sql, int totalSelectCol) throws CommonErrorException;
 	Object executeQuery(Connection conn, String sql, int totalSelectCol) throws CommonErrorException;
 	int getRowPerPage(String screenId);
 	int getTotalActiveRecordSize(Connection conn, StringBuilder sql, List<Object> parameter) throws CommonErrorException;

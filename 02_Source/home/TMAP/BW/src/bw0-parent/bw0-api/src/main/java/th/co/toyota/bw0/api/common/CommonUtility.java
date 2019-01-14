@@ -6,9 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLSyntaxErrorException;
 import java.util.Calendar;
@@ -21,7 +18,6 @@ import javax.persistence.EntityExistsException;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.hibernate.exception.SQLGrammarException;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 
 import com.google.common.base.Strings;
@@ -32,55 +28,11 @@ import th.co.toyota.bw0.api.exception.common.CommonErrorException;
 import th.co.toyota.st3.api.constants.CST30000Messages;
 
 public final class CommonUtility {
-	private static Logger logger = LoggerFactory.getLogger(CommonUtility.class);
 	
 	private CommonUtility() {
 	    throw new IllegalStateException("CommonUtility class");
 	  }
-	
-	public static void closeConnection(Connection conn, ResultSet rs, PreparedStatement ps, boolean closeConnection){
-		try {
-			if(conn!=null && !conn.isClosed()){
-				if (rs != null) {
-					rs.close();
-				}
-				if (ps != null) {
-					ps.close();
-				}
-				
-				if(closeConnection){
-					conn.close();
-				}
-			}
-		} catch (SQLException e) {
-			logger.error(ExceptionUtils.getStackTrace(e));
-		}
-	}
-	
-	public static void closeConnection(Connection conn, ResultSet rs, PreparedStatement ps, boolean closeConnection, boolean completed){
-		try {
-			if(conn!=null && !conn.isClosed()){
-				if (rs != null) {
-					rs.close();
-				}
-				if (ps != null) {
-					ps.close();
-				}
-				if (completed) {
-					conn.commit();
-				} else {
-					conn.rollback();
-				}
-				
-				if(closeConnection){
-					conn.close();
-				}
-			}
-		} catch (SQLException e) {
-			logger.error(ExceptionUtils.getStackTrace(e));
-		}
-	}
-	
+
 	public static void deleteFile(File sourcefile){
 	    sourcefile.deleteOnExit();
 	}

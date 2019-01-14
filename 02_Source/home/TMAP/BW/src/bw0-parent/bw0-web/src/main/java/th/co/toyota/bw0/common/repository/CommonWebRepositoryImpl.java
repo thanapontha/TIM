@@ -64,48 +64,37 @@ public class CommonWebRepositoryImpl implements CommonWebRepository {
 	@Override
 	public Map<String, String> getUserInfoForTestOnDev(String ipAddress) {
 		Map<String, String> userInfoMap = new HashMap<>();
-		Connection conn = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-        try{
-        	StringBuilder sql = new StringBuilder();
-			sql.append(" SELECT CD, VALUE ");
-			sql.append(" FROM TB_M_SYSTEM ");
-			sql.append(" WHERE CATEGORY = 'CATEGORY' ");
-			sql.append(" AND SUB_CATEGORY = '"+ipAddress+"' ");
-			
-			SessionImpl session = (SessionImpl) (em.getDelegate());
-			conn = session.getJdbcConnectionAccess().obtainConnection();
-			ps = conn.prepareStatement(sql.toString());
-			rs = ps.executeQuery();
+        
+    	StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT CD, VALUE ");
+		sql.append(" FROM TB_M_SYSTEM ");
+		sql.append(" WHERE CATEGORY = 'CATEGORY' ");
+		sql.append(" AND SUB_CATEGORY = '"+ipAddress+"' ");
+		
+		try(Connection conn = this.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString()); ResultSet rs = ps.executeQuery();){
 			while(rs.next()){
 				userInfoMap.put(rs.getString("CD"), rs.getString("VALUE"));
 			}
         }catch(Exception e){
         	logger.debug(ExceptionUtils.getStackTrace(e));
-        } finally {
-        	CommonUtility.closeConnection(conn, rs, ps, true);
-		}
+        }
         return userInfoMap;
 	}
 	
 	@Override
+	public Object executeQuery(String sql, int totalSelectCol) throws CommonErrorException {
+		try(Connection conn = this.getConnection()){
+			return this.executeQuery(conn, sql, totalSelectCol);
+		}catch (Exception e) {
+			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, true);
+		}
+	}
+	
+	@Override
 	public Object executeQuery(Connection conn, String sql, int totalSelectCol) throws CommonErrorException {
-		boolean closeConnection = true;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
 		Object result = null;
-        try{
-			if(conn==null){
-	    		SessionImpl session = (SessionImpl)(em.getDelegate());
-	    		conn = session.getJdbcConnectionAccess().obtainConnection();
-	    	}else{
-	    		closeConnection = false;
-	    	}
-			
+        try(PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery();){
 			logger.debug(sql);
-			ps = conn.prepareStatement(sql);
-			rs = ps.executeQuery();
 			if(totalSelectCol==1){				
 				while(rs.next()){
 					result = rs.getObject(1);
@@ -121,9 +110,7 @@ public class CommonWebRepositoryImpl implements CommonWebRepository {
 			}
 		}catch(Exception e){
 			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, false);
-		} finally {
-			CommonUtility.closeConnection(conn, rs, ps, closeConnection);
-		}		
+		}	
 		return result;
 	}
 	
@@ -149,25 +136,13 @@ public class CommonWebRepositoryImpl implements CommonWebRepository {
 	@Override
 	public int getTotalActiveRecordSize(Connection conn, StringBuilder sql, List<Object> parameter) throws CommonErrorException {
 		BigDecimal totalRows = new BigDecimal(0);
-		boolean closeConnection = true;
-		PreparedStatement ps = null;
 		ResultSet rs = null;
-		try {
-        	if(conn==null){
-        		SessionImpl session = (SessionImpl)(em.getDelegate());
-        		conn = session.getJdbcConnectionAccess().obtainConnection();
-        	}else{
-        		closeConnection = false;
-        	}
-        	
-			String sqlCount = "SELECT COUNT(1) AS TOTAL_ROW FROM ( " + sql.toString() + " ) ";
-			
-			ps = conn.prepareStatement(sqlCount);
+		String sqlCount = "SELECT COUNT(1) AS TOTAL_ROW FROM ( " + sql.toString() + " ) ";
+		try(PreparedStatement ps = conn.prepareStatement(sqlCount)) {
 			if (parameter != null) {
 				int index = 1;
 				for (Object obj : parameter) {
-					ps.setObject(index, obj);
-					index++;
+					ps.setObject(index++, obj);
 				}
 			}
 			rs = ps.executeQuery();
@@ -177,7 +152,13 @@ public class CommonWebRepositoryImpl implements CommonWebRepository {
 		} catch (Exception e) {
 			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, false);
 		} finally {
-			CommonUtility.closeConnection(conn, rs, ps, closeConnection);
+			try {
+				if(rs != null) {
+					rs.close();
+				}
+			 }catch(Exception e){
+	        	logger.debug(ExceptionUtils.getStackTrace(e));
+		     }
 		}
 		return totalRows.intValue();
 	}
@@ -192,42 +173,26 @@ public class CommonWebRepositoryImpl implements CommonWebRepository {
 	public List<ComboValue> loadComboboxWithAuth(Connection conn, String tableName, String[] selectField, String criteria, String orderBy, StringBuilder existConditionAuth)
 			throws CommonErrorException {
 		List<ComboValue> comboLs = new ArrayList<>();
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		boolean closeConnection = true;
-		try {
-
-			if(conn==null){
-				SessionImpl session = (SessionImpl)(em.getDelegate());
-				conn = session.getJdbcConnectionAccess().obtainConnection();
-			}else{
-				closeConnection = false;
-			}
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT DISTINCT ").append(selectField[0]).append(" AS ST_VALUE, ").append(selectField[1]).append(" AS ST_LABEL ");
+		sql.append(" FROM ").append(tableName).append(" M ");
+		sql.append(" WHERE   1 = 1 ");
+		if (!Strings.isNullOrEmpty(criteria)) {
+			sql.append(" AND ").append(criteria);
+		}
+		if(existConditionAuth!=null && existConditionAuth.toString().length()>0){
+			sql.append(existConditionAuth.toString());
+		}
+		if (!Strings.isNullOrEmpty(orderBy)) {
+			sql.append(" ORDER BY ").append(orderBy);
+		}
 			
-			StringBuilder sql = new StringBuilder();
-
-			sql.append("SELECT DISTINCT ").append(selectField[0]).append(" AS ST_VALUE, ").append(selectField[1]).append(" AS ST_LABEL ");
-			sql.append(" FROM ").append(tableName).append(" M ");
-			sql.append(" WHERE   1 = 1 ");
-			if (!Strings.isNullOrEmpty(criteria)) {
-				sql.append(" AND ").append(criteria);
-			}
-			if(existConditionAuth!=null && existConditionAuth.toString().length()>0){
-				sql.append(existConditionAuth.toString());
-			}
-			if (!Strings.isNullOrEmpty(orderBy)) {
-				sql.append(" ORDER BY ").append(orderBy);
-			}
-			
-			ps = conn.prepareStatement(sql.toString());
-			rs = ps.executeQuery();
+		try(PreparedStatement ps = conn.prepareStatement(sql.toString()); ResultSet rs = ps.executeQuery();){
 			while (rs.next()) {
 				comboLs.add(new ComboValue(Strings.nullToEmpty(rs.getString("ST_VALUE").trim()), Strings.nullToEmpty(rs.getString("ST_LABEL").trim())));
 			}
 		} catch (Exception e) {
 			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, false);
-		} finally {
-			CommonUtility.closeConnection(conn, rs, ps, closeConnection);
 		}
 		return comboLs;
 	}

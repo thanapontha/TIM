@@ -22,62 +22,42 @@ import java.sql.Connection;
 import java.util.List;
 
 import th.co.toyota.bw0.api.exception.common.CommonErrorException;
+import th.co.toyota.bw0.batch.preprocess.vo.UploadParamVO;
 
 public interface ExampleFileUploadPreprocessRepository {
+	public class ColumnIndex{
+		private ColumnIndex() {
+		    throw new IllegalStateException("ColumnIndex class");
+		  }
+		public static final int DUPCNT = 0;
+		public static final int GETSUDO_MONTH = 1;
+		public static final int TIMING = 2;
+		public static final int VEHICLE_PLANT = 3;
+		public static final int VEHICLE_MODEL = 4;
+		public static final int UNIT_PLANT = 5;
+		public static final int UNIT_MODEL = 6;
+		public static final int FILE_ID = 7;
+		public static final int FILE_NAME = 8;
+		public static final int IMPORTER = 9;
+		public static final int RUNDOWN_KEY = 10;	
+		public static final int EXPORTER = 11;
+		public static final int ORDER_DT = 12;
+		public static final int VANNING_VOLUME = 13;
+		public static final int VANNING_DT = 14;
+		public static final int LOADING_DT = 15;
+		public static final int UNLOADING_DT = 16;
+		public static final int PROD_DT = 17;
+		public static final int PROD_VOLUME = 18;
+		public static final int UPLOAD_FILE_NAME = 19;
+		public static final int CREATE_BY = 20;
+		public static final int APL_ID = 21;
+		public static final int RUNNING_NO = 22;
+		//Total select column from sql query, please change if add new select column.
+		public static final int TOTAL_SELECTED_COLUMN = 23;
+	}
 	
-	public int IDX_L_GETSUDO_MONTH = 0;
-	public int IDX_L_TIMING = 1;
-	public int IDX_L_VEHICLE_PLANT = 2;
-	public int IDX_L_VEHICLE_MODEL = 3;
-	public int IDX_L_UNIT_PLANT = 4;
-	public int IDX_L_UNIT_MODEL = 5;
-	public int IDX_L_ERROR_SHEET = 6;
-	public int IDX_L_ERROR_DATE = 7;
-	public int IDX_L_ERROR_MONTH = 8;
-	public int IDX_L_ERROR_RUNDOWN = 9;
-	public int IDX_L_ERROR_CALENDAR = 10;
-	public int IDX_L_ERROR_WORKSHEET = 11;
-	public int IDX_L_ERROR_STOCK_MIN = 12;
-	public int IDX_L_ERROR_STOCK_MAX = 13;
-	
-	
-	public int IDX_DUPCNT = 0;
-	public int IDX_GETSUDO_MONTH = 1;
-	public int IDX_TIMING = 2;
-	public int IDX_VEHICLE_PLANT = 3;
-	public int IDX_VEHICLE_MODEL = 4;
-	public int IDX_UNIT_PLANT = 5;
-	public int IDX_UNIT_MODEL = 6;
-	public int IDX_FILE_ID = 7;
-	public int IDX_FILE_NAME = 8;
-	public int IDX_IMPORTER = 9;
-	public int IDX_RUNDOWN_KEY = 10;	
-	public int IDX_EXPORTER = 11;
-	public int IDX_ORDER_DT = 12;
-	public int IDX_VANNING_VOLUME = 13;
-	public int IDX_VANNING_DT = 14;
-	public int IDX_LOADING_DT = 15;
-	public int IDX_UNLOADING_DT = 16;
-	public int IDX_PROD_DT = 17;
-	public int IDX_PROD_VOLUME = 18;
-	public int IDX_UPLOAD_FILE_NAME = 19;
-	public int IDX_CREATE_BY = 20;
-	public int IDX_APL_ID = 21;
-	public int IDX_RUNNING_NO = 22;
-	public int IDX_VEHICLE_PLANT_EXIST = 23;
-	public int IDX_UNIT_PLANT_EXIST = 24;
-	public int IDX_START_PROD_EXIST = 25;
-	public int IDX_START_PROD_DT = 26;
-	public int IDX_START_EFF_KK_MONTH = 27;
-	
-	//Total select column from sql query, please change if add new select column.
-	public int totalSelectCol = 28;
-	
-	public List<Object[]> getStagingList(Connection conn, String userId,
-			String vehiclePlant, String vehicleModel, String getsudoMonth,
-			String pamsKompoFlag) throws CommonErrorException;
+	List<Object[]> getStagingList(Connection conn, UploadParamVO paramVo) throws CommonErrorException;
 
-	public Object[] insertAndCalculateDataToTarget(Connection conn, String[] params,
-			int statusOfValidate, String[] unitPlantArr, String[] unitModelArr) throws Exception;
+	Object[] insertAndCalculateDataToTarget(Connection conn, UploadParamVO paramVo) throws CommonErrorException;
 
 }
