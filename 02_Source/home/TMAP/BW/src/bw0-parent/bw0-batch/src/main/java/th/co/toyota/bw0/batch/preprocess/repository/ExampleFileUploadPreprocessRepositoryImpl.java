@@ -24,7 +24,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -45,8 +44,6 @@ import th.co.toyota.bw0.api.exception.common.CommonErrorException;
 import th.co.toyota.bw0.api.repository.common.CommonAPIRepository;
 import th.co.toyota.bw0.util.FormatUtil;
 import th.co.toyota.st3.api.constants.CST30000Constants;
-
-import com.google.common.base.Strings;
 
 @Repository
 public class ExampleFileUploadPreprocessRepositoryImpl implements ExampleFileUploadPreprocessRepository {
@@ -183,265 +180,6 @@ public class ExampleFileUploadPreprocessRepositoryImpl implements ExampleFileUpl
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
-			}
-		}
-	}
-	
-	@Override
-	public List<Object[]> getUnitModelRelateList(Connection conn, String getsudoMonth, String vehiclePlant, String vehicleModel) 
-			throws CommonErrorException{
-		int totalSelectColum = 3;
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT M.UNIT_MODEL, M.UNIT_PLANT, M.UNIT_TYPE ");
-		sql.append("  FROM TB_M_VEHICLE_UNIT_RELATION M ");
-		sql.append(" WHERE M.VEHICLE_PLANT = '"+vehiclePlant+"' ");
-		sql.append("   AND M.VEHICLE_MODEL = '"+vehicleModel+"' ");
-		sql.append("   AND ");
-		sql.append("   AND EXISTS (SELECT 'x' ");
-		sql.append("   	          FROM TB_C_PACK_LT L ");
-		sql.append("   	         WHERE L.VEHICLE_PLANT = M.VEHICLE_PLANT ");
-		sql.append("   	           AND L.UNIT_PLANT = M.UNIT_PLANT ");
-		sql.append("   	           AND L.OFFSET_LT > 0) ");
-		sql.append(" GROUP BY M.UNIT_MODEL, M.UNIT_PLANT, M.UNIT_TYPE ");
-		
-		boolean closeConnection = true;
-		PreparedStatement pp = null;
-		ResultSet rs = null;
-		List<Object[]> ls = new ArrayList<>();
-        try{
-			if(conn==null){
-	    		SessionImpl session = (SessionImpl)(em.getDelegate());
-	    		conn = session.getJdbcConnectionAccess().obtainConnection();
-	    	}else{
-	    		closeConnection = false;
-	    	}
-			
-			logger.debug(sql.toString());
-			pp = conn.prepareStatement(sql.toString());
-			rs = pp.executeQuery();
-			while(rs.next()){
-				List<Object> obj = new ArrayList<>();
-				for(int col=1;col<=totalSelectColum; col++){
-					obj.add(rs.getObject(col));
-				}
-				ls.add(obj.toArray());
-			}
-			return ls;
-		}catch(Exception e){
-			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, true);
-		} finally {
-			try{
-				if(conn!=null && !conn.isClosed()){
-					if (rs !=null) {
-						rs.close();					
-			            rs = null;
-			        }
-					
-					if (pp !=null) {
-			            pp.close();
-			            pp = null;
-			        }
-					
-					if(closeConnection){
-						conn.close();
-						conn = null;
-					}
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	@Override
-	public List<String> getLastMonthOfWorksheetExistInKompo(Connection conn,String version, String getsudoMonth, String timing, String vehiclePlant,
-			String vehicleModel, String userId, String appId) throws CommonErrorException{
-		
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT TO_CHAR(MAX_MONTH,'DD/MM/YYYY') AS MAX_MONTH ");
-		sql.append("  FROM (SELECT MAX(TO_DATE(K.VOLUME_MONTH, 'Mon-YY')) AS MAX_MONTH ");
-		sql.append("          FROM TB_R_KAIKIENG_D K ");
-		sql.append("         WHERE K.VERSION = '"+version+"' ");
-		sql.append("           AND K.GETSUDO_MONTH = '"+getsudoMonth+"' ");
-		sql.append("           AND K.TIMING = '"+timing+"' ");
-		sql.append("           AND K.VEHICLE_PLANT = '"+vehiclePlant+"' ");
-		sql.append("           AND K.VEHICLE_MODEL = '"+vehicleModel+"') T ");
-		sql.append(" WHERE EXISTS (SELECT 'X' ");
-		sql.append("          FROM TB_S_KOMPO S ");
-		sql.append("         WHERE TO_CHAR(S.PROD_DT, 'Mon-YY') = TO_CHAR(T.MAX_MONTH,'Mon-YY') ");
-		sql.append("           AND S.GETSUDO_MONTH = '"+getsudoMonth+"' ");
-		sql.append("           AND S.TIMING = '"+timing+"' ");
-		sql.append("           AND S.VEHICLE_PLANT = '"+vehiclePlant+"' ");
-		sql.append("           AND S.VEHICLE_MODEL = '"+vehicleModel+"' ");
-		sql.append("           AND S.CREATE_BY = '"+userId+"' ");
-		sql.append("           AND S.APL_ID = '"+appId+"' ) ");
-		
-		boolean closeConnection = true;
-		PreparedStatement pp = null;
-		ResultSet rs = null;
-		List<String> ls = new ArrayList<>();
-        try{
-			if(conn==null){
-	    		SessionImpl session = (SessionImpl)(em.getDelegate());
-	    		conn = session.getJdbcConnectionAccess().obtainConnection();
-	    	}else{
-	    		closeConnection = false;
-	    	}
-			
-			logger.debug(sql.toString());
-			pp = conn.prepareStatement(sql.toString());
-			rs = pp.executeQuery();
-			while(rs.next()){
-				ls.add(rs.getString("MAX_MONTH"));
-			}
-			return ls;
-		}catch(Exception e){
-			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, true);
-		} finally {
-			try{
-				if(conn!=null && !conn.isClosed()){
-					if (rs !=null) {
-						rs.close();					
-			            rs = null;
-			        }
-					
-					if (pp !=null) {
-			            pp.close();
-			            pp = null;
-			        }
-					
-					if(closeConnection){
-						conn.close();
-						conn = null;
-					}
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-
-	}
-	
-	@Override
-	public int insertLogDetail(Object[] data,String userId, String type) throws CommonErrorException {
-		int insertedCnt = 0;
-		boolean completed = false;
-		Connection conn = null;
-		PreparedStatement ps = null;
-		try {
-
-			StringBuilder SQL = new StringBuilder();
-			
-			SQL.append("INSERT INTO TB_L_UPLOAD_DETAIL ");
-			SQL.append("  (GETSUDO_MONTH, "); //param 1
-			SQL.append("   TIMING, "); //param 2
-			SQL.append("   VEHICLE_PLANT, "); //param 3
-			SQL.append("   VEHICLE_MODEL, "); //param 4
-			SQL.append("   UNIT_PLANT, "); //param 5
-			SQL.append("   UNIT_MODEL, "); //param 6
-			SQL.append("   ERROR_SHEET, "); //param 7
-			SQL.append("   RUNNING_NO, "); 
-			SQL.append("   ERROR_DATE, "); //param 8
-			SQL.append("   ERROR_MONTH, "); //param 9
-			SQL.append("   ERROR_RUNDOWN, "); //param 10
-			SQL.append("   ERROR_CALENDAR, "); //param 11
-			SQL.append("   ERROR_WORKSHEET, ");// param 12
-			SQL.append("   ERROR_STOCK_MIN, "); //param 13
-			SQL.append("   ERROR_STOCK_MAX, "); //param 14
-			SQL.append("   CREATE_BY, "); 
-			SQL.append("   CREATE_DT, "); 
-			SQL.append("   UPDATE_BY, "); 
-			SQL.append("   UPDATE_DT) ");
-			SQL.append("VALUES ");
-			
-			SQL.append("  (?, ?, ?, ?, ?, ?, ?, (SELECT NVL(MAX(RUNNING_NO),1)+1 FROM TB_L_UPLOAD_DETAIL), "); //Key
-			if(AppConstants.LOG_DETAIL_CALENDAR.equals(type)){
-				SQL.append("   to_char(?,'DD-Mon-YY'), NULL, ");
-				SQL.append("   (SELECT T.VALUE FROM TB_M_SYSTEM T ");
-				SQL.append(" 	WHERE T.CATEGORY = 'COMMON' ");
-				SQL.append("      AND T.SUB_CATEGORY = 'CALENDAR_FLAG' AND T.STATUS = 'Y' "); 
-				SQL.append("      AND T.CD = DECODE(?, 'F', 'F', 'W')), ");
-				SQL.append("   ?, NULL, NULL, NULL, ");
-			}else if(AppConstants.LOG_DETAIL_STOCK.equals(type)){
-				SQL.append("   to_char(?,'DD-Mon-YY'), NULL, NULL, NULL, NULL, ?, ?, ");
-			}else if(AppConstants.LOG_DETAIL_PROD_VOL.equals(type) || AppConstants.LOG_DETAIL_PACK_VOL.equals(type)){
-				SQL.append("   NULL, ?, ?, NULL, ?, NULL, NULL, ");
-			}else if(AppConstants.LOG_DETAIL_OTHER.equals(type)){
-				//Do nothing
-			}else{
-				//Default
-				SQL.append("  (?, ?, ?, ?, ?, ?, ?, ");
-				SQL.append("   (SELECT NVL(MAX(RUNNING_NO),1)+1 FROM TB_L_UPLOAD_DETAIL), ");
-				SQL.append("   to_char(?,'DD-Mon-YY'), ?, ?, ?, ?, ?, ?, ");
-			}
-			SQL.append("   ?, ?, ?, ?) "); //Create/Update
-
-			
-			SessionImpl session = (SessionImpl) (em.getDelegate());
-			
-			conn = session.getJdbcConnectionAccess().obtainConnection();
-			conn.setAutoCommit(false);
-
-			ps = conn.prepareStatement(SQL.toString());
-			int index = 1;
-			ps.setObject(index++, data[IDX_L_GETSUDO_MONTH]);
-			ps.setObject(index++, data[IDX_L_TIMING]);
-			ps.setObject(index++, data[IDX_L_VEHICLE_PLANT]);
-			ps.setObject(index++, data[IDX_L_VEHICLE_MODEL]);
-			ps.setObject(index++, data[IDX_L_UNIT_PLANT]);
-			ps.setObject(index++, data[IDX_L_UNIT_MODEL]);
-			ps.setObject(index++, data[IDX_L_ERROR_SHEET]);
-			
-			if(AppConstants.LOG_DETAIL_CALENDAR.equals(type)){
-				ps.setDate(index++, FormatUtil.convert((Date)data[IDX_L_ERROR_DATE]));
-				ps.setObject(index++, data[IDX_L_ERROR_RUNDOWN]);
-				ps.setObject(index++, data[IDX_L_ERROR_CALENDAR]);
-			}else if(AppConstants.LOG_DETAIL_STOCK.equals(type)){
-				ps.setDate(index++, FormatUtil.convert((Date)data[IDX_L_ERROR_DATE]));
-				ps.setObject(index++, data[IDX_L_ERROR_STOCK_MIN]);
-				ps.setObject(index++, data[IDX_L_ERROR_STOCK_MAX]);
-			}else if(AppConstants.LOG_DETAIL_PROD_VOL.equals(type) || AppConstants.LOG_DETAIL_PACK_VOL.equals(type)){
-				ps.setObject(index++, data[IDX_L_ERROR_MONTH]);
-				ps.setObject(index++, data[IDX_L_ERROR_RUNDOWN]);
-				ps.setObject(index++, data[IDX_L_ERROR_WORKSHEET]);
-			}else if(AppConstants.LOG_DETAIL_STOCK.equals(type)){
-				//Do nothing
-			}else{
-				ps.setDate(index++, FormatUtil.convert((Date)data[IDX_L_ERROR_DATE]));
-				ps.setObject(index++, data[IDX_L_ERROR_MONTH]);
-				ps.setObject(index++, data[IDX_L_ERROR_RUNDOWN]);
-				ps.setObject(index++, data[IDX_L_ERROR_CALENDAR]);
-				ps.setObject(index++, data[IDX_L_ERROR_WORKSHEET]);
-				ps.setObject(index++, data[IDX_L_ERROR_STOCK_MIN]);
-				ps.setObject(index++, data[IDX_L_ERROR_STOCK_MAX]);
-			}
-			
-			Timestamp sysdate = FormatUtil.currentTimestampToOracleDB();
-			
-			ps.setObject(index++, userId);
-			ps.setTimestamp(index++, sysdate);
-			ps.setObject(index++, userId);
-			ps.setTimestamp(index++, sysdate);
-
-			
-			insertedCnt = ps.executeUpdate();
-
-			completed = true;
-			return insertedCnt;
-		}catch (Exception e) {
-			completed = false;
-			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, true);
-		} finally {
-			try {
-				if ((conn != null) && !conn.isClosed()) {
-					if (completed) {
-						conn.commit();
-					} else {
-						conn.rollback();
-					}
-				}
-			} catch (SQLException e1) {
-				e1.printStackTrace();
 			}
 		}
 	}
@@ -631,10 +369,6 @@ public class ExampleFileUploadPreprocessRepositoryImpl implements ExampleFileUpl
 			insHeader.append("           AND T.VEHICLE_MODEL = R.VEHICLE_MODEL ");
 			insHeader.append("          LEFT JOIN TB_L_UPLOAD_STS L ");
 			insHeader.append("            ON (CASE ");
-			insHeader.append("                 WHEN T.UPLOAD_TYPE = '"+AppConstants.UPLOAD_PAMS_FLAG+"' THEN ");
-			insHeader.append("                  '"+AppConstants.UPLOAD_TYPE_RUNDOWN+"' ");
-			insHeader.append("                 WHEN T.UPLOAD_TYPE = '"+AppConstants.UPLOAD_KOMPO_FLAG+"' THEN ");
-			insHeader.append("                  '"+AppConstants.UPLOAD_TYPE_KOMPOKUNG+"' ");
 			insHeader.append("                 ELSE ");
 			insHeader.append("                  '' ");
 			insHeader.append("               END) = L.UPLOAD_TYPE ");
@@ -910,19 +644,8 @@ public class ExampleFileUploadPreprocessRepositoryImpl implements ExampleFileUpl
 				completed = false;
 				throw new CommonErrorException(MessagesConstants.B_ERROR_CONCURRENTCY, new String[]{}, AppConstants.ERROR);
 			}
-			
-			String statusUpload = this.commonRepository.getStatusOfLogUpload(appId, null);
-			if(AppConstants.STATUS_INTERRUPT.equalsIgnoreCase(statusUpload)){
-				completed = false;
-				String arg1 = "update";
-				String arg2 = "this operation was interupted by user";
-				throw new CommonErrorException(MessagesConstants.B_ERROR_CONCURRENTCY_INTERRUPT, new String[]{arg1,arg2 }, AppConstants.ERROR);
-			}else if(Strings.isNullOrEmpty(statusUpload)){
-				completed = false;
-				throw new CommonErrorException(MessagesConstants.B_ERROR_CONCURRENTCY, new String[]{}, AppConstants.ERROR);
-			}else{
-				completed = true;
-			}
+	
+			completed = true;
 		}catch (Exception e) {
 			completed = false;
 			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, true);
@@ -961,96 +684,4 @@ public class ExampleFileUploadPreprocessRepositoryImpl implements ExampleFileUpl
 			return new Object[]{CST30000Constants.ERROR, resultMap};
 		}
 	}
-
-	@Override
-	public List<Object[]> getVehicleProdVolumeDiagramWithWorksheet(Connection conn, String version, String getsudoMonth, String timing, String vehiclePlant,
-			String vehicleModel, String userId) throws CommonErrorException{
-		
-		int totalSelectColum = 7;
-		
-		StringBuilder  sql = new StringBuilder();
-		sql.append("SELECT K.VOLUME_MONTH, ");
-		sql.append("             NVL(SU.PROD_VOLUME_MONTH, 0) PROD_VOLUME_MONTH, ");
-		sql.append("             K.VEHICLE_VOLUME, ");
-		sql.append("             K.GETSUDO_MONTH, ");
-		sql.append("             K.TIMING, ");
-		sql.append("             K.VEHICLE_PLANT, ");
-		sql.append("             K.VEHICLE_MODEL ");
-		sql.append("        FROM TB_R_KAIKIENG_H K ");
-		sql.append("        LEFT JOIN (SELECT GETSUDO_MONTH, ");
-		sql.append("                          TIMING, ");
-		sql.append("                          VEHICLE_PLANT, ");
-		sql.append("                          VEHICLE_MODEL, ");
-		sql.append("                          TO_CHAR(PROD_DT, 'Mon-YY') PROD_MONTH, ");
-		sql.append("                          SUM(PROD_VOLUME) PROD_VOLUME_MONTH ");
-		sql.append("                     FROM TB_S_KOMPO ");
-		sql.append("                     WHERE CREATE_BY = '"+userId+"' ");
-		sql.append("                    GROUP BY GETSUDO_MONTH, ");
-		sql.append("                             TIMING, ");
-		sql.append("                             VEHICLE_PLANT, ");
-		sql.append("                             VEHICLE_MODEL, ");
-		sql.append("                             TO_CHAR(PROD_DT, 'Mon-YY')) SU ");
-		sql.append("          ON K.GETSUDO_MONTH = SU.GETSUDO_MONTH ");
-		sql.append("         AND K.TIMING = SU.TIMING ");
-		sql.append("         AND K.VEHICLE_PLANT = SU.VEHICLE_PLANT ");
-		sql.append("         AND K.VEHICLE_MODEL = SU.VEHICLE_MODEL ");
-		sql.append("         AND K.VOLUME_MONTH = SU.PROD_MONTH ");
-		sql.append("       WHERE K.VERSION = '"+version+"' ");
-		sql.append("         AND K.GETSUDO_MONTH = '"+getsudoMonth+"' ");
-		sql.append("         AND K.TIMING = '"+timing+"' ");
-		sql.append("         AND K.VEHICLE_PLANT = '"+vehiclePlant+"' ");
-		sql.append("         AND K.VEHICLE_MODEL = '"+vehicleModel+"' ");
-		sql.append("         AND NVL(SU.PROD_VOLUME_MONTH, 0) <> K.VEHICLE_VOLUME ");
-		sql.append("          ");
-		sql.append("         ORDER BY to_date(K.VOLUME_MONTH,'Mon-YY')");
-	
-		boolean closeConnection = true;
-		PreparedStatement pp = null;
-		ResultSet rs = null;
-		List<Object[]> ls = new ArrayList<>();
-        try{
-			if(conn==null){
-	    		SessionImpl session = (SessionImpl)(em.getDelegate());
-	    		conn = session.getJdbcConnectionAccess().obtainConnection();
-	    	}else{
-	    		closeConnection = false;
-	    	}
-			
-			logger.debug(sql.toString());
-			pp = conn.prepareStatement(sql.toString());
-			rs = pp.executeQuery();
-			while(rs.next()){
-				List<Object> obj = new ArrayList<>();
-				for(int col=1;col<=totalSelectColum; col++){
-					obj.add(rs.getObject(col));
-				}
-				ls.add(obj.toArray());
-			}
-			return ls;
-		}catch(Exception e){
-			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, true);
-		} finally {
-			try{
-				if(conn!=null && !conn.isClosed()){
-					if (rs !=null) {
-						rs.close();					
-			            rs = null;
-			        }
-					
-					if (pp !=null) {
-			            pp.close();
-			            pp = null;
-			        }
-					
-					if(closeConnection){
-						conn.close();
-						conn = null;
-					}
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
 }

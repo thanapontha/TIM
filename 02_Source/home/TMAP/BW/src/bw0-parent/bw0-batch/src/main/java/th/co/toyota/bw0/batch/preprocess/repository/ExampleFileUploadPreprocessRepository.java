@@ -72,9 +72,6 @@ public interface ExampleFileUploadPreprocessRepository {
 	
 	//Total select column from sql query, please change if add new select column.
 	public int totalSelectCol = 28;
-
-	public int insertLogDetail(Object[] data, String userId, String type)
-			throws CommonErrorException;
 	
 	public List<Object[]> getStagingList(Connection conn, String userId,
 			String vehiclePlant, String vehicleModel, String getsudoMonth,
@@ -82,19 +79,5 @@ public interface ExampleFileUploadPreprocessRepository {
 
 	public Object[] insertAndCalculateDataToTarget(Connection conn, String[] params,
 			int statusOfValidate, String[] unitPlantArr, String[] unitModelArr) throws Exception;
-
-	public List<Object[]> getUnitModelRelateList(Connection conn, String getsudoMonth,
-			String vehiclePlant, String vehicleModel)
-			throws CommonErrorException;
-
-	public List<String> getLastMonthOfWorksheetExistInKompo(Connection conn,
-			String version, String getsudoMonth, String timing,
-			String vehiclePlant, String vehicleModel, String userId,
-			String appId) throws CommonErrorException;
-
-	public List<Object[]> getVehicleProdVolumeDiagramWithWorksheet(Connection conn,
-			String version, String getsudoMonth, String timing,
-			String vehiclePlant, String vehicleModel, String userId)
-			throws CommonErrorException;
 
 }

@@ -127,9 +127,6 @@ public class CommonDownloadReport {
 				this.appId = Strings.nullToEmpty(args[4]);						
 			}
 			
-			//Add by Thanawut T. 2017/12/12 BCT-Vendor for detect download processing
-			commonRepository.updateStatusOfLogUpload(appId, userLog, AppConstants.STATUS_PROCESSING, AppConstants.STATUS_PROCESSING_DESC+" Download Calendar.");
-			
 			String msg = messageSource.getMessage(CST30000Messages.INFO_PROCESS_START,	new String[] { batchName }, Locale.getDefault());
 			logger.info(msg);
 			loggerBBW04221.start(appId, CST30000Messages.INFO_PROCESS_START, msg, userLog);
@@ -157,10 +154,8 @@ public class CommonDownloadReport {
 	            int iRow = 0; 
 
 	            // Create data rows
-                List<String> vehiclePlantList = commonRepository.getVehiclePlantMaster(conn, this.getsudoMonth);
-                List<String> unitPlantList = commonRepository.getUnitPlantMaster(conn, this.getsudoMonth);
-                String vehiclePlantStr = String.join("','", vehiclePlantList); 
-                String unitPlantStr = String.join("','", unitPlantList);
+                String vehiclePlantStr = ""; 
+                String unitPlantStr = "";
                 vehiclePlantStr= (vehiclePlantStr!=null && !"".equals(vehiclePlantStr)) ? "'"+vehiclePlantStr+"'": "";
                 unitPlantStr= (unitPlantStr!=null && !"".equals(unitPlantStr)) ? "'"+unitPlantStr+"'": "";
                 String plantCondition = "'"+AppConstants.COMPANY_CD_TMAP_MS+"','"+AppConstants.COMPANY_CD_TDEM+"'";
@@ -188,31 +183,6 @@ public class CommonDownloadReport {
                 
                 int iColHeader = 1; //Start at cell B
                 
-                iRow = 5;
-                header = sh.createRow(iRow);
-                header.setHeightInPoints(11.25f);
-                if(!vehiclePlantList.isEmpty()){
-                	if(vehiclePlantList.size() > 1){
-                		poi.setMergeCellWithStyle(sh, iRow, iRow, 3, vehiclePlantList.size() + 2, VEHICLE_LABEL , 
-    	                		styles.get(STYLE_HEADER_V_PLANT));
-                    }else{
-                    	Cell cell = header.createCell(3);
-                        cell.setCellStyle(styles.get(STYLE_HEADER_V_PLANT));                
-                        cell.setCellValue(VEHICLE_LABEL);
-                    }
-	                
-                }
-                if(!unitPlantList.isEmpty()){
-                	if(unitPlantList.size() > 1){
-                		poi.setMergeCellWithStyle(sh, iRow, iRow, vehiclePlantList.size() + 3, vehiclePlantList.size() + 2 + unitPlantList.size(), UNIT_LABEL , 
-    	                		styles.get(STYLE_HEADER_U_PLANT));
-                    }else{
-                    	Cell cell = header.createCell(vehiclePlantList.size() + 3);
-                        cell.setCellStyle(styles.get(STYLE_HEADER_U_PLANT));                
-                        cell.setCellValue(UNIT_LABEL);
-                    }
-	                
-                }
                 
                 iRow = 6;
                 Row row6 = sh.createRow(iRow);
@@ -228,24 +198,6 @@ public class CommonDownloadReport {
                 cellHead.setCellValue(AppConstants.COMPANY_CD_TDEM);
                 iColHeader++;
                 
-				
-                for(int i=0;i<vehiclePlantList.size();i++){
-                	String value = vehiclePlantList.get(i); 
-                	Cell cell = row6.createCell(iColHeader+i);
-					cell.setCellStyle(styles.get(STYLE_HEADER_PLANT));
-					cell.setCellValue(value);
-					
-                }
-                iColHeader+=vehiclePlantList.size();
-                
-                for(int i=0;i<unitPlantList.size();i++){
-                	String value = unitPlantList.get(i); 
-                	Cell cell = row6.createCell(iColHeader+i);
-					cell.setCellStyle(styles.get(STYLE_HEADER_PLANT));
-					cell.setCellValue(value);
-					
-                }
-                iColHeader+=unitPlantList.size();
                 iRow++;
                 //end Create header
                 
@@ -297,12 +249,6 @@ public class CommonDownloadReport {
 				sh.setColumnWidth(iSetwidthCol++, 3500);
 				sh.setColumnWidth(iSetwidthCol++, 3500);
 				sh.setColumnWidth(iSetwidthCol++, 3500);
-				for(int i=0;i<vehiclePlantList.size();i++){
-                	sh.setColumnWidth(iSetwidthCol++, 3500);
-                }
-                for(int i=0;i<unitPlantList.size();i++){
-                	sh.setColumnWidth(iSetwidthCol++, 3500);
-                }
                 
 				//write excel file
 				this.writeFileReport(excelFileList);
@@ -325,8 +271,6 @@ public class CommonDownloadReport {
 				loggerBBW04221.endError(appId,CST30000Messages.INFO_PROCESS_END_ERROR, message, this.userLog);
 				status = CST30000Constants.ERROR;
 				
-				//Add by Thanawut T. 2017/12/12 BCT-Vendor for detect download processing
-				commonRepository.updateStatusOfLogUpload(appId, userLog, AppConstants.STATUS_ERROR, AppConstants.STATUS_ERROR_DESC+" Download Calendar.");
 			} else {
 				String msgFileName = "";
 				if(excelFileList != null && !excelFileList.isEmpty()){
@@ -337,8 +281,6 @@ public class CommonDownloadReport {
 				loggerBBW04221.end(appId, CST30000Messages.INFO_PROCESS_END_SUCCESS, message, this.userLog);
 				status = CST30000Constants.SUCCESS;
 				
-				//Add by Thanawut T. 2017/12/12 BCT-Vendor for detect download processing
-				commonRepository.updateStatusOfLogUpload(appId, userLog, AppConstants.STATUS_SUCCESS, AppConstants.STATUS_SUCCESS_DESC+" Download Calendar.");
 			}
 			try {
 				if(conn!=null && !conn.isClosed()){

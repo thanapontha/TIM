@@ -18,8 +18,6 @@
  ********************************************************/
 package th.co.toyota.bw0.api.service.common;
 
-import java.sql.Connection;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -36,7 +34,6 @@ import th.co.toyota.bw0.api.constants.AppConstants;
 import th.co.toyota.bw0.api.constants.MessagesConstants;
 import th.co.toyota.bw0.api.exception.common.CommonErrorException;
 import th.co.toyota.bw0.api.repository.common.CommonAPIRepository;
-import th.co.toyota.st3.api.constants.CST30000Constants;
 import th.co.toyota.st3.api.download.CST30090ExcelGenerator;
 import th.co.toyota.st3.api.model.BatchQueue;
 import th.co.toyota.st3.api.model.ModuleDetailInfo;
@@ -63,16 +60,6 @@ public class CommonService{
 	
 	@Value("${pu_phase_test}")
 	protected String PU_PHASE_TEST;	
-	
-	//Index parameter for delete Rundwon Kompo Status
-	final int IDX_VERSION = 0;
-	final int IDX_GETSUDO_MONTH = 1;
-	final int IDX_TIMING = 2;
-	final int IDX_VEHICLE_PLANT = 3;
-	final int IDX_VEHICLE_MODEL = 4;
-	final int IDX_UNIT_PLANT = 5;
-	final int IDX_UNIT_TYPE = 6;
-	final int IDX_UNIT_MODEL = 7;
 
 
 	public boolean postBatchRequest(List<String> parameters,
@@ -119,59 +106,5 @@ public class CommonService{
 	
 	public String genAppId() throws CommonErrorException{
 		return repository.genAppId();
-	}
-
-	public Object[] getPrevGetsudoMonthAndTiming(Connection conn, String getsudoMonthCurrent, String timingCurrent){
-		try {
-			return repository.getPrevGetsudoMonthAndTiming(conn, getsudoMonthCurrent, timingCurrent);
-		} catch (CommonErrorException e) {
-			return null;
-		}
-	}
-	
-	public String convertRundownKompoUploadStatus(int processStatus){
-		String uploadStatus = "";
-		if (processStatus == CST30000Constants.SUCCESS) {
-			uploadStatus = "SC";
-		}else if (processStatus == CST30000Constants.ERROR) {
-			uploadStatus = "ER";
-		}else if (processStatus == CST30000Constants.WARNING) {
-			uploadStatus = "SC";
-		}
-		return uploadStatus;
-	}
-	
-	public void addRundownKompoSts(Connection conn, Object[] data) throws Exception {
-		String[] paramDel = new String[]{data[IDX_VERSION].toString(), 
-										 data[IDX_GETSUDO_MONTH].toString(), 
-										 data[IDX_TIMING].toString(), 
-										 data[IDX_VEHICLE_PLANT].toString(), 
-										 data[IDX_VEHICLE_MODEL].toString(),
-										 data[IDX_UNIT_PLANT].toString(),
-										 data[IDX_UNIT_MODEL].toString()};
-		
-		repository.insertRundownKompoSts(conn, paramDel, data);
-	}
-	
-	public void addRundownKompoStsKOMPO(Connection conn, List<Object[]> datas) throws Exception {
-		
-		if(datas!=null && !datas.isEmpty()){
-			Object[] data = datas.get(0);
-			String[] paramDel = new String[]{data[IDX_VERSION].toString(), 
-											 data[IDX_GETSUDO_MONTH].toString(), 
-											 data[IDX_TIMING].toString(), 
-											 data[IDX_VEHICLE_PLANT].toString(), 
-											 data[IDX_VEHICLE_MODEL].toString()};
-			
-			repository.insertRundownKompoSts(conn, paramDel, datas);
-		}
-	}
-	
-	public Date getNextGetsudoMonthFromCurrent(){
-		Calendar calendar = Calendar.getInstance();         
-		calendar.add(Calendar.MONTH, 1);
-		calendar.set(Calendar.DATE, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
-		Date nextMonthFirstDay = calendar.getTime();
-		return nextMonthFirstDay;
 	}
 }

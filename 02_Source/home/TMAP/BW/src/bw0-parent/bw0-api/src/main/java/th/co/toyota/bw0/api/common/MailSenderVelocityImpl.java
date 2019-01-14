@@ -131,8 +131,6 @@ public class MailSenderVelocityImpl implements MailSender {
         }
     }
     
-    
-    
     @Override
     public void sendEmail(Connection conn, Map<String, Object> model, String functionId, String appId, String userId, IST30000LoggerDb loggerDb)throws CommonErrorException {
 		boolean valid = true;
@@ -180,7 +178,7 @@ public class MailSenderVelocityImpl implements MailSender {
 		}
 		
 		infoId.setCategory(AppConstants.SYS_CATEGORY_EMAIL);
-		infoId.setSubCategory(AppConstants.FUNCTION_ID_BBW01140);		
+//		infoId.setSubCategory(AppConstants.FUNCTION_ID_BBW01140);		
 		infoId.setCode(AppConstants.SYS_CD_CC+"*");
 		List<SystemInfo> emailCcList = systemRepository.querySystemMasterInfo(infoId);
 		if(emailCcList != null && emailCcList.size()==0){
@@ -211,14 +209,7 @@ public class MailSenderVelocityImpl implements MailSender {
 	}
     
     public void sendEmail(Map<String, Object> model, String subjectMail, String[] emailToArr, String[] emailCcArr, String functionId, String action)throws CommonErrorException {
-		if (AppConstants.SCREEN_ID_WBW01110.equals(functionId) && AppConstants.ACTION_SUBMIT_KAIKIENGDATA.equals(action)) {
-			this.sendEmail(model, emailToArr, emailCcArr, subjectMail, this.templateSubmitKaikiengData, null);
-		}else if (AppConstants.SCREEN_ID_WBW01110.equals(functionId) && AppConstants.ACTION_REJECT_KAIKIENGDATA.equals(action)) {
-			this.sendEmail(model, emailToArr, emailCcArr, subjectMail, this.templateRejectKaikiengData, null);
-		}else if (AppConstants.SCREEN_ID_WBW01110.equals(functionId) && AppConstants.ACTION_FIX_KAIKIENGDATA.equals(action)) {
-			this.sendEmail(model, emailToArr, emailCcArr, subjectMail, this.templateFixKaikiengData, null);
-		}
-    	
+//			this.sendEmail(model, emailToArr, emailCcArr, subjectMail, this.templateFixKaikiengData, null);    	
     }
 			
 	public VelocityEngine getVelocity() {

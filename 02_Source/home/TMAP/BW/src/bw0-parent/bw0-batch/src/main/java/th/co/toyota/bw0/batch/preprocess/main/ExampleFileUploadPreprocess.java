@@ -38,7 +38,6 @@ import th.co.toyota.config.AppConfig;
 import th.co.toyota.bw0.api.common.CommonUtility;
 import th.co.toyota.bw0.api.constants.AppConstants;
 import th.co.toyota.bw0.api.constants.MessagesConstants;
-import th.co.toyota.bw0.api.exception.common.CommonErrorException;
 import th.co.toyota.bw0.api.repository.common.CommonAPIRepository;
 import th.co.toyota.bw0.batch.preprocess.service.ExampleFileUploadPreprocessService;
 import th.co.toyota.st3.api.constants.CST30000Constants;
@@ -63,7 +62,6 @@ public class ExampleFileUploadPreprocess implements IST31250PreProcessClass {
 	@Autowired
 	private CommonAPIRepository repository;
 	private String batchName = "Upload KOMPO preprocess";
-	private String batchNameMsg = " Upload KOMPO.";
 	
 	public Timestamp sysdate;
 
@@ -77,7 +75,7 @@ public class ExampleFileUploadPreprocess implements IST31250PreProcessClass {
 		ExampleFileUploadPreprocess main = appContext.getBean(ExampleFileUploadPreprocess.class);
 		CST31250FileReceivingCmdOptions arg0 = new CST31250FileReceivingCmdOptions();
 		arg0.setModuleId(AppConstants.MODULE_ID_BW02);
-		arg0.setFunctionId(AppConstants.FUNCTION_ID_BBW02130);
+		arg0.setFunctionId("BBW02130");
 		arg0.setApplicationId("1800000672");
 		arg0.setUser("gwrds01");
 		
@@ -120,8 +118,6 @@ public class ExampleFileUploadPreprocess implements IST31250PreProcessClass {
 			
 			serviceKompo.sysdate = this.sysdate;
 
-			
-			//Validate Sheet 2 (Diagram)
 			int resultKompo = serviceKompo.validate(conn, arg0);
 			
 			//Save data to result table
@@ -158,7 +154,6 @@ public class ExampleFileUploadPreprocess implements IST31250PreProcessClass {
 				logger.info(msg);
 				loggerBBW02130.end(appId, CST30000Messages.INFO_PROCESS_END_SUCCESS, msg, createBy);
 				
-				repository.updateStatusOfLogUpload(appId, createBy, AppConstants.STATUS_SUCCESS, AppConstants.STATUS_SUCCESS_DESC+batchNameMsg);
 				result = CST30000Constants.SUCCESS;
 			}else if (resultKompo == CST30000Constants.ERROR) {				
 				msg = messageSource.getMessage(
@@ -168,7 +163,6 @@ public class ExampleFileUploadPreprocess implements IST31250PreProcessClass {
 				logger.error(msg);
 				loggerBBW02130.endError(appId, CST30000Messages.INFO_PROCESS_END_ERROR, msg, createBy);
 				
-				repository.updateStatusOfLogUpload(appId, createBy, AppConstants.STATUS_ERROR, AppConstants.STATUS_ERROR_DESC+batchNameMsg);
 				result = CST30000Constants.ERROR;
 			}
 			return result;
@@ -181,24 +175,13 @@ public class ExampleFileUploadPreprocess implements IST31250PreProcessClass {
 			loggerBBW02130.error(appId, CST30000Messages.ERROR_UNDEFINED_ERROR,
 					errMsg, createBy);
 			
-			try {
-				errMsg = messageSource.getMessage(
-						CST30000Messages.INFO_PROCESS_END_ERROR,
-						new String[] { batchName, paramStr1.toString(), paramStr2.toString(), paramStr3.toString() },
-						Locale.getDefault());
-				logger.error(errMsg);
-				loggerBBW02130.endError(appId, CST30000Messages.INFO_PROCESS_END_ERROR, errMsg, createBy);
-				
-				repository.updateStatusOfLogUpload(appId, createBy, AppConstants.STATUS_ERROR, AppConstants.STATUS_ERROR_DESC+batchNameMsg);
-			} catch (CommonErrorException e1) {
-				errMsg = messageSource
-						.getMessage(CST30000Messages.ERROR_UNDEFINED_ERROR,
-								new String[] { CommonUtility.genMessageOfException(e1) },
-								Locale.getDefault());
-				logger.error(errMsg);
-				loggerBBW02130.error(appId, CST30000Messages.ERROR_UNDEFINED_ERROR, errMsg, createBy);
-			}
-			
+			errMsg = messageSource.getMessage(
+					CST30000Messages.INFO_PROCESS_END_ERROR,
+					new String[] { batchName, paramStr1.toString(), paramStr2.toString(), paramStr3.toString() },
+					Locale.getDefault());
+			logger.error(errMsg);
+			loggerBBW02130.endError(appId, CST30000Messages.INFO_PROCESS_END_ERROR, errMsg, createBy);
+
 			return CST30000Constants.ERROR;
 		}finally{
 			try {
@@ -211,71 +194,4 @@ public class ExampleFileUploadPreprocess implements IST31250PreProcessClass {
 			}
 		}
 	}
-	
-	public void insertLogDetail(Object[] keys) throws CommonErrorException {
-		Connection conn = null;
-		boolean completed = false;
-		try{
-			conn = repository.getConnection();
-			conn.setAutoCommit(false);
-			serviceKompo.deleteAllLogDetail(conn, keys);
-			serviceKompo.insertLogDetail(conn);
-			serviceKompo.insertLogDetailOther(conn, keys);
-			completed = true;
-		}catch (CommonErrorException e){
-			completed = false;
-			throw e;
-		}catch (Exception e) {
-			completed = false;
-			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, true);
-		}finally{
-			try {
-				if(conn!=null && !conn.isClosed()){
-					if(completed){
-						conn.commit();
-					}else{
-						conn.rollback();
-					}
-					
-					conn.close();
-					conn = null;	
-				}
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
-		}
-	}
-	
-	public void deleteLogDetail(Object[] keys) throws CommonErrorException {
-		Connection conn = null;
-		boolean completed = false;
-		try{
-			conn = repository.getConnection();
-			conn.setAutoCommit(false);
-			serviceKompo.deleteAllLogDetail(conn, keys);
-			completed = true;
-		}catch (CommonErrorException e){
-			completed = false;
-			throw e;
-		}catch (Exception e) {
-			completed = false;
-			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, true);
-		}finally{
-			try {
-				if(conn!=null && !conn.isClosed()){
-					if(completed){
-						conn.commit();
-					}else{
-						conn.rollback();
-					}
-					
-					conn.close();
-					conn = null;	
-				}
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
-		}
-	}
-
 }

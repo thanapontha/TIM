@@ -38,7 +38,6 @@ import th.co.toyota.bw0.api.common.CommonUtility;
 import th.co.toyota.bw0.api.constants.AppConstants;
 import th.co.toyota.bw0.api.constants.MessagesConstants;
 import th.co.toyota.bw0.api.exception.common.CommonErrorException;
-import th.co.toyota.bw0.api.repository.common.CommonAPIRepository;
 import th.co.toyota.bw0.batch.preprocess.repository.ExampleFileUploadPreprocessRepository;
 import th.co.toyota.bw0.util.FormatUtil;
 import th.co.toyota.st3.api.constants.CST30000Constants;
@@ -61,9 +60,6 @@ public class ExampleFileUploadPreprocessService {
 	
 	@Autowired
 	private ExampleFileUploadPreprocessRepository repositoryKompo;
-	
-	@Autowired
-	private CommonAPIRepository commonRepository;
 
 	@Value("${projectCode}")
 	protected String PROJECT_CODE;
@@ -178,38 +174,26 @@ public class ExampleFileUploadPreprocessService {
 //		this.unitModel = CommonUtility.convertBatchParam(Strings.nullToEmpty(paramList.get(8)));
 		this.fileName = CommonUtility.convertBatchParam(Strings.nullToEmpty(paramList.get(9)));
 		
-		//CR UT-002 2018/02/16 Thanawut T. : select multiple Unit Model for Kompokung Validate
-		//KOMPO
-		if(AppConstants.UPLOAD_KOMPO_FLAG.equals(this.pamsKompoFlag)){
-			String unitPlantAllSelected = null;
-			String unitModelAllSelected = null;
-			String unitTypeAllSelected = null;
-			
-			if (!Strings.isNullOrEmpty(Strings.nullToEmpty(paramList.get(6))))
-				unitPlantAllSelected = CommonUtility.convertBatchParam(Strings.nullToEmpty(paramList.get(6)));
-			if (!Strings.isNullOrEmpty(Strings.nullToEmpty(paramList.get(7))))
-				unitTypeAllSelected = CommonUtility.convertBatchParam(Strings.nullToEmpty(paramList.get(7)));
-			if (!Strings.isNullOrEmpty(Strings.nullToEmpty(paramList.get(8))))
-				unitModelAllSelected = CommonUtility.convertBatchParam(Strings.nullToEmpty(paramList.get(8)));
-			
-			this.unitPlantArr = unitPlantAllSelected.split(selectSep);
-			this.unitPlant = (unitPlantArr != null) ? unitPlantArr[0] : unitPlantAllSelected;
-			
-			this.unitTypeArr = unitTypeAllSelected.split(selectSep);
-			this.unitType = (unitTypeArr != null) ? unitTypeArr[0] : unitTypeAllSelected;
-			
-			this.unitModelArr = unitModelAllSelected.split(selectSep);
-			this.unitModel = (unitModelArr != null) ? unitModelArr[0] : unitModelAllSelected;
-		}else{ //PAMs
-			//In Case PAMs use 1 unit model
-			if (!Strings.isNullOrEmpty(Strings.nullToEmpty(paramList.get(6))))
-				this.unitPlant = CommonUtility.convertBatchParam(Strings.nullToEmpty(paramList.get(6)));
-			if (!Strings.isNullOrEmpty(Strings.nullToEmpty(paramList.get(7))))
-				this.unitType = CommonUtility.convertBatchParam(Strings.nullToEmpty(paramList.get(7)));
-			if (!Strings.isNullOrEmpty(Strings.nullToEmpty(paramList.get(8))))
-				this.unitModel = CommonUtility.convertBatchParam(Strings.nullToEmpty(paramList.get(8)));
-		}
-		//END CR UT-002 2018/02/16
+	
+		String unitPlantAllSelected = null;
+		String unitModelAllSelected = null;
+		String unitTypeAllSelected = null;
+		
+		if (!Strings.isNullOrEmpty(Strings.nullToEmpty(paramList.get(6))))
+			unitPlantAllSelected = CommonUtility.convertBatchParam(Strings.nullToEmpty(paramList.get(6)));
+		if (!Strings.isNullOrEmpty(Strings.nullToEmpty(paramList.get(7))))
+			unitTypeAllSelected = CommonUtility.convertBatchParam(Strings.nullToEmpty(paramList.get(7)));
+		if (!Strings.isNullOrEmpty(Strings.nullToEmpty(paramList.get(8))))
+			unitModelAllSelected = CommonUtility.convertBatchParam(Strings.nullToEmpty(paramList.get(8)));
+		
+		this.unitPlantArr = unitPlantAllSelected.split(selectSep);
+		this.unitPlant = (unitPlantArr != null) ? unitPlantArr[0] : unitPlantAllSelected;
+		
+		this.unitTypeArr = unitTypeAllSelected.split(selectSep);
+		this.unitType = (unitTypeArr != null) ? unitTypeArr[0] : unitTypeAllSelected;
+		
+		this.unitModelArr = unitModelAllSelected.split(selectSep);
+		this.unitModel = (unitModelArr != null) ? unitModelArr[0] : unitModelAllSelected;
 	}
 	
 	public int validate(Connection conn, CST31250FileReceivingCmdOptions params) {
@@ -486,26 +470,6 @@ public class ExampleFileUploadPreprocessService {
 				}
 				valid = false;
 			}
-			
-			List<String> wsExistInKompo = repositoryKompo.getLastMonthOfWorksheetExistInKompo(conn,
-																							 this.version,
-																							 this.getsudoMonth, 
-																							 this.timing, 
-																							 this.vehiclePlant, 
-																							 this.vehicleModel, 
-																							 this.createBy, 
-																							 this.appId);
-			if(wsExistInKompo==null || wsExistInKompo.isEmpty()){
-				String errMsg = messageSource.getMessage(MessagesConstants.B_ERROR_NOT_EXIST,
-						new String[] {"Last Month of Worksheet ("+this.endMonth+")", "Diagram upload file"},
-						Locale.getDefault());
-				if (!validateLogError(errMsg)) {
-					logger.error(errMsg);
-					loggerBBW02130.error(appId, MessagesConstants.B_ERROR_NOT_EXIST, errMsg, createBy);
-				}
-				valid = false;
-			}
-		
 		}
 		return valid;
 	}
@@ -515,38 +479,38 @@ public class ExampleFileUploadPreprocessService {
 		boolean warning = false;
 
 		//5. Check Vehicle Production Volume in Diagram sheet between Worksheet 
-		List<Object[]> vehicleProdVolvsWSL = repositoryKompo.getVehicleProdVolumeDiagramWithWorksheet(conn,
-																									  this.version, 
-																									  this.getsudoMonth, 
-																									  this.timing, 
-																									  this.vehiclePlant, 
-																									  this.vehicleModel, 
-																									  this.createBy);
-		if(vehicleProdVolvsWSL != null && !vehicleProdVolvsWSL.isEmpty()){
-			for(int i=0; i<vehicleProdVolvsWSL.size(); i++){
-				Object[] rowData = vehicleProdVolvsWSL.get(i);
-				String volumeMonth = (rowData[0] == null) ? "":(String)rowData[0];
-				BigDecimal sumProdVolumeMonth = (rowData[1] == null) ? BigDecimal.ZERO:(BigDecimal)rowData[1];
-				BigDecimal unitVolume = (rowData[2] == null) ? BigDecimal.ZERO:(BigDecimal)rowData[2];
-				String errMsg = messageSource.getMessage(MessagesConstants.B_ERROR_MUST_EQUAL,
-						new String[] {"Production Volume Diagram data {Key : Volume Month= "+volumeMonth+"} ", "Production Volume in worksheet"},
-						Locale.getDefault());
-				if (!validateLogError(errMsg)) {
-					logger.error(errMsg);
-					loggerBBW02130.error(appId, MessagesConstants.B_ERROR_MUST_EQUAL, errMsg, createBy);
-					Object[] logDetail = new Object[] {appId, getsudoMonth, timing, vehiclePlant,
-														vehicleModel, unitPlant, unitModel,
-														"6",nextRunNoProdVolDiagram++,
-														null,
-														volumeMonth,sumProdVolumeMonth,null,
-														unitVolume,null,null,
-													    this.createBy, FormatUtil.convert(this.sysdate),
-													    this.createBy, FormatUtil.convert(this.sysdate)};
-					logDetailProdVolDiagram.add(logDetail);
-				}
-			}
-			valid = false;
-		}
+//		List<Object[]> vehicleProdVolvsWSL = repositoryKompo.getVehicleProdVolumeDiagramWithWorksheet(conn,
+//																									  this.version, 
+//																									  this.getsudoMonth, 
+//																									  this.timing, 
+//																									  this.vehiclePlant, 
+//																									  this.vehicleModel, 
+//																									  this.createBy);
+//		if(vehicleProdVolvsWSL != null && !vehicleProdVolvsWSL.isEmpty()){
+//			for(int i=0; i<vehicleProdVolvsWSL.size(); i++){
+//				Object[] rowData = vehicleProdVolvsWSL.get(i);
+//				String volumeMonth = (rowData[0] == null) ? "":(String)rowData[0];
+//				BigDecimal sumProdVolumeMonth = (rowData[1] == null) ? BigDecimal.ZERO:(BigDecimal)rowData[1];
+//				BigDecimal unitVolume = (rowData[2] == null) ? BigDecimal.ZERO:(BigDecimal)rowData[2];
+//				String errMsg = messageSource.getMessage(MessagesConstants.B_ERROR_MUST_EQUAL,
+//						new String[] {"Production Volume Diagram data {Key : Volume Month= "+volumeMonth+"} ", "Production Volume in worksheet"},
+//						Locale.getDefault());
+//				if (!validateLogError(errMsg)) {
+//					logger.error(errMsg);
+//					loggerBBW02130.error(appId, MessagesConstants.B_ERROR_MUST_EQUAL, errMsg, createBy);
+//					Object[] logDetail = new Object[] {appId, getsudoMonth, timing, vehiclePlant,
+//														vehicleModel, unitPlant, unitModel,
+//														"6",nextRunNoProdVolDiagram++,
+//														null,
+//														volumeMonth,sumProdVolumeMonth,null,
+//														unitVolume,null,null,
+//													    this.createBy, FormatUtil.convert(this.sysdate),
+//													    this.createBy, FormatUtil.convert(this.sysdate)};
+//					logDetailProdVolDiagram.add(logDetail);
+//				}
+//			}
+//			valid = false;
+//		}
 		
 		return new Object[]{valid, warning};
 	}
@@ -662,51 +626,6 @@ public class ExampleFileUploadPreprocessService {
 			}
 		}
 	}
-	
-	//Insert log detail Other Eror to DB
-	public void insertLogDetailOther(Connection conn, Object[] keys) throws CommonErrorException {
-		
-		this.setKeyParamerter(keys);
-		
-		Object[] logDetail = new Object[] {appId, getsudoMonth, timing, vehiclePlant, 
-										   vehicleModel, unitPlant, unitModel, 
-										   "7",1, null,
-										   null,null,null,
-										   null,null,null,
-										   createBy, FormatUtil.convert(this.sysdate),
-										   createBy, FormatUtil.convert(this.sysdate)};
-		
-		//Insert only 1 record
-		if(!logDetailOther.contains(logDetail)){
-			logDetailOther.add(logDetail);
-			commonRepository.insertLogDetail(conn, logDetailOther, AppConstants.LOG_DETAIL_OTHER);
-		}
-		
-	}
-	
-	public void insertLogDetail(Connection conn) throws CommonErrorException{
-		if(logDetailCalendar!=null && !logDetailCalendar.isEmpty()){
-			commonRepository.insertLogDetail(conn, logDetailCalendar, AppConstants.LOG_DETAIL_CALENDAR);
-		}
-		if(logDetailStdStock!=null && !logDetailStdStock.isEmpty()){
-			commonRepository.insertLogDetail(conn, logDetailStdStock, AppConstants.LOG_DETAIL_STOCK);
-		}
-		if(logDetailProdVol!=null && !logDetailProdVol.isEmpty()){
-			commonRepository.insertLogDetail(conn, logDetailProdVol, AppConstants.LOG_DETAIL_PROD_VOL);
-		}
-		if(logDetailPackVol!=null && !logDetailPackVol.isEmpty()){
-			commonRepository.insertLogDetail(conn, logDetailPackVol, AppConstants.LOG_DETAIL_PACK_VOL);
-		}
-		if(logDetailProdVolDiagram!=null && !logDetailProdVolDiagram.isEmpty()){
-			commonRepository.insertLogDetail(conn, logDetailProdVolDiagram, AppConstants.LOG_DETAIL_PROD_VOL_DIAGRAM);
-		}
-	}
-	
-	//Delete all log detail to DB
-	public void deleteAllLogDetail(Connection conn, Object[] keys) throws CommonErrorException{
-		this.setKeyParamerter(keys);
-		String[] keySrc = new String[]{this.getsudoMonth,this.timing, this.vehiclePlant, this.vehicleModel};
-		commonRepository.deleteLogDetail(conn, keySrc);
-	}
+
 }
 
