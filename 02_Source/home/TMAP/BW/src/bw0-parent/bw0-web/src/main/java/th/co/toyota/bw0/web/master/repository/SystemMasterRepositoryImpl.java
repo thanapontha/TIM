@@ -293,7 +293,6 @@ public class SystemMasterRepositoryImpl implements SystemMasterRepository{
 	@Override
 	public List<SystemInfo> searchObjectList(Connection conn, StringBuilder sql, List<Object> parameter,
 			int firstResult, int rowsPerPage) throws CommonErrorException {
-		ResultSet rs = null;
 		List<SystemInfo> listResult = new ArrayList<>();
 		int sumRowNum = firstResult + rowsPerPage;
 		StringBuilder sqlPaging = new StringBuilder();
@@ -308,32 +307,26 @@ public class SystemMasterRepositoryImpl implements SystemMasterRepository{
 			for (Object objParam : parameter) {
 				ps.setString(index++, (String) objParam);
 			}
-			rs = ps.executeQuery();
-			while (rs.next()) {
-				SystemInfo info = new SystemInfo();
-				info.setId(new SystemInfoId());
-				info.getId().setCategory(rs.getString("CATEGORY"));
-				info.getId().setSubCategory(rs.getString("SUB_CATEGORY"));
-				info.getId().setCode(rs.getString("CD"));
-				info.setValue(rs.getString("VALUE"));
-				info.setRemark(rs.getString("REMARK"));
-				info.setStatus(Character.valueOf(rs.getString("STATUS").charAt(0)));	
-				info.setCreateBy(rs.getString("CREATE_BY"));
-				info.setCreateDate(rs.getTimestamp("CREATE_DT"));
-				info.setUpdateBy(rs.getString("UPDATE_BY"));
-				info.setUpdateDate(rs.getTimestamp("UPDATE_DT"));
-				listResult.add(info);
+
+			try(ResultSet rs = ps.executeQuery()){
+				while (rs.next()) {
+					SystemInfo info = new SystemInfo();
+					info.setId(new SystemInfoId());
+					info.getId().setCategory(rs.getString("CATEGORY"));
+					info.getId().setSubCategory(rs.getString("SUB_CATEGORY"));
+					info.getId().setCode(rs.getString("CD"));
+					info.setValue(rs.getString("VALUE"));
+					info.setRemark(rs.getString("REMARK"));
+					info.setStatus(Character.valueOf(rs.getString("STATUS").charAt(0)));	
+					info.setCreateBy(rs.getString("CREATE_BY"));
+					info.setCreateDate(rs.getTimestamp("CREATE_DT"));
+					info.setUpdateBy(rs.getString("UPDATE_BY"));
+					info.setUpdateDate(rs.getTimestamp("UPDATE_DT"));
+					listResult.add(info);
+				}
 			}
 		} catch (Exception e) {
 			throw CommonUtility.handleExceptionToCommonErrorException(e, logger, false);
-		} finally{
-			try {
-				if(rs != null){
-					rs.close();
-				}
-			} catch (SQLException e1) {
-				logger.error(e1.getMessage());
-			}
 		}
 		return listResult;
 	}
