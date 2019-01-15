@@ -77,40 +77,35 @@ public class ExampleConvertExcelToStage {
 		String batchName = "Example Upload Batch";
 		String fileId = "BW02130";
 		String tableName = "TB_S_KOMPO";
-
 		String createBy = "SYSTEM";
 		String appId = null;
 		String fileName = "blankFile";
 		Timestamp sysdate = FormatUtil.currentTimestampToOracleDB();
-
-		int lengthParamCheck = 3;
-		if (params.length == lengthParamCheck) {
-			if (!Strings.isNullOrEmpty(params[IDX_PARAM_USER_LOGIN]))
-				createBy = CommonUtility.convertBatchParam(params[IDX_PARAM_USER_LOGIN]);
-			if (!Strings.isNullOrEmpty(params[IDX_PARAM_APP_ID]))
-				appId = CommonUtility.convertBatchParam(params[IDX_PARAM_APP_ID]);
-			fileName = CommonUtility.convertBatchParam(params[IDX_PARAM_FILE_NAME]);
-
-		}
-
-		// Start Spring
-		ApplicationContext appContext = new AnnotationConfigApplicationContext(AppConfig.class);
-		ExampleConvertExcelToStage exampleConvertExcelToStage = appContext.getBean(ExampleConvertExcelToStage.class);
-
-		//Get App ID
-		appId = exampleConvertExcelToStage.service.getAppId(appId, sysdate, createBy);
 		
 		int status = CST30000Constants.SUCCESS;
-		try {
-			int[] result = new int[2];
-			String msg = "";
-			boolean archiveFlag = false;
+		int[] result = new int[2];
+		boolean archiveFlag = false;
 
+		// Start Spring Context
+		ApplicationContext appContext = new AnnotationConfigApplicationContext(AppConfig.class);
+		ExampleConvertExcelToStage exampleConvertExcelToStage = appContext.getBean(ExampleConvertExcelToStage.class);
+		
+		try {
+			// Parameter validation
+			int lengthParamCheck = 3;
+			if (params.length == lengthParamCheck) {
+				if (!Strings.isNullOrEmpty(params[IDX_PARAM_USER_LOGIN]))
+					createBy = CommonUtility.convertBatchParam(params[IDX_PARAM_USER_LOGIN]);
+				if (!Strings.isNullOrEmpty(params[IDX_PARAM_APP_ID]))
+					appId = CommonUtility.convertBatchParam(params[IDX_PARAM_APP_ID]);
+				fileName = CommonUtility.convertBatchParam(params[IDX_PARAM_FILE_NAME]);
+			}
+		
+			// Get App ID
+			appId = exampleConvertExcelToStage.service.getAppId(appId, sysdate, createBy);
+		
 			// Log start process
-			msg = exampleConvertExcelToStage.messageSource.getMessage(CST30000Messages.INFO_PROCESS_START,
-					new String[] { batchName }, Locale.getDefault());
-			exampleConvertExcelToStage.logger.info(msg);
-			exampleConvertExcelToStage.loggerBBW02130.start(appId, CST30000Messages.INFO_PROCESS_START, msg, createBy);
+			exampleConvertExcelToStage.writeLogStart(batchName, appId, createBy);
 
 			// Process : Convert Excel To Staging table
 			if (exampleConvertExcelToStage.service
@@ -135,20 +130,7 @@ public class ExampleConvertExcelToStage {
 			exampleConvertExcelToStage.batchUtil.archiveFile(fileName, "", archiveFlag);
 
 			// Log end process
-			if (result[IDX_VALIDATE_STATUS] == CST30000Constants.ERROR) {
-				msg = exampleConvertExcelToStage.messageSource.getMessage(CST30000Messages.INFO_PROCESS_END_ERROR,
-						new String[] { batchName, "(Please see details on above log)", "Upload file:" + fileName, "" },
-						Locale.getDefault());
-				exampleConvertExcelToStage.logger.info(msg);
-				exampleConvertExcelToStage.loggerBBW02130.endError(appId, CST30000Messages.INFO_PROCESS_END_ERROR, msg, createBy);
-			} else {
-				msg = exampleConvertExcelToStage.messageSource.getMessage(CST30000Messages.INFO_PROCESS_END_SUCCESS,
-						new String[] { batchName, "(Total convert Example data " + result[IDX_ROWS_EFFECTED] + " rows)",
-								"Upload file:" + fileName, "" },
-						Locale.getDefault());
-				exampleConvertExcelToStage.logger.info(msg);
-				exampleConvertExcelToStage.loggerBBW02130.end(appId, CST30000Messages.INFO_PROCESS_END_SUCCESS, msg, createBy);
-			}
+			exampleConvertExcelToStage.writeLogEnd(result, batchName, appId, createBy, fileName);
 
 		} catch (Exception e) {
 			String errMsg = exampleConvertExcelToStage.messageSource.getMessage(CST30000Messages.ERROR_UNDEFINED_ERROR,
@@ -161,6 +143,32 @@ public class ExampleConvertExcelToStage {
 		((ConfigurableApplicationContext) appContext).close();
 
 		System.exit(status);
+	}
+	
+	private void writeLogStart(String batchName, String appId, String createBy) {
+		String msg = messageSource.getMessage(CST30000Messages.INFO_PROCESS_START,
+				new String[] { batchName }, Locale.getDefault());
+		logger.info(msg);
+		loggerBBW02130.start(appId, CST30000Messages.INFO_PROCESS_START, msg, createBy);
+
+	}
+	
+	private void writeLogEnd(int[] result, String batchName, String appId, String createBy, String fileName) {
+		String msg = "";
+		if (result[IDX_VALIDATE_STATUS] == CST30000Constants.ERROR) {
+			msg = messageSource.getMessage(CST30000Messages.INFO_PROCESS_END_ERROR,
+					new String[] { batchName, "(Please see details on above log)", "Upload file:" + fileName, "" },
+					Locale.getDefault());
+			logger.info(msg);
+			loggerBBW02130.endError(appId, CST30000Messages.INFO_PROCESS_END_ERROR, msg, createBy);
+		} else {
+			msg = messageSource.getMessage(CST30000Messages.INFO_PROCESS_END_SUCCESS,
+					new String[] { batchName, "(Total convert Example data " + result[IDX_ROWS_EFFECTED] + " rows)",
+							"Upload file:" + fileName, "" },
+					Locale.getDefault());
+			logger.info(msg);
+			loggerBBW02130.end(appId, CST30000Messages.INFO_PROCESS_END_SUCCESS, msg, createBy);
+		}
 	}
 	
 	private int[] convertExcelToStaging(String tableName, IST30000LoggerDb loggerDb) {
