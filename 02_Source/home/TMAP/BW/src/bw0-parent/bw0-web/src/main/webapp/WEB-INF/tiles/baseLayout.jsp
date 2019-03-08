@@ -80,12 +80,6 @@
 </head>
 
 <body>
-<%-- 	<div id="submain" class="overflow-hidden" >
-		<!-- div id="content-panel" class="iframe overflow-hidden autoheight" >  -->
-			<views:messageBar/>
-			<tiles:insertAttribute name="body" />
-		<!-- /div> -->
-	</div> --%>
   	<tiles:insertAttribute name="header" />
 	<div class="mainbody">
 		<div id="content-panel">
