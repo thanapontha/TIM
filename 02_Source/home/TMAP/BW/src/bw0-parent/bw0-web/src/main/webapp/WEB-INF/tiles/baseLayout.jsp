@@ -24,10 +24,15 @@
 	<script src="${pageContext.request.contextPath}<spring:message code="jqueryjspath"/>jquery.cookie.js"></script>
 	<script src="${pageContext.request.contextPath}<spring:message code="jqueryjspath"/>jquery.fixedheadertable.min.js"></script>
 	
-	<script src="${pageContext.request.contextPath}/webjars/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+	<%-- <script src="${pageContext.request.contextPath}/webjars/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/webjars/bootstrap/4.1.3/css/bootstrap.min.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/webjars/bootstrap/4.1.3/css/bootstrap-reboot.min.css" />
-     <views:style src="styles.css" />
+ --%>
+    <%--include bootstrap 4.3.1 --%>
+    <views:script src="bootstrap.min.js"/>
+ 	<views:style src="bootstrap.min.css" />
+ 	<views:style src="bootstrap-reboot.min.css" />
+    <views:style src="styles.css" />
 
     	
 	<views:script src="st3.lib.js"/>
@@ -75,6 +80,12 @@
 </head>
 
 <body>
+<%-- 	<div id="submain" class="overflow-hidden" >
+		<!-- div id="content-panel" class="iframe overflow-hidden autoheight" >  -->
+			<views:messageBar/>
+			<tiles:insertAttribute name="body" />
+		<!-- /div> -->
+	</div> --%>
   	<tiles:insertAttribute name="header" />
 	<div class="mainbody">
 		<div id="content-panel">
