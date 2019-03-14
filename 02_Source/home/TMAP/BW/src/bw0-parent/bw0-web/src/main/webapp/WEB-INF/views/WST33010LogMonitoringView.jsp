@@ -954,7 +954,7 @@
 			</div>
 			<div class="col-xl-2 col-lg-2 col-md-2 col-sm-4 col-12">
 				<div id="_logStatus-panel" class="hide">
-					<label for="messageType">
+					<label for="messageType" class="mx-1 my-0">
 						<spring:message code="ST3.WST33010.Label.ColLevel" />:
 					</label>
 					<select id="messageType" name="messageType" class="form-control form-control-sm" disabled="disabled">
