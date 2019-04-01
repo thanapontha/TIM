@@ -5,6 +5,13 @@
        "http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
 
 <tiles-definitions>
+  <definition name="baseLayoutOld" template="/WEB-INF/tiles/baseLayoutOld.jsp">
+      <put-attribute name="title"  value="Template"/>
+      <put-attribute name="header" value="/WEB-INF/tiles/headerOld.jsp"/>
+      <put-attribute name="menu"   value="/WEB-INF/tiles/menu.jsp"/>
+      <put-attribute name="body"   value="/WEB-INF/tiles/body.jsp"/>
+      <put-attribute name="footer"   value="/WEB-INF/tiles/footer.jsp"/>
+  </definition>
 
   <definition name="baseLayout" template="/WEB-INF/tiles/baseLayout.jsp">
       <put-attribute name="title"  value="Template"/>
@@ -29,7 +36,7 @@
       <put-attribute name="body"   value="/WEB-INF/tiles/body.jsp"/>
   </definition>
   
-   <definition name="WBW00000" extends="baseLayout">
+   <definition name="WBW00000" extends="baseLayoutOld">
       <put-attribute name="title"  value="Welcome Page"/>
       <put-attribute name="body"   value="/WEB-INF/views/welcomeNew.jsp"/>      
   </definition>
@@ -179,7 +186,7 @@
       <put-attribute name="body"   value="/WEB-INF/views/WST33060SystemMasterView.jsp"/>      
   </definition> -->
   
-  <definition name="WST33060" extends="baseLayout">
+  <definition name="WST33060" extends="baseLayoutOld">
       <put-attribute name="title"  value="System Master"/>
       <put-attribute name="body"   value="/WEB-INF/views/master/WST33060SystemMaster.jsp"/>      
   </definition>

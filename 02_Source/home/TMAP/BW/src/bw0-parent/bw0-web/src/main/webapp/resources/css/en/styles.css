@@ -364,3 +364,231 @@ img.ui-datepicker-trigger{
 	height: 25px !important;
 	margin-top: 2px;
 }
+
+#left-menu-panel{
+	position: absolute;
+	width:200px;
+	overflow: hidden;
+	z-index:2;
+	background:url(../../images/en/images/border.png) repeat-y right top white;
+	display: none;
+}	
+
+#left-menu-panel #unpin, #left-menu-panel #pin {
+	visibility: hidden;
+}
+
+#left-menu-panel{
+	-webkit-transition: -webkit-transform 0.2s linear; 
+	-webkit-transform: translate3d(0,0,0);
+	-ms-transition: -ms-transform 0.2s linear; 
+	-ms-transform: translate3d(0,0,0);
+	-moz-transition: -moz-transform 0.2s linear; 
+	-moz-transform: translate3d(0,0,0);
+	-o-transition: -o-transform 0.2s linear; 
+	-o-transform: translate3d(0,0,0);
+	transition: transform 0.2s linear; 
+	transform: translate3d(0,0,0);
+}
+#left-menu-panel.toggle{
+	-webkit-transform: translate3d(-200px,0,0);
+	-ms-transform: translate3d(-200px,0,0);
+	-moz-transform: translate3d(-200px,0,0);
+	-o-transform: translate3d(-200px,0,0);
+	transform: translate3d(-200px,0,0);
+}
+
+
+#left-menu-panel  .ui-resizable-handle.ui-icon-gripsmall-diagonal-se {
+	display:none !important;
+}
+#left-menu-panel  .ui-resizable-handle.ui-resizable-e {
+	width:20px;
+}
+#menu-container{
+	overflow-y: auto;
+	height:100%;
+	min-width:185px;
+	margin-right:15px;
+	position:relative;
+	outline: none;
+}
+#menu-container .ui-accordion-content { 
+	padding: 0px; 
+	margin: 0px;
+	padding-left: 5px;
+	padding-right: 1px;
+}
+	#menu-container .ui-accordion-content div.item{ 
+		border-bottom: solid lightgray 1px;
+		margin-top: 5px;
+		margin-bottom: 5px;
+	}
+		#menu-container .ui-accordion-content div.item  a{ 
+			display: block;
+		}
+#menu-container .ui-accordion.sub .ui-accordion-header {
+	padding: 5px; 
+	padding-left: 5px;
+	padding-right: 5px;
+}
+#menu-container .ui-accordion.sub .ui-accordion-header .ui-accordion-header-icon {
+	display: none;
+}
+#menu .item div.link{
+	cursor: pointer;
+}
+
+#menu .item div.link:hover{
+	cursor: pointer;
+	color:red;
+}
+
+#menu .ui-state-active, #menu .ui-state-focus, #menu .ui-state-hover{
+	background: #E60000;
+	color: white;
+}
+#menu .ui-state-active a, #menu .ui-state-focus a, #menu .ui-state-hover a{
+	color: white;
+}
+
+
+
+#main{
+	margin: 5px;
+	position: relative;
+	min-width: 950px;
+	min-height: 500px;
+}
+#right-area{
+	margin-left:205px;
+}
+/* IE 6 overflow HACK */
+* html #right-area {
+	overflow:hidden;
+}
+* html #right-area .tabitem .iframe {
+	position:relative;
+}
+
+* html .content-panel {
+overflow:hidden;
+}
+
+* html .content-panel table {
+position:relative;
+}
+	
+#logo-panel{
+	float:left;
+	position:absolute;
+	width:200px;
+	vertical-align:middle;
+	background-color:#E60000;
+	color: white;
+	border-radius: 4px;
+}
+	#logo-panel #logo {
+		height:28px;
+		display: block;
+		margin-left: 5px;
+	}
+#grayline-logo-panel{
+	height: 16px;
+	display:block;
+	background-color: rgb(127,127,127);
+	position:relative;
+	overflow:hidden;
+	padding-left: 5px;
+}
+#grayline-logo-panel input {
+	margin: 0px;
+}
+#grayline-logo-panel #toggle-menu-right {
+	display: none;
+}
+
+#grayline-logo-panel #toggle-menu-left{
+	display:block;
+}
+#grayline-logo-panel #toggle-menu-right{
+	display:none;
+}
+
+#grayline-logo-panel.toggle #toggle-menu-left{
+	display:none;
+}
+#grayline-logo-panel.toggle #toggle-menu-right{
+	display:block;
+}
+
+.application-panel{
+	height:28px;
+	background-color:#E60000;
+	vertical-align:middle;
+	color: white;
+	border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+	.application {
+		float: left;
+		padding-left: 10px;
+	}
+	.userinfo {
+		float: right;
+		margin-right: 10px;
+		vertical-align:baseline;
+		position:relative;
+		top: 7px;
+	}
+
+
+.screenid-panel{
+	height: 16px;
+	background-color: rgb(127,127,127);
+	/**margin-bottom: 5px;**/
+	color: white;
+	position: relative;
+}
+.screenid-panel .screenid{
+	float: left;
+	margin-left: 10px;
+	color: white;
+}
+.screenid-panel .time,
+#grayline-logo-panel-mobile .time
+ {
+	color: white;
+	position:absolute;
+	right: 10px;
+	white-space: nowrap;
+}
+
+#header-mobile { display: none; }
+#system-menu { display: none; }
+
+
+.ui-widget-overlay {
+	background: #000 !important;
+}
+
+.ui-tabs-nav{
+	background: #FFF;
+	border: 0px;
+	border-bottom: 1px solid black;
+	-moz-border-radius: 0px;
+	-webkit-border-radius: 0px;
+	-khtml-border-radius: 0px;
+	border-radius: 0px;
+}
+	.ui-tabs-nav li.ui-state-active {
+		background: #E60000;
+	}
+
+/*fix for jquery dialog on safari ipad */
+.ui-dialog, .ui-dialog *{ 
+	-webkit-transform: translate3d(0, 0, 0);
+}
+.ui-widget-content {
+	color: black;
+}

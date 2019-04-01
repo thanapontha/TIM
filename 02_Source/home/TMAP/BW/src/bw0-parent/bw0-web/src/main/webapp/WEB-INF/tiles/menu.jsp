@@ -46,59 +46,59 @@
 		<!-- Application module -->
 		<sc2:menuGroup groupId="BW0100" title="${groupKaikieng}">
 			<!-- Define Menu Item -->
-			<sc2:menuItem screenId="WBW01110" href="/BW0/Kaikieng/kaikiengInput" target="WBW01110">${itemKaikiengInput}</sc2:menuItem>
-			<sc2:menuItem screenId="WBW01150" href="/BW0/Kaikieng/getsudoWorksheetManagement" target="WBW01150">${itemGetsudoWorksheetManagement}</sc2:menuItem>
+			<sc2:menuItem screenId="WBW01110" href="${pageContext.request.contextPath}/Kaikieng/kaikiengInput" target="WBW01110">${itemKaikiengInput}</sc2:menuItem>
+			<sc2:menuItem screenId="WBW01150" href="${pageContext.request.contextPath}/Kaikieng/getsudoWorksheetManagement" target="WBW01150">${itemGetsudoWorksheetManagement}</sc2:menuItem>
 		</sc2:menuGroup>
 		
 		<sc2:menuGroup groupId="BW0200" title="${groupRundownandUnit}">
 			<!-- Define Menu Item -->
-			<sc2:menuItem screenId="WBW02110" href="/BW0/RundownandUnit/rundownAndKompoManagement" target="WBW02110">${itemRundownAndKompoManagement}</sc2:menuItem>
-			<sc2:menuItem screenId="WBW02160" href="/BW0/RundownandUnit/unitCapacityManagement" target="WBW02160">${itemUnitCapacityManagement}</sc2:menuItem>
+			<sc2:menuItem screenId="WBW02110" href="${pageContext.request.contextPath}/RundownandUnit/rundownAndKompoManagement" target="WBW02110">${itemRundownAndKompoManagement}</sc2:menuItem>
+			<sc2:menuItem screenId="WBW02160" href="${pageContext.request.contextPath}/RundownandUnit/unitCapacityManagement" target="WBW02160">${itemUnitCapacityManagement}</sc2:menuItem>
 		</sc2:menuGroup>
 
 		<!-- Define the Group Menu -->
 		<sc2:menuGroup groupId="ST3001" title="${groupMaster}">
 			<!-- Define Menu Item -->
-			<sc2:menuItem screenId="WST33060" href="/BW0/master/systemMaster" target="WST33060">${itemSystemMaster}</sc2:menuItem>
+			<sc2:menuItem screenId="WST33060" href="${pageContext.request.contextPath}/master/systemMaster" target="WST33060">${itemSystemMaster}</sc2:menuItem>
 			<!--
-			<sc2:menuItem screenId="WST33040" href="/BW0/master/batchMaster" target="WST33040">${itemBatchMaster}</sc2:menuItem>
+			<sc2:menuItem screenId="WST33040" href="${pageContext.request.contextPath}/master/batchMaster" target="WST33040">${itemBatchMaster}</sc2:menuItem>
 			-->
 			<sc2:menuSubGroup subGroupId="ST30011" title="${subGroupKaikiengMaster}">
-				<sc2:menuItem screenId="WBW04110" href="/BW0/master/vehiclePlant" target="WBW04110">${itemVehiclePlant}</sc2:menuItem>
-				<sc2:menuItem screenId="WBW04120" href="/BW0/master/unitPlant" target="WBW04120">${itemUnitPlant}</sc2:menuItem>
-				<sc2:menuItem screenId="WBW04130" href="/BW0/master/vehicleUnitRelation" target="WBW04130">${itemVehicleUnitRelation}</sc2:menuItem>
+				<sc2:menuItem screenId="WBW04110" href="${pageContext.request.contextPath}/master/vehiclePlant" target="WBW04110">${itemVehiclePlant}</sc2:menuItem>
+				<sc2:menuItem screenId="WBW04120" href="${pageContext.request.contextPath}/master/unitPlant" target="WBW04120">${itemUnitPlant}</sc2:menuItem>
+				<sc2:menuItem screenId="WBW04130" href="${pageContext.request.contextPath}/master/vehicleUnitRelation" target="WBW04130">${itemVehicleUnitRelation}</sc2:menuItem>
 			</sc2:menuSubGroup>
 			<sc2:menuSubGroup subGroupId="ST30012" title="${subGroupRundownandUnitMaster}">
-				<sc2:menuItem screenId="WBW04210" href="/BW0/master/calendar" target="WBW04210">${itemCalendar}</sc2:menuItem>
-				<sc2:menuItem screenId="WBW04230" href="/BW0/master/standardStock" target="WBW04230">${itemStandardStock}</sc2:menuItem>
-				<sc2:menuItem screenId="WBW04240" href="/BW0/master/unitPlantCapacity" target="WBW04240">${itemUnitPlantCapacity}</sc2:menuItem>
+				<sc2:menuItem screenId="WBW04210" href="${pageContext.request.contextPath}/master/calendar" target="WBW04210">${itemCalendar}</sc2:menuItem>
+				<sc2:menuItem screenId="WBW04230" href="${pageContext.request.contextPath}/master/standardStock" target="WBW04230">${itemStandardStock}</sc2:menuItem>
+				<sc2:menuItem screenId="WBW04240" href="${pageContext.request.contextPath}/master/unitPlantCapacity" target="WBW04240">${itemUnitPlantCapacity}</sc2:menuItem>
 			</sc2:menuSubGroup>
 		</sc2:menuGroup>
 		
 		<sc2:menuGroup groupId="ST3002" title="${groupCommon}">
 			<sc2:menuSubGroup subGroupId="ST30021" title="${subGroupMonitoring}">
-				<sc2:menuItem screenId="WST33010" href="/BW0/common/logMonitoring" target="WST33010">${itemLogMonitoring}</sc2:menuItem>
+				<sc2:menuItem screenId="WST33010" href="${pageContext.request.contextPath}/common/logMonitoring" target="WST33010">${itemLogMonitoring}</sc2:menuItem>
 				<!--
-				<sc2:menuItem screenId="WST33020" href="/BW0/common/excelDownloadMonitoring" target="WST33020">${itemExcelDownloadMonitoring}</sc2:menuItem>
-				<sc2:menuItem screenId="WST33050" href="/BW0/common/batchStatus" target="WST33050">${itemBatchStatusMonitoring}</sc2:menuItem> 
+				<sc2:menuItem screenId="WST33020" href="${pageContext.request.contextPath}/common/excelDownloadMonitoring" target="WST33020">${itemExcelDownloadMonitoring}</sc2:menuItem>
+				<sc2:menuItem screenId="WST33050" href="${pageContext.request.contextPath}/common/batchStatus" target="WST33050">${itemBatchStatusMonitoring}</sc2:menuItem> 
 				-->
 			</sc2:menuSubGroup>
 			
 			<!--
  			<sc2:menuSubGroup subGroupId="ST30022" title="${subGroupDownload}">
-				<sc2:menuItem screenId="WST30900" href="/BW0/common/excelDownload" target="WST30900">${itemExcelDownload}</sc2:menuItem>
+				<sc2:menuItem screenId="WST30900" href="${pageContext.request.contextPath}/common/excelDownload" target="WST30900">${itemExcelDownload}</sc2:menuItem>
 			</sc2:menuSubGroup>
 			-->
 			
 			<sc2:menuSubGroup subGroupId="ST30023" title="${subGroupGWRDSDownload}">
-				<sc2:menuItem screenId="WBW03210" href="/BW0/common/gwrdsCommonDownload" target="WBW03210">${itemCommonReportGeneration}</sc2:menuItem>
+				<sc2:menuItem screenId="WBW03210" href="${pageContext.request.contextPath}/common/gwrdsCommonDownload" target="WBW03210">${itemCommonReportGeneration}</sc2:menuItem>
 			</sc2:menuSubGroup>
 			
 		</sc2:menuGroup>
 		<!--
 		<sc2:menuGroup groupId="ST3003" title="${groupHelp}">
-			<sc2:menuItem screenId="WST30300" href="/BW0/common/about" target="WST30300">${itemApplicationAbout}</sc2:menuItem>
-			<sc2:menuItem screenId="WST30070" href="/BW0/common/test" target="WST3007Test">API Test</sc2:menuItem>  
+			<sc2:menuItem screenId="WST30300" href="${pageContext.request.contextPath}/common/about" target="WST30300">${itemApplicationAbout}</sc2:menuItem>
+			<sc2:menuItem screenId="WST30070" href="${pageContext.request.contextPath}/common/test" target="WST3007Test">API Test</sc2:menuItem>  
 		</sc2:menuGroup>
 		-->
 	</sc2:menu>

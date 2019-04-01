@@ -110,7 +110,7 @@ window.__disabledMinSize__ = false;
 			else if (objVar.$headerMobile.is(':visible'))
 				objVar.$leftMenuPanel.height( objVar.$main.height() - objVar.$headerMobile.height() )
 					.css('left', 0).css('top', objVar.$headerMobile.height() );
-			else objVar.$leftMenuPanel.height( objVar.$main.height() - objVar.$leftMenuPanel.offset().top );
+			else objVar.$leftMenuPanel.height( objVar.$main.height() - objVar.$leftMenuPanel.offset().top -10);
 		}
 	}
 
