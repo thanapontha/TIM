@@ -30,16 +30,29 @@
 	</div>
 </div>
 <div id="right-area">
-	<div class="page-header">
-		<div class="application-panel">
-			<span class="application"><spring:message code="BW0.lbl.Application"/></span> <span
-				class="userinfo"><c:out value="${sessionScope.tscuserinfo.firstName}" /></span>
-		</div>
-		<div class="screenid-panel">
-			<span class="screenid">
-			<c:out value="${payload.screenId} : ${payload.screenDescription}" /></span> 
-			<span class="time"><c:out value="${payload.dateTimeNow}" /></span>
-			<span class="timeSec hide"><c:out value="${payload.dateTimeNowSec}" /></span>
-		</div>
-	</div>
+  <div class="application-panel d-flex justify-content-between p-0">
+    <div><span class="application"><spring:message code="BW0.lbl.Application"/></span> </div>
+    <div><span class="userinfo"><c:out value="${sessionScope.tscuserinfo.firstName}" /></span></div>
+  </div>
+  <div class="screenid-panel d-flex justify-content-between p-0">
+    <div><span class="screenid"><c:out value="${payload.screenId} : ${payload.screenDescription}" /></span></div>
+    <div class="d-flex">
+      <ul class="d-flex list-unstyled m-0 p-0">
+        <li>
+        	<a href="${_mappingPath}?language=th_TH" class="px-2">
+          		<input tabindex="-1" type="image" src="${pageContext.request.contextPath}<spring:message code="imagepath"/>icons/th_TH.png" width="17" title="TH"/>
+        	</a>
+        </li>
+        <li>
+        	<a href="${_mappingPath}?language=en_US" class="px-2">
+				<input tabindex="-1" type="image" src="${pageContext.request.contextPath}<spring:message code="imagepath"/>icons/en_US.png" width="17" title="EN"/>
+			</a>
+        </li>
+        <li>
+        	<span class="px-2 time">&nbsp;&nbsp;<c:out value="${payload.dateTimeNow}" /></span>
+        </li>
+      </ul>
+    </div>
+  </div>
 </div>
+

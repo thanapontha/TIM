@@ -191,12 +191,12 @@
       <put-attribute name="body"   value="/WEB-INF/views/master/WST33060SystemMaster.jsp"/>      
   </definition>
   
-  <definition name="WST33010" extends="baseLayout">		
+  <definition name="WST33010" extends="baseLayoutOld">		
 	<put-attribute name="title"  value="Log Monitoring Summary Screen"/>	
 	<put-attribute name="body"   value="/WEB-INF/views/WST33010LogMonitoringView.jsp"/>	
   </definition>
   
-  <definition name="WST33011" extends="baseLayout">		
+  <definition name="WST33011" extends="baseLayoutOld">		
 	<put-attribute name="title"  value="Log Monitoring Detail Screen"/>	
 	<put-attribute name="body"   value="/WEB-INF/views/WST33011LogMonitoringDetailsView.jsp"/>	
   </definition>		

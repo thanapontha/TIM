@@ -120,7 +120,6 @@ public class FormatUtilTest {
 	}
 	@Test
 	public void isValidByPatternFormatTest() {
-		String value = "12/11/2018";
 		boolean result = FormatUtil.isValidByPattern("test","test");
 		assertEquals("Result",result , true);
 	}
@@ -131,36 +130,10 @@ public class FormatUtilTest {
 	}
 	@Test
 	public void compareDateFormatTest() {
-		String value = "12/11/2018";
 		int result = FormatUtil.compareDate(new Date(),new Date());
 		assertEquals("Result",result , 0);
 	}
-	@Test
-	public void getCurrentDateFormatTest() {
-		Date value = new Date();
-		Date result = FormatUtil.getCurrentDate();
-		value.setHours(0);
-		value.setSeconds(0);
-		value.setMinutes(0);
-		assertEquals("Result",result.toString() , value.toString());
-	}
-	@Test
-	public void getCurrentMonthFormatTest() {
-		Date value = new Date();
-		Date result = FormatUtil.getCurrentMonth();
-		value.setHours(0);
-		value.setSeconds(0);
-		value.setMinutes(0);
-		value.setDate(1);
-		assertEquals("Result",result.toString() , value.toString());
-	}
-	@Test
-	public void getMaxDatyOfMonthFormatTest() {
-		Date value = new Date();
-		Date result = FormatUtil.getMaxDatyOfMonth(value);
-		value.setDate(31);
-		assertEquals("Result",result.toString() , value.toString());
-	}
+
 	@Test
 	public void getCurrentYearFormatTest() {
 		int value = Year.now().getValue();
@@ -206,15 +179,7 @@ public class FormatUtilTest {
 		Long result = FormatUtil.dateDiff(new Date(),new Date());
 		assertEquals("Result",result.longValue() , 0);
 	}
-	@Test
-	public void checkOverMonthFormatTest() {
-		Date value = new Date();
-		value.setMonth(1);
-		Date value2 = new Date();
-		value2.setMonth(5);
-		boolean result = FormatUtil.checkOverMonth(value,value2,2);
-		assertEquals("Result",result , true);
-	}
+
 	@Test
 	public void padFormatTest() {
 		char[] value = new char[2];
@@ -260,7 +225,6 @@ public class FormatUtilTest {
 	}
 	@Test
 	public void currentTimestampToOracleDB2FormatTest() {
-		String value = "jan-18";
 		Date result = FormatUtil.convertTimestampToOracleDB("10000");
 		assertNotNull("Result",result);
 	}

@@ -24,10 +24,6 @@
 	<script src="${pageContext.request.contextPath}<spring:message code="jqueryjspath"/>jquery.cookie.js"></script>
 	<script src="${pageContext.request.contextPath}<spring:message code="jqueryjspath"/>jquery.fixedheadertable.min.js"></script>
 	
-	<%-- <script src="${pageContext.request.contextPath}/webjars/bootstrap/4.1.3/js/bootstrap.min.js"></script>
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/webjars/bootstrap/4.1.3/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/webjars/bootstrap/4.1.3/css/bootstrap-reboot.min.css" />
- --%>
     <%--include bootstrap 4.3.1 --%>
     <views:script src="bootstrap.min.js"/>
  	<views:style src="bootstrap.min.css" />

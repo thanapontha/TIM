@@ -31,7 +31,7 @@
 	<views:script src="st3.lib.js"/>
 	<views:script src="gwrds.lib.js"/>
 	<views:script src="gwrds.lib.ext.js"/>
-	    <views:script src="bootstrap.min.js"/>
+	<views:script src="bootstrap.min.js"/>
  	<views:style src="bootstrap.min.css" />
  	<views:style src="bootstrap-reboot.min.css" />
 	<views:script src="st3.script.js"/>
@@ -55,6 +55,9 @@
 			'ST3.lbl.Entries': '<spring:message code="ST3.lbl.Entries"/>',
 			'ST3.lbl.More': '<spring:message code="ST3.lbl.More"/>'
 		};
+		
+		var calendarImgPath = _imagePath + "icons/calendar.png";
+		
 		ST3Lib.dialog.btn.ok = '<spring:message code="ST3.dialog.ok"/>';
 		ST3Lib.dialog.btn.cancel = '<spring:message code="ST3.dialog.cancel"/>';
 		ST3Lib.validate.msgcode['MSTD0031AERR'] = '<spring:message code="MSTD0031AERR"/>';
