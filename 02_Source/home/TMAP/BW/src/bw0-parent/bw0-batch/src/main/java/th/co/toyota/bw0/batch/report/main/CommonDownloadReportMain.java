@@ -39,7 +39,6 @@ import th.co.toyota.bw0.api.repository.common.SystemMasterAPIRepository;
 import th.co.toyota.bw0.batch.report.repository.CommonDownloadReportRepository;
 import th.co.toyota.config.AppConfig;
 import th.co.toyota.st3.api.constants.CST30000Messages;
-import th.co.toyota.st3.api.util.CST32010DocNoGenerator;
 import th.co.toyota.st3.api.util.IST30000LoggerDb;
 
 @Component
@@ -74,9 +73,9 @@ public class CommonDownloadReportMain {
 
 		String[] params = {
 				"TDEM", //param 1: Version (User Company Login TMAP-MS or TDEM)
-				"Jan-18", //paam 2: Getsudo Month
+				"Sep-18", //paam 2: Getsudo Month
 				"D-14", // param 3: Timing
-				"testUser", //param 4: User Login
+				"gwrds03", //param 4: User Login
 				"99999" //param 5: Application ID
 		};
 		
@@ -84,6 +83,7 @@ public class CommonDownloadReportMain {
 			params = args;
 		}
 		try {
+			main.logger.debug("test generate CommonDownloadReportMain");
 			main.generateReport(params);
 		} catch (CommonErrorException e) {
 			String message = main.messageSource.getMessage(CST30000Messages.ERROR_UNDEFINED_ERROR, new String[] { CommonUtility.genMessageOfException(e) }, Locale.getDefault());

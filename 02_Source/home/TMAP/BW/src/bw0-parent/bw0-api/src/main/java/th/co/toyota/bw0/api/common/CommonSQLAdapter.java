@@ -71,12 +71,12 @@ public class CommonSQLAdapter {
 	            ps.setInt(i + 1, ((Integer)arrParamValue).intValue());
 	          } else if ((arrParamValue instanceof BigDecimal)) {
 	            ps.setBigDecimal(i + 1, (BigDecimal)arrParamValue);
+	          }else {
+	        	  ps.setObject(i + 1, arrParamValue);
 	          }
 	        }
 	        else if (arrParamValue == null) {
 	          ps.setString(i + 1, (String)arrParamValue);
-	        } else {
-	          ps.setObject(i + 1, arrParamValue);
 	        }
 	      }
 	    }

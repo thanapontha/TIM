@@ -461,11 +461,6 @@ public class CommonDataFileUpload {
 	        	throw new FileUploadDownloadException(this.messageSource.getMessage(MessagesConstants.A_ERROR_FILE_SIZE_OVER, 
 	        			(Object[])new String[]{String.valueOf(maxFileSizeChk/ 1024)+" MB"}, Locale.getDefault()));
 	        }
-	        
-	        if (file == null) {
-	            throw new FileUploadDownloadException(this.messageSource.getMessage(CST30000Messages.ERROR_FILE_NOT_SELECTED, 
-	            		(Object[])new String[0], Locale.getDefault()));
-	        }
 
 	        if (file.isEmpty() || file.getSize() == 0) {
 	            throw new FileUploadDownloadException(this.messageSource.getMessage(CST30000Messages.ERROR_FILE_HAS_NO_DATA, 

@@ -42,7 +42,7 @@
 		<appender-ref ref="APPLOGFILE" />
 	</logger>-->
 
-	<root level="ERROR">
+	<root level="DEBUG">
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="DEBUGLOGFILE" />
 	</root>
